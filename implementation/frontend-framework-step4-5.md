@@ -1,6 +1,6 @@
-# Frontend Framework for Step 4 and Step 5
+# Frontend Framework for Step 4, Step 5 and Step 6
 
-This framework defines how the frontend is structured for document OCR and validation flow.
+This framework defines how the frontend is structured for document OCR, validation and face verification flow.
 
 ## 1) UI modules
 
@@ -23,6 +23,15 @@ This framework defines how the frontend is structured for document OCR and valid
    - validation JSON
    - quality JSON
    - extracted fields JSON
+5. `Face Verification Intake`
+   - reference document selector
+   - selfie upload
+   - optional liveness video upload
+   - run verification session action
+6. `Face Verification Monitor`
+   - session table
+   - match/liveness/deepfake score cards
+   - decision summary + quality checks
 
 ## 2) State model (React)
 
@@ -31,7 +40,12 @@ This framework defines how the frontend is structured for document OCR and valid
 - `uploadForm` + selected `file`
 - `processingDocumentId`
 - `selectedDocumentId`
+- `referenceDocumentId`
+- `verificationSessions[]`
+- `selectedVerificationSessionId`
+- `selectedSelfieFile` / `selectedVideoFile`
 - status messages (`authMessage`, `documentMessage`)
+ - status message (`verificationMessage`)
 
 ## 3) API contract used by frontend
 
@@ -41,6 +55,9 @@ This framework defines how the frontend is structured for document OCR and valid
 4. `POST /api/v1/documents/upload`
 5. `GET /api/v1/documents/my`
 6. `POST /api/v1/documents/{document_id}/process`
+7. `POST /api/v1/verification-sessions/upload`
+8. `GET /api/v1/verification-sessions/my`
+9. `GET /api/v1/verification-sessions/{session_id}`
 
 ## 4) User workflow
 
@@ -50,10 +67,12 @@ This framework defines how the frontend is structured for document OCR and valid
 4. Click `Run OCR`
 5. Click `View`
 6. Inspect validation + quality output
+7. Upload selfie/video and run verification session
+8. Inspect score cards in verification monitor
 
 ## 5) Extension points for next phases
 
 1. Replace current OCR extraction with model-backed OCR service.
 2. Add confidence score UI and field-level correction controls.
-3. Add face verification tab with score cards.
-4. Add admin review screen for flagged documents.
+3. Add admin review screen for flagged sessions/documents.
+4. Add manual correction workflow before final KYC decision.

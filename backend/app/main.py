@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes.auth import router as auth_router
 from app.api.routes.documents import router as documents_router
 from app.api.routes.system import router as system_router
+from app.api.routes.verification import router as verification_router
 from app.core.config import settings
 from app.db.session import engine, init_db_schema
 from app.services.connections import close_connections, init_connections
@@ -38,3 +39,4 @@ app.add_middleware(
 app.include_router(system_router)
 app.include_router(auth_router)
 app.include_router(documents_router)
+app.include_router(verification_router)

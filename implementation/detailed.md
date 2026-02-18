@@ -165,8 +165,26 @@ Implemented backend foundation items:
    - validation + quality indicators in list
    - detailed `OCR + Validation Output` view
 
-## Step 6 (next in execution)
+## Step 6 progress (completed)
 
-1. Start face upload APIs and storage flow.
-2. Add face match/deepfake/liveness score placeholders.
-3. Expose score cards in frontend for end-to-end vertical slice.
+1. Added verification session APIs:
+   - `POST /api/v1/verification-sessions/upload`
+   - `GET /api/v1/verification-sessions/my`
+   - `GET /api/v1/verification-sessions/{session_id}`
+2. Added placeholder scoring engine for:
+   - face match score
+   - liveness score
+   - deepfake probability
+3. Added threshold-based session status:
+   - `approved` when `match >= 80`, `liveness >= 60`, `deepfake_probability <= 30`
+   - otherwise `flagged`
+4. Frontend now includes Step 6 framework:
+   - face verification intake panel (selfie + optional video)
+   - verification sessions table
+   - score cards and decision inspector
+
+## Step 7 (next in execution)
+
+1. Build admin review queue for flagged verification sessions.
+2. Add reviewer/admin decision endpoints and frontend actions.
+3. Update user KYC status based on final admin decision.

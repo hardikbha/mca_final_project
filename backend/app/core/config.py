@@ -24,6 +24,7 @@ class Settings:
     auto_create_schema: bool = _parse_bool(os.getenv("AUTO_CREATE_SCHEMA"), True)
     upload_root: str = os.getenv("UPLOAD_ROOT", "storage/uploads")
     max_upload_size_mb: int = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10"))
+    max_video_size_mb: int = int(os.getenv("MAX_VIDEO_SIZE_MB", "30"))
 
     @property
     def cors_origins(self) -> list[str]:

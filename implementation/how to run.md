@@ -124,13 +124,39 @@ In frontend:
 - click `View`
 - inspect `Validation`, `Quality`, `Extracted Fields` in `OCR + Validation Output (Step 4/5)`
 
-## 10) Stop everything
+## 10) Run Step 6 face verification
+
+Create a sample selfie and run verification session:
+
+```bash
+printf 'fake image data for selfie' > /tmp/step6_selfie.jpg
+
+curl -X POST http://localhost:8000/api/v1/verification-sessions/upload \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "reference_document_id=$DOC_ID" \
+  -F "selfie_file=@/tmp/step6_selfie.jpg;type=image/jpeg"
+```
+
+List verification sessions:
+
+```bash
+curl http://localhost:8000/api/v1/verification-sessions/my \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+In frontend:
+- Go to `Face Verification Intake (Step 6)` panel
+- Choose reference document (optional), upload selfie (and optional video)
+- Click `Run Verification`
+- Open `Face Verification Monitor` to inspect match/liveness/deepfake cards
+
+## 11) Stop everything
 
 ```bash
 docker compose down
 ```
 
-## 11) If something fails
+## 12) If something fails
 
 Run:
 

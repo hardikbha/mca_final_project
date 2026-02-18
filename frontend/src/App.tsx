@@ -80,6 +80,26 @@ type DocumentProcessResponse = {
   document: DocumentResponse;
 };
 
+type VerificationSessionResponse = {
+  session_id: string;
+  user_id: string;
+  selfie_image_path: string;
+  video_path: string | null;
+  match_score: number | null;
+  liveness_score: number | null;
+  deepfake_probability: number | null;
+  authenticity_label: "real" | "fake" | null;
+  quality_checks: Record<string, unknown> | null;
+  timestamp: string;
+  status: "pending" | "approved" | "rejected" | "flagged";
+  admin_reviewed: boolean;
+};
+
+type VerificationCreateResponse = {
+  message: string;
+  session: VerificationSessionResponse;
+};
+
 const DEFAULT_STATUS: SystemStatus = {
   api: "error",
   timestamp: "",
@@ -139,8 +159,20 @@ function App() {
   const [isUploading, setIsUploading] = useState(false);
   const [processingDocumentId, setProcessingDocumentId] = useState("");
   const [selectedDocumentId, setSelectedDocumentId] = useState("");
+  const [referenceDocumentId, setReferenceDocumentId] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileInputKey, setFileInputKey] = useState(0);
+  const [verificationMessage, setVerificationMessage] = useState("");
+  const [verificationSessions, setVerificationSessions] = useState<VerificationSessionResponse[]>(
+    []
+  );
+  const [isLoadingVerificationSessions, setIsLoadingVerificationSessions] = useState(false);
+  const [isCreatingVerification, setIsCreatingVerification] = useState(false);
+  const [selectedVerificationSessionId, setSelectedVerificationSessionId] = useState("");
+  const [selectedSelfieFile, setSelectedSelfieFile] = useState<File | null>(null);
+  const [selectedVideoFile, setSelectedVideoFile] = useState<File | null>(null);
+  const [selfieInputKey, setSelfieInputKey] = useState(0);
+  const [videoInputKey, setVideoInputKey] = useState(0);
   const [uploadForm, setUploadForm] = useState<{
     document_type: DocumentType;
     document_number: string;
@@ -188,7 +220,13 @@ function App() {
     setCurrentUser(null);
     setDocuments([]);
     setSelectedDocumentId("");
+    setReferenceDocumentId("");
+    setVerificationSessions([]);
+    setSelectedVerificationSessionId("");
+    setSelectedSelfieFile(null);
+    setSelectedVideoFile(null);
     setDocumentMessage("Token cleared. Login again to access document APIs.");
+    setVerificationMessage("Token cleared. Login again to access verification APIs.");
   };
 
   const registerUser = async () => {
@@ -207,6 +245,7 @@ function App() {
     setCurrentUser(authData.user);
     setAuthMessage("Registration successful.");
     await listMyDocuments(authData.access_token);
+    await listMyVerificationSessions(authData.access_token);
   };
 
   const loginUser = async () => {
@@ -225,6 +264,7 @@ function App() {
     setCurrentUser(authData.user);
     setAuthMessage("Login successful.");
     await listMyDocuments(authData.access_token);
+    await listMyVerificationSessions(authData.access_token);
   };
 
   const fetchMe = async () => {
@@ -265,8 +305,12 @@ function App() {
       setDocuments(items);
       if (items.length === 0) {
         setSelectedDocumentId("");
+        setReferenceDocumentId("");
       } else if (!items.some((item) => item.document_id === selectedDocumentId)) {
         setSelectedDocumentId(items[0].document_id);
+      }
+      if (items.length > 0 && !items.some((item) => item.document_id === referenceDocumentId)) {
+        setReferenceDocumentId(items[0].document_id);
       }
       setDocumentMessage("Document list loaded.");
     } catch (err) {
@@ -354,7 +398,102 @@ function App() {
     }
   };
 
+  const listMyVerificationSessions = async (tokenOverride?: string) => {
+    const authToken = tokenOverride ?? token;
+    if (!authToken) {
+      setVerificationMessage("No token available. Login first.");
+      setVerificationSessions([]);
+      return;
+    }
+    setIsLoadingVerificationSessions(true);
+    setVerificationMessage("");
+    try {
+      const response = await fetch(`${apiBase}/api/v1/verification-sessions/my`, {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
+      const data = (await response.json()) as VerificationSessionResponse[] | { detail?: unknown };
+      if (!response.ok) {
+        throw new Error(getApiError(data, "Could not fetch verification sessions"));
+      }
+      const items = data as VerificationSessionResponse[];
+      setVerificationSessions(items);
+      if (items.length === 0) {
+        setSelectedVerificationSessionId("");
+      } else if (!items.some((item) => item.session_id === selectedVerificationSessionId)) {
+        setSelectedVerificationSessionId(items[0].session_id);
+      }
+      setVerificationMessage("Verification sessions loaded.");
+    } catch (err) {
+      setVerificationMessage(
+        err instanceof Error ? err.message : "Could not fetch verification sessions"
+      );
+    } finally {
+      setIsLoadingVerificationSessions(false);
+    }
+  };
+
+  const onSelfieChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setSelectedSelfieFile(file);
+  };
+
+  const onVideoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setSelectedVideoFile(file);
+  };
+
+  const createVerificationSession = async () => {
+    if (!token) {
+      setVerificationMessage("No token available. Login first.");
+      return;
+    }
+    if (!selectedSelfieFile) {
+      setVerificationMessage("Please choose a selfie file before running verification.");
+      return;
+    }
+
+    setIsCreatingVerification(true);
+    setVerificationMessage("");
+    try {
+      const formData = new FormData();
+      formData.append("selfie_file", selectedSelfieFile);
+      if (selectedVideoFile) {
+        formData.append("video_file", selectedVideoFile);
+      }
+      if (referenceDocumentId) {
+        formData.append("reference_document_id", referenceDocumentId);
+      }
+
+      const response = await fetch(`${apiBase}/api/v1/verification-sessions/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+      const data = (await response.json()) as VerificationCreateResponse | { detail?: unknown };
+      if (!response.ok) {
+        throw new Error(getApiError(data, "Verification session creation failed"));
+      }
+      const created = (data as VerificationCreateResponse).session;
+      setVerificationSessions((prev) => [created, ...prev.filter((item) => item.session_id !== created.session_id)]);
+      setSelectedVerificationSessionId(created.session_id);
+      setSelectedSelfieFile(null);
+      setSelectedVideoFile(null);
+      setSelfieInputKey((prev) => prev + 1);
+      setVideoInputKey((prev) => prev + 1);
+      setVerificationMessage((data as VerificationCreateResponse).message);
+    } catch (err) {
+      setVerificationMessage(
+        err instanceof Error ? err.message : "Verification session creation failed"
+      );
+    } finally {
+      setIsCreatingVerification(false);
+    }
+  };
+
   const selectedDocument = documents.find((doc) => doc.document_id === selectedDocumentId) ?? null;
+  const selectedVerificationSession =
+    verificationSessions.find((session) => session.session_id === selectedVerificationSessionId) ??
+    null;
   const serviceEntries = Object.entries(status.services);
   const healthyServices = serviceEntries.filter(([, service]) => service.status === "ok").length;
   const processedDocuments = documents.filter((doc) => doc.ocr_extracted_data).length;
@@ -362,6 +501,8 @@ function App() {
   const flaggedDocuments = documents.filter(
     (doc) => doc.ocr_extracted_data?.next_action === "manual_review_required"
   ).length;
+  const approvedSessions = verificationSessions.filter((session) => session.status === "approved").length;
+  const flaggedSessions = verificationSessions.filter((session) => session.status === "flagged").length;
 
   const getQualityClass = (quality?: OcrQuality): string => {
     if (!quality) {
@@ -380,6 +521,14 @@ function App() {
     void loadStatus();
   }, [apiBase]);
 
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+    void listMyDocuments(token);
+    void listMyVerificationSessions(token);
+  }, [token]);
+
   return (
     <main className="page-shell">
       <div className="ambient ambient-left" />
@@ -391,7 +540,7 @@ function App() {
           <h1>Verification Command Center</h1>
           <p className="hero-copy">
             This dashboard runs your complete current pipeline: auth, document upload, OCR
-            processing, validation and quality checks.
+            processing, validation, quality checks and face verification scoring.
           </p>
         </div>
 
@@ -614,6 +763,83 @@ function App() {
             </div>
           </div>
         </article>
+
+        <article className="panel">
+          <div className="panel-head">
+            <h2>Face Verification Intake</h2>
+            <span className="panel-tag">Step 6</span>
+          </div>
+          <p className="muted">
+            Upload selfie (and optional liveness video) to generate face-match/deepfake/liveness
+            placeholder scores.
+          </p>
+
+          <label htmlFor="referenceDocument">Reference Document</label>
+          <select
+            id="referenceDocument"
+            value={referenceDocumentId}
+            onChange={(e) => setReferenceDocumentId(e.target.value)}
+          >
+            <option value="">No reference document</option>
+            {documents.map((doc) => (
+              <option key={doc.document_id} value={doc.document_id}>
+                {doc.document_type} | {doc.document_number || doc.document_id.slice(0, 8)}
+              </option>
+            ))}
+          </select>
+
+          <label htmlFor="selfieFile">Selfie Image (jpg/png)</label>
+          <input
+            key={selfieInputKey}
+            id="selfieFile"
+            type="file"
+            accept=".jpg,.jpeg,.png"
+            onChange={onSelfieChange}
+          />
+
+          <label htmlFor="videoFile">Liveness Video (optional mp4/mov/avi)</label>
+          <input
+            key={videoInputKey}
+            id="videoFile"
+            type="file"
+            accept=".mp4,.mov,.avi"
+            onChange={onVideoChange}
+          />
+
+          <div className="btn-row">
+            <button
+              className="btn"
+              onClick={() => void createVerificationSession()}
+              type="button"
+              disabled={isCreatingVerification}
+            >
+              {isCreatingVerification ? "Running..." : "Run Verification"}
+            </button>
+            <button
+              className="btn secondary"
+              onClick={() => void listMyVerificationSessions()}
+              type="button"
+              disabled={isLoadingVerificationSessions}
+            >
+              {isLoadingVerificationSessions ? "Loading..." : "Load Sessions"}
+            </button>
+          </div>
+
+          <div className="quick-kpis">
+            <div>
+              <small>Approved Sessions</small>
+              <strong>{approvedSessions}</strong>
+            </div>
+            <div>
+              <small>Flagged Sessions</small>
+              <strong>{flaggedSessions}</strong>
+            </div>
+          </div>
+
+          <p className={verificationMessage ? "muted" : ""}>
+            {verificationMessage || "No verification actions yet."}
+          </p>
+        </article>
       </section>
 
       <section className="panel wide">
@@ -756,6 +982,182 @@ function App() {
         <p className={documentMessage ? "muted" : ""}>
           {documentMessage || "No document actions yet."}
         </p>
+      </section>
+
+      <section className="panel wide">
+        <div className="panel-head">
+          <h2>Face Verification Monitor</h2>
+          <span className="panel-tag">Step 6</span>
+        </div>
+        <p className="muted">
+          Review verification sessions and check threshold pass/fail for match, liveness and deepfake risk.
+        </p>
+
+        <div className="table-wrap">
+          {verificationSessions.length === 0 ? (
+            <p className="muted">No verification sessions created yet.</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Match</th>
+                  <th>Liveness</th>
+                  <th>Deepfake</th>
+                  <th>Authenticity</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {verificationSessions.map((session) => (
+                  <tr key={session.session_id}>
+                    <td>{new Date(session.timestamp).toLocaleString()}</td>
+                    <td>{session.match_score ?? "N/A"}</td>
+                    <td>{session.liveness_score ?? "N/A"}</td>
+                    <td>{session.deepfake_probability ?? "N/A"}</td>
+                    <td>
+                      <span
+                        className={
+                          session.authenticity_label === "real"
+                            ? "status-ok"
+                            : session.authenticity_label === "fake"
+                              ? "status-bad"
+                              : "status-neutral"
+                        }
+                      >
+                        {session.authenticity_label ?? "N/A"}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className={
+                          session.status === "approved"
+                            ? "status-ok"
+                            : session.status === "flagged"
+                              ? "status-bad"
+                              : "status-neutral"
+                        }
+                      >
+                        {session.status}
+                      </span>
+                    </td>
+                    <td>
+                      <button
+                        className="btn secondary small"
+                        type="button"
+                        onClick={() => setSelectedVerificationSessionId(session.session_id)}
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        <div className="analysis-box">
+          <h3>Verification Inspector</h3>
+          {!selectedVerificationSession ? (
+            <p className="muted">Select a session to inspect scores and quality checks.</p>
+          ) : (
+            <>
+              <div className="score-grid">
+                <div className="score-card">
+                  <span>Face Match</span>
+                  <strong>{selectedVerificationSession.match_score ?? "N/A"}</strong>
+                  <small
+                    className={
+                      (selectedVerificationSession.match_score ?? 0) >= 80
+                        ? "status-ok"
+                        : "status-bad"
+                    }
+                  >
+                    Threshold: &gt;= 80
+                  </small>
+                </div>
+                <div className="score-card">
+                  <span>Liveness</span>
+                  <strong>{selectedVerificationSession.liveness_score ?? "N/A"}</strong>
+                  <small
+                    className={
+                      (selectedVerificationSession.liveness_score ?? 0) >= 60
+                        ? "status-ok"
+                        : "status-bad"
+                    }
+                  >
+                    Threshold: &gt;= 60
+                  </small>
+                </div>
+                <div className="score-card">
+                  <span>Deepfake Risk</span>
+                  <strong>{selectedVerificationSession.deepfake_probability ?? "N/A"}</strong>
+                  <small
+                    className={
+                      (selectedVerificationSession.deepfake_probability ?? 100) <= 30
+                        ? "status-ok"
+                        : "status-bad"
+                    }
+                  >
+                    Threshold: &lt;= 30
+                  </small>
+                </div>
+              </div>
+
+              <div className="analysis-columns">
+                <div className="code-box">
+                  <strong>Session Metadata</strong>
+                  <pre>
+                    {JSON.stringify(
+                      {
+                        session_id: selectedVerificationSession.session_id,
+                        authenticity_label: selectedVerificationSession.authenticity_label,
+                        status: selectedVerificationSession.status,
+                        admin_reviewed: selectedVerificationSession.admin_reviewed,
+                        selfie_image_path: selectedVerificationSession.selfie_image_path,
+                        video_path: selectedVerificationSession.video_path
+                      },
+                      null,
+                      2
+                    )}
+                  </pre>
+                </div>
+
+                <div className="code-box">
+                  <strong>Quality Checks</strong>
+                  <pre>
+                    {JSON.stringify(
+                      selectedVerificationSession.quality_checks ?? "No quality checks found",
+                      null,
+                      2
+                    )}
+                  </pre>
+                </div>
+
+                <div className="code-box">
+                  <strong>Decision Summary</strong>
+                  <pre>
+                    {JSON.stringify(
+                      {
+                        auto_approval_rule:
+                          "match >= 80, liveness >= 60, deepfake_probability <= 30",
+                        session_status: selectedVerificationSession.status,
+                        decision:
+                          selectedVerificationSession.status === "approved"
+                            ? "Auto-approval criteria met"
+                            : "Manual review recommended"
+                      },
+                      null,
+                      2
+                    )}
+                  </pre>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </section>
     </main>
   );
