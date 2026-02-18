@@ -1,0 +1,145 @@
+# How To Run
+
+Use these steps in your own terminal to run the project and view the current progress.
+
+## 1) Go to project folder
+
+```bash
+cd /Users/hardiksharma/Downloads/final_project
+```
+
+## 2) Make sure Docker engine is running
+
+If you use Colima:
+
+```bash
+colima start
+docker context use colima
+```
+
+Check:
+
+```bash
+docker --version
+docker compose version
+docker info
+```
+
+## 3) Start the full stack
+
+```bash
+docker compose down -v --remove-orphans
+docker compose up -d --build
+docker compose ps
+```
+
+## 4) Seed demo users (optional but recommended)
+
+```bash
+docker compose exec -T backend python scripts/seed_demo_data.py
+```
+
+## 5) Open the app
+
+- Frontend: `http://localhost:5173`
+- Backend docs: `http://localhost:8000/docs`
+
+## 6) Quick verification commands
+
+```bash
+curl http://localhost:8000/health
+curl http://localhost:8000/api/v1/system/status
+```
+
+Expected:
+- `/health` should return `{"status":"ok"}`
+- `/api/v1/system/status` should show `postgresql`, `mongodb`, and `redis` as `ok`
+
+## 7) Test auth quickly from terminal
+
+```bash
+curl -X POST http://localhost:8000/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"full_name":"Test User","email":"testuser@example.com","phone":"9876543210","password":"StrongPass@123"}'
+
+curl -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"identifier":"testuser@example.com","password":"StrongPass@123"}'
+```
+
+You can also test register/login/me from the frontend auth panel at `http://localhost:5173`.
+
+## 8) Test document upload APIs (Step 3)
+
+Use a JWT token from register/login response:
+
+```bash
+TOKEN="<paste_access_token_here>"
+```
+
+Create a sample file and upload:
+
+```bash
+printf 'sample pdf content' > /tmp/step3_test.pdf
+
+curl -X POST http://localhost:8000/api/v1/documents/upload \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "document_type=pan" \
+  -F "document_number=ABCDE1234F" \
+  -F "file=@/tmp/step3_test.pdf;type=application/pdf"
+```
+
+List uploaded documents:
+
+```bash
+curl http://localhost:8000/api/v1/documents/my \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+You can do this from frontend too:
+- Login in auth panel
+- Go to `Document Processing Framework (Step 3, 4, 5)` panel
+- Select document type, choose file, click upload, then load documents
+
+## 9) Run Step 4/5 processing (OCR + validation + quality)
+
+Take `document_id` from the upload/list response and process it:
+
+```bash
+DOC_ID="<paste_document_id_here>"
+
+curl -X POST http://localhost:8000/api/v1/documents/$DOC_ID/process \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+After processing, call list again to see `ocr_extracted_data`:
+
+```bash
+curl http://localhost:8000/api/v1/documents/my \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+In frontend:
+- click `Run OCR` for a document
+- click `View`
+- inspect `Validation`, `Quality`, `Extracted Fields` in `OCR + Validation Output (Step 4/5)`
+
+## 10) Stop everything
+
+```bash
+docker compose down
+```
+
+## 11) If something fails
+
+Run:
+
+```bash
+docker compose ps
+docker compose logs backend --tail=200
+docker compose logs postgres --tail=120
+docker compose logs mongodb --tail=120
+docker compose logs redis --tail=120
+```
+
+Share those logs and I will fix it quickly.

@@ -1,0 +1,94 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: ekyc_postgres
+    environment:
+      POSTGRES_USER: ekyc
+      POSTGRES_PASSWORD: ekyc
+      POSTGRES_DB: ekyc
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ekyc -d ekyc"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mongodb:
+    image: mongo:6
+    container_name: ekyc_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7
+    container_name: ekyc_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build:
+      context: ./backend
+    container_name: ekyc_backend
+    environment:
+      APP_ENV: development
+      CORS_ORIGINS: http://localhost:5173,http://frontend:5173
+      POSTGRES_DSN: postgresql+asyncpg://ekyc:ekyc@postgres:5432/ekyc
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DB: ekyc
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: change_me_in_production
+      JWT_ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 1440
+      AUTO_CREATE_SCHEMA: "false"
+      UPLOAD_ROOT: /app/storage/uploads
+      MAX_UPLOAD_SIZE_MB: 10
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./storage:/app/storage
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: ekyc_frontend
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "5173:5173"
+
+volumes:
+  pg_data:
+  mongo_data:
+  redis_data:
