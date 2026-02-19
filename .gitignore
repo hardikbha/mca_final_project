@@ -18,3 +18,8 @@ storage/uploads/*
 !storage/uploads/.gitkeep
 storage/reports/*
 !storage/reports/.gitkeep
+backend/ekyc_local.db
+backend/storage/uploads/*
+!backend/storage/uploads/.gitkeep
+backend/storage/reports/*
+!backend/storage/reports/.gitkeep

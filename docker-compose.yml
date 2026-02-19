@@ -50,6 +50,7 @@ services:
       APP_ENV: development
       CORS_ORIGINS: http://localhost:5173,http://frontend:5173
       POSTGRES_DSN: postgresql+asyncpg://ekyc:ekyc@postgres:5432/ekyc
+      APP_DB_DSN: postgresql+asyncpg://ekyc:ekyc@postgres:5432/ekyc
       MONGODB_URI: mongodb://mongodb:27017
       MONGODB_DB: ekyc
       REDIS_URL: redis://redis:6379/0

@@ -150,13 +150,52 @@ In frontend:
 - Click `Run Verification`
 - Open `Face Verification Monitor` to inspect match/liveness/deepfake cards
 
-## 11) Stop everything
+## 11) Run Step 7 admin review
+
+Login as seeded admin user:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"identifier":"admin@ekyc.local","password":"AdminPass@123"}'
+```
+
+Set token from response:
+
+```bash
+ADMIN_TOKEN="<paste_admin_access_token_here>"
+```
+
+Load flagged queue:
+
+```bash
+curl http://localhost:8000/api/v1/admin/reviews/queue \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+```
+
+Review one flagged session:
+
+```bash
+FLAGGED_SESSION_ID="<paste_session_id_here>"
+
+curl -X POST http://localhost:8000/api/v1/admin/reviews/$FLAGGED_SESSION_ID/decision \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"review_decision":"request_reupload","rejection_reason":"Selfie is unclear. Please upload again."}'
+```
+
+Frontend check:
+- login as `admin@ekyc.local` / `AdminPass@123`
+- open `Admin Review Queue (Step 7)`
+- load queue, then click approve/reject/request re-upload
+
+## 12) Stop everything
 
 ```bash
 docker compose down
 ```
 
-## 12) If something fails
+## 13) If something fails
 
 Run:
 

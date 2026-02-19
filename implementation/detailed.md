@@ -183,8 +183,52 @@ Implemented backend foundation items:
    - verification sessions table
    - score cards and decision inspector
 
-## Step 7 (next in execution)
+## Step 7 progress (completed)
 
-1. Build admin review queue for flagged verification sessions.
-2. Add reviewer/admin decision endpoints and frontend actions.
-3. Update user KYC status based on final admin decision.
+1. Added admin review APIs for reviewer/admin roles:
+   - `GET /api/v1/admin/reviews/queue`
+   - `POST /api/v1/admin/reviews/{session_id}/decision`
+2. Added role guard for reviewer/admin-only routes.
+3. Added manual decisions:
+   - `approved`
+   - `rejected`
+   - `request_reupload`
+4. Added KYC status updates on decision:
+   - `approved` -> user `kyc_status=approved`, `is_verified=true`
+   - `rejected` -> user `kyc_status=rejected`, `is_verified=false`
+   - `request_reupload` -> user `kyc_status=under_review`, `is_verified=false`
+5. Frontend now includes Step 7 admin queue panel:
+   - load flagged sessions
+   - apply approve/reject/request re-upload actions
+   - provide rejection/re-upload reason
+
+## Step 8 progress (current request: local runnable app shell)
+
+1. Implemented required login rule:
+   - fixed admin login supported as `hardik` / `1234`
+   - all other users must register first, then login
+2. Added dedicated dummy-feature backend endpoints:
+   - `GET /api/v1/features/catalog`
+   - `POST /api/v1/features/run` (token required)
+3. Reworked frontend to a clean flow:
+   - auth screen (`Login` + `Register`)
+   - post-login main app screen
+   - top taskbar listing all features
+4. Added feature runner UI where each feature:
+   - accepts dummy input
+   - returns feature-specific dummy output
+5. Added local-first DB fallback for development:
+   - `APP_DB_DSN=sqlite+aiosqlite:///./ekyc_local.db`
+   - avoids blocking local run when PostgreSQL is not available
+
+## Step 9 progress (UI + flow refinement as requested)
+
+1. Upgraded UI to a cleaner, organized post-login dashboard with dedicated feature taskbar.
+2. Implemented stage-wise workflow exactly as requested:
+   - Document OCR + forgery score (`pdf/png/jpg/jpeg/webp`)
+   - Face match using extracted document face as reference
+   - Deepfake score on current shared image
+   - Liveness score on single image
+3. Added final decision endpoint combining all four scores and generating downloadable PDF.
+4. Added destination email input in UI for report dispatch target (delivery mocked for now).
+5. Kept backend outputs dummy/random for now; can plug real model APIs when provided.
