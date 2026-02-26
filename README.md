@@ -100,7 +100,11 @@ Fixed admin login shortcut:
 
 Current behavior:
 
-- Scores are currently dummy/random for fast UI-backend integration.
+- Document forgery is still placeholder for integration speed.
+- Document face extraction is real (dlib 81 landmarks + padded crop from ID image).
+- Face match is real (Gradio Space: `cvdetectors/humandetector`).
+- Liveness is real (Gradio Space: `cvdetectors/liveness-detector`).
+- Deepfake score is fetched from Gradio Space `Dharshaneshwaran/deepfake` (image inference endpoint).
 - Final decision combines all four scores:
   - document forgery
   - face match

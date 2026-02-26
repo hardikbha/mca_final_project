@@ -13,6 +13,13 @@ from app.models.user import User
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
+def _normalize_access_token(raw_token: str) -> str:
+    token = raw_token.strip().strip('"').strip("'").strip()
+    if token.lower().startswith("bearer "):
+        token = token[7:].strip()
+    return token
+
+
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: AsyncSession = Depends(get_db_session),
@@ -24,12 +31,18 @@ async def get_current_user(
         )
 
     try:
-        payload = decode_access_token(credentials.credentials)
+        token = _normalize_access_token(credentials.credentials)
+        payload = decode_access_token(token)
         user_id = UUID(str(payload.get("sub")))
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token expired. Please login again.",
+        ) from None
     except (jwt.InvalidTokenError, ValueError, TypeError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
+            detail="Invalid token. Use Authorization: Bearer <access_token>.",
         ) from None
 
     user = await db.get(User, user_id)

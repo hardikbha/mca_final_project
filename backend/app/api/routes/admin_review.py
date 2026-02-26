@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,6 +18,7 @@ from app.schemas.admin_review import (
     ReviewDecisionRequest,
 )
 from app.schemas.verification import VerificationSessionResponse
+from app.services.audit_service import log_audit_event
 
 router = APIRouter(prefix="/api/v1/admin/reviews", tags=["admin-review"])
 
@@ -53,6 +54,7 @@ async def list_flagged_sessions_for_review(
 async def decide_flagged_session(
     session_id: UUID,
     payload: ReviewDecisionRequest,
+    request: Request,
     db: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(get_current_reviewer_or_admin),
 ) -> AdminDecisionResponse:
@@ -115,6 +117,12 @@ async def decide_flagged_session(
     await db.refresh(session)
     await db.refresh(review)
     await db.refresh(target_user)
+
+    await log_audit_event(
+        request, "admin_review",
+        user_id=current_user.user_id,
+        details={"session_id": str(session_id), "decision": payload.review_decision.value},
+    )
 
     return AdminDecisionResponse(
         message=message,

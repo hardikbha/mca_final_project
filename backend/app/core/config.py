@@ -29,6 +29,33 @@ class Settings:
     report_root: str = os.getenv("REPORT_ROOT", "storage/reports")
     max_upload_size_mb: int = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10"))
     max_video_size_mb: int = int(os.getenv("MAX_VIDEO_SIZE_MB", "30"))
+    face_landmark_model_path: str = os.getenv(
+        "FACE_LANDMARK_MODEL_PATH",
+        "storage/models/shape_predictor_81_face_landmarks.dat",
+    )
+    face_landmark_model_url: str = os.getenv(
+        "FACE_LANDMARK_MODEL_URL",
+        "https://raw.githubusercontent.com/codeniko/shape_predictor_81_face_landmarks/master/shape_predictor_81_face_landmarks.dat",
+    )
+    face_crop_padding_ratio: float = float(os.getenv("FACE_CROP_PADDING_RATIO", "0.25"))
+    face_similarity_space_url: str = os.getenv(
+        "FACE_SIMILARITY_SPACE_URL",
+        "https://cvdetectors-humandetector.hf.space",
+    )
+    face_similarity_api_name: str = os.getenv("FACE_SIMILARITY_API_NAME", "/predict")
+    face_match_pass_threshold: float = float(os.getenv("FACE_MATCH_PASS_THRESHOLD", "70"))
+    liveness_space_url: str = os.getenv(
+        "LIVENESS_SPACE_URL",
+        "https://cvdetectors-liveness-detector.hf.space",
+    )
+    liveness_api_name: str = os.getenv("LIVENESS_API_NAME", "/predict")
+    liveness_live_threshold: float = float(os.getenv("LIVENESS_LIVE_THRESHOLD", "65"))
+    external_api_timeout_seconds: float = float(os.getenv("EXTERNAL_API_TIMEOUT_SECONDS", "90"))
+    deepfake_space_url: str = os.getenv("DEEPFAKE_SPACE_URL", "Dharshaneshwaran/deepfake")
+    deepfake_api_name: str = os.getenv("DEEPFAKE_API_NAME", "/predict_3")
+    deepfake_hf_token: str | None = os.getenv("DEEPFAKE_HF_TOKEN")
+    deepfake_timeout_seconds: float = float(os.getenv("DEEPFAKE_TIMEOUT_SECONDS", "90"))
+    gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
 
     @property
     def cors_origins(self) -> list[str]:

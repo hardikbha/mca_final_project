@@ -37,7 +37,28 @@ Fixed admin login shortcut:
 
 Notes:
 
-- For now, feature scores are generated as dummy/random values.
+- Document OCR still uses placeholder OCR/forgery values, but document face extraction is real:
+  - Extracts face using dlib 81 landmarks (`shape_predictor_81_face_landmarks.dat`)
+  - Expands boundary with configurable padding and saves cropped reference face
+- Face match is real and calls Gradio Space API `cvdetectors/humandetector`.
+- Liveness is real and calls Gradio Space API `cvdetectors/liveness-detector`.
+- Deepfake detection calls Gradio Space `Dharshaneshwaran/deepfake` using image endpoint API.
+- Optional face extraction + face/liveness config env vars:
+  - `FACE_LANDMARK_MODEL_PATH`
+  - `FACE_LANDMARK_MODEL_URL`
+  - `FACE_CROP_PADDING_RATIO`
+  - `FACE_SIMILARITY_SPACE_URL`
+  - `FACE_SIMILARITY_API_NAME`
+  - `FACE_MATCH_PASS_THRESHOLD`
+  - `LIVENESS_SPACE_URL`
+  - `LIVENESS_API_NAME`
+  - `LIVENESS_LIVE_THRESHOLD`
+  - `EXTERNAL_API_TIMEOUT_SECONDS`
+- Optional deepfake config env vars:
+  - `DEEPFAKE_SPACE_URL` (default: `Dharshaneshwaran/deepfake`)
+  - `DEEPFAKE_API_NAME` (default: `/predict_3`, falls back to `/predict_2` automatically)
+  - `DEEPFAKE_HF_TOKEN` (optional for gated/private Space access)
+  - `DEEPFAKE_TIMEOUT_SECONDS` (default: `90`)
 - Final report email status is mocked and can be replaced with actual email provider integration.
 
 ## Demo seeding

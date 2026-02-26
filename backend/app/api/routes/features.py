@@ -1,3 +1,4 @@
+import mimetypes
 import random
 import re
 import uuid
@@ -6,12 +7,22 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from app.core.config import settings
 from app.deps import get_current_user
 from app.models.user import User
+from app.services.email_service import send_email
+from app.services.deepfake_inference import DeepfakeInferenceError, run_deepfake_inference
+from app.services.document_face_extraction import DocumentFaceExtractionError, extract_document_face
+from app.services.gradio_face_services import (
+    FaceSimilarityError,
+    LivenessDetectionError,
+    run_face_similarity,
+    run_liveness_detection,
+)
 
 router = APIRouter(prefix="/api/v1/features", tags=["features"])
 
@@ -23,6 +34,14 @@ ALLOWED_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 PIPELINE_STATE: dict[str, dict[str, Any]] = {}
+PIPELINE_IMAGE_KEY_TO_STATE_PATH: dict[str, tuple[str, str]] = {
+    "document_original": ("document", "file_path"),
+    "document_face": ("document", "reference_face_path"),
+    "face_live": ("face_match", "file_path"),
+    "face_live_cropped": ("face_match", "live_face_crop_path"),
+    "deepfake_live": ("deepfake", "file_path"),
+    "liveness_live": ("liveness", "file_path"),
+}
 
 
 class FinalReportRequest(BaseModel):
@@ -34,6 +53,44 @@ def _get_user_state(user: User) -> dict[str, Any]:
     if key not in PIPELINE_STATE:
         PIPELINE_STATE[key] = {}
     return PIPELINE_STATE[key]
+
+
+def _build_preview_url(image_key: str) -> str:
+    return f"/api/v1/features/images/{image_key}"
+
+
+def _resolve_pipeline_image_path(current_user: User, image_key: str) -> Path:
+    mapping = PIPELINE_IMAGE_KEY_TO_STATE_PATH.get(image_key)
+    if mapping is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Unsupported preview key: {image_key}",
+        )
+
+    state = _get_user_state(current_user)
+    state_section, path_key = mapping
+    section_data = state.get(state_section)
+    if not isinstance(section_data, dict):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No preview available for {image_key}. Run the related pipeline step first.",
+        )
+
+    raw_path = section_data.get(path_key)
+    if not isinstance(raw_path, str) or not raw_path:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Preview path missing for {image_key}.",
+        )
+
+    file_path = Path(raw_path).resolve()
+    upload_root_resolved = UPLOAD_ROOT.resolve()
+    if not file_path.is_relative_to(upload_root_resolved):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid preview file path.",
+        )
+    return file_path
 
 
 async def _save_file(
@@ -153,9 +210,39 @@ async def run_document_ocr(
         max_size_mb=settings.max_upload_size_mb,
     )
 
-    forgery_score = round(random.uniform(8.0, 46.0), 2)
-    ocr_confidence = round(random.uniform(0.82, 0.98), 2)
-    reference_face_id = str(uuid.uuid4())
+    try:
+        extraction = await run_in_threadpool(
+            extract_document_face,
+            file_path,
+            output_dir=UPLOAD_ROOT / user_id / "document_face",
+            model_path=BACKEND_ROOT / settings.face_landmark_model_path,
+            model_url=settings.face_landmark_model_url,
+            crop_padding_ratio=settings.face_crop_padding_ratio,
+            timeout_seconds=settings.external_api_timeout_seconds,
+        )
+    except DocumentFaceExtractionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Document face extraction failed: {exc}",
+        ) from exc
+
+    reference_face_id = str(extraction["reference_face_id"])
+    reference_face_path = str(extraction["reference_face_path"])
+    landmarks_count = int(extraction["landmarks_count"])
+    crop_boundary = extraction["crop_boundary"]
+    crop_area = int(crop_boundary["width"]) * int(crop_boundary["height"])
+    image_area = int(extraction["image_width"]) * int(extraction["image_height"])
+    # A simple quality-based proxy for document authenticity risk in absence of a full forgery model.
+    coverage_ratio = crop_area / float(max(1, image_area))
+    forgery_risk = 26.0
+    if landmarks_count >= 81:
+        forgery_risk -= 8.0
+    elif landmarks_count >= 68:
+        forgery_risk -= 4.0
+    if coverage_ratio > 0.004:
+        forgery_risk -= 3.0
+    forgery_score = round(max(6.0, min(forgery_risk, 55.0)), 2)
+    ocr_confidence = round(min(0.99, 0.78 + (landmarks_count / 400.0)), 2)
 
     extracted_fields = {
         "name": current_user.full_name.title(),
@@ -165,12 +252,19 @@ async def run_document_ocr(
     response = {
         "stage": "document_ocr",
         "file_name": file_path.name,
+        "document_image_url": _build_preview_url("document_original"),
         "file_size_bytes": size_bytes,
         "document_type": document_type,
         "ocr_confidence": ocr_confidence,
         "document_forgery_score": forgery_score,
         "extracted_face_available": True,
         "reference_face_id": reference_face_id,
+        "reference_face_image_name": Path(reference_face_path).name,
+        "reference_face_image_url": _build_preview_url("document_face"),
+        "reference_face_landmarks_count": extraction["landmarks_count"],
+        "reference_face_crop_boundary": extraction["crop_boundary"],
+        "reference_face_padding_ratio": extraction["padding_ratio"],
+        "reference_face_detector": extraction["detector"],
         "ocr_preview": [
             f"Name: {extracted_fields['name']}",
             f"Doc No: {extracted_fields['document_number']}",
@@ -184,6 +278,8 @@ async def run_document_ocr(
     state["document"] = {
         "file_path": str(file_path),
         "reference_face_id": reference_face_id,
+        "reference_face_path": reference_face_path,
+        "reference_face_landmarks_count": extraction["landmarks_count"],
         "document_forgery_score": forgery_score,
         "document_type": document_type,
         "result": response,
@@ -211,20 +307,83 @@ async def run_face_match(
         allowed_extensions=ALLOWED_IMAGE_EXTENSIONS,
         max_size_mb=settings.max_upload_size_mb,
     )
-    match_score = round(random.uniform(58.0, 96.5), 2)
-    result = "match_passed" if match_score >= 75 else "low_match_manual_review"
+
+    try:
+        live_face_extraction = await run_in_threadpool(
+            extract_document_face,
+            file_path,
+            output_dir=UPLOAD_ROOT / user_id / "face_match_face",
+            model_path=BACKEND_ROOT / settings.face_landmark_model_path,
+            model_url=settings.face_landmark_model_url,
+            crop_padding_ratio=settings.face_crop_padding_ratio,
+            timeout_seconds=settings.external_api_timeout_seconds,
+        )
+    except DocumentFaceExtractionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Live selfie face extraction failed: {exc}",
+        ) from exc
+
+    live_face_crop_path = Path(str(live_face_extraction["reference_face_path"]))
+    if not live_face_crop_path.exists():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Live selfie face crop could not be created. Please upload a clear face image.",
+        )
+
+    reference_face_path_raw = state["document"].get("reference_face_path")
+    if not isinstance(reference_face_path_raw, str) or not reference_face_path_raw:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No extracted document face available. Re-run document OCR with a clear ID card image.",
+        )
+    reference_face_path = Path(reference_face_path_raw)
+    if not reference_face_path.exists():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Extracted document face file not found. Re-run document OCR.",
+        )
+
+    try:
+        inference = await run_in_threadpool(
+            run_face_similarity,
+            document_face_path=reference_face_path,
+            live_face_path=live_face_crop_path,
+            space_url=settings.face_similarity_space_url,
+            api_name=settings.face_similarity_api_name,
+            timeout_seconds=settings.external_api_timeout_seconds,
+            pass_threshold=settings.face_match_pass_threshold,
+        )
+    except FaceSimilarityError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Face similarity inference failed: {exc}",
+        ) from exc
+
+    match_score = float(inference["face_match_score"])
+    result = str(inference["result"])
     response = {
         "stage": "face_match",
         "reference_face_id": state["document"]["reference_face_id"],
         "reference_document_type": state["document"]["document_type"],
+        "reference_face_image_url": _build_preview_url("document_face"),
         "live_image_name": file_path.name,
+        "live_image_url": _build_preview_url("face_live"),
+        "live_face_crop_image_name": live_face_crop_path.name,
+        "live_face_crop_image_url": _build_preview_url("face_live_cropped"),
+        "live_face_landmarks_count": live_face_extraction["landmarks_count"],
+        "live_face_crop_boundary": live_face_extraction["crop_boundary"],
+        "live_face_detector": live_face_extraction["detector"],
         "file_size_bytes": size_bytes,
         "face_match_score": match_score,
         "result": result,
+        "raw_output": inference["raw_output"],
+        "source": inference["source"],
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
     state["face_match"] = {
         "file_path": str(file_path),
+        "live_face_crop_path": str(live_face_crop_path),
         "face_match_score": match_score,
         "result": response,
     }
@@ -233,33 +392,73 @@ async def run_face_match(
 
 @router.post("/deepfake")
 async def run_deepfake_detection(
-    live_image: UploadFile = File(...),
+    live_image: UploadFile | None = File(None),
     current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
+    state = _get_user_state(current_user)
     user_id = str(current_user.user_id)
-    file_path, size_bytes = await _save_file(
-        live_image,
-        user_id=user_id,
-        step="deepfake",
-        allowed_extensions=ALLOWED_IMAGE_EXTENSIONS,
-        max_size_mb=settings.max_upload_size_mb,
-    )
-    deepfake_score = round(random.uniform(6.0, 55.0), 2)
-    authenticity_confidence = round(100.0 - deepfake_score, 2)
-    label = "real_likely" if deepfake_score < 35 else "suspicious_manual_review"
+    input_source = "face_match_live_image"
+
+    if live_image is not None:
+        file_path, size_bytes = await _save_file(
+            live_image,
+            user_id=user_id,
+            step="deepfake",
+            allowed_extensions=ALLOWED_IMAGE_EXTENSIONS,
+            max_size_mb=settings.max_upload_size_mb,
+        )
+        input_source = "uploaded_for_deepfake"
+    else:
+        face_match_file_path_raw = state.get("face_match", {}).get("file_path")
+        if not isinstance(face_match_file_path_raw, str) or not face_match_file_path_raw:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No selfie/live image found. Run face verification first, or upload an image.",
+            )
+        file_path = Path(face_match_file_path_raw)
+        if not file_path.exists():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Stored selfie/live image is missing. Re-run face verification.",
+            )
+        size_bytes = file_path.stat().st_size
+
+    try:
+        inference = await run_in_threadpool(
+            run_deepfake_inference,
+            file_path,
+            space_url=settings.deepfake_space_url,
+            api_name=settings.deepfake_api_name,
+            hf_token=settings.deepfake_hf_token,
+            timeout_seconds=settings.deepfake_timeout_seconds,
+        )
+    except DeepfakeInferenceError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Deepfake model inference failed: {exc}",
+        ) from exc
+
     response = {
         "stage": "deepfake_detection",
         "live_image_name": file_path.name,
+        "live_image_url": _build_preview_url("deepfake_live"),
         "file_size_bytes": size_bytes,
-        "deepfake_score": deepfake_score,
-        "authenticity_confidence": authenticity_confidence,
-        "label": label,
+        "deepfake_score": inference["deepfake_score"],
+        "authenticity_confidence": inference["authenticity_confidence"],
+        "label": inference["label"],
+        "model_label": inference["model_label"],
+        "model_confidences": inference["model_confidences"],
+        "source": {
+            "provider": inference["provider"],
+            "model_id": inference["model_id"],
+            "api_name": inference["api_name"],
+        },
+        "input_source": input_source,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
-    state = _get_user_state(current_user)
     state["deepfake"] = {
         "file_path": str(file_path),
-        "deepfake_score": deepfake_score,
+        "deepfake_score": inference["deepfake_score"],
         "result": response,
     }
     return response
@@ -267,34 +466,92 @@ async def run_deepfake_detection(
 
 @router.post("/liveness")
 async def run_liveness_check(
-    single_image: UploadFile = File(...),
+    single_image: UploadFile | None = File(None),
     current_user: User = Depends(get_current_user),
 ) -> dict[str, Any]:
+    state = _get_user_state(current_user)
     user_id = str(current_user.user_id)
-    file_path, size_bytes = await _save_file(
-        single_image,
-        user_id=user_id,
-        step="liveness",
-        allowed_extensions=ALLOWED_IMAGE_EXTENSIONS,
-        max_size_mb=settings.max_upload_size_mb,
-    )
-    liveness_score = round(random.uniform(52.0, 98.0), 2)
-    status_label = "live_person_detected" if liveness_score >= 65 else "retry_or_manual_review"
+    input_source = "face_match_live_image"
+
+    if single_image is not None:
+        file_path, size_bytes = await _save_file(
+            single_image,
+            user_id=user_id,
+            step="liveness",
+            allowed_extensions=ALLOWED_IMAGE_EXTENSIONS,
+            max_size_mb=settings.max_upload_size_mb,
+        )
+        input_source = "uploaded_for_liveness"
+    else:
+        face_match_file_path_raw = state.get("face_match", {}).get("file_path")
+        if not isinstance(face_match_file_path_raw, str) or not face_match_file_path_raw:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No selfie/live image found. Run face verification first, or upload an image.",
+            )
+        file_path = Path(face_match_file_path_raw)
+        if not file_path.exists():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Stored selfie/live image is missing. Re-run face verification.",
+            )
+        size_bytes = file_path.stat().st_size
+
+    try:
+        inference = await run_in_threadpool(
+            run_liveness_detection,
+            image_path=file_path,
+            space_url=settings.liveness_space_url,
+            api_name=settings.liveness_api_name,
+            timeout_seconds=settings.external_api_timeout_seconds,
+            live_threshold=settings.liveness_live_threshold,
+        )
+    except LivenessDetectionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Liveness inference failed: {exc}",
+        ) from exc
+
+    liveness_score = float(inference["liveness_score"])
+    status_label = str(inference["status"])
     response = {
         "stage": "liveness_check",
         "image_name": file_path.name,
+        "image_url": _build_preview_url("liveness_live"),
         "file_size_bytes": size_bytes,
         "liveness_score": liveness_score,
         "status": status_label,
+        "raw_output": inference["raw_output"],
+        "source": inference["source"],
+        "input_source": input_source,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
-    state = _get_user_state(current_user)
     state["liveness"] = {
         "file_path": str(file_path),
         "liveness_score": liveness_score,
         "result": response,
     }
     return response
+
+
+@router.get("/images/{image_key}")
+async def get_pipeline_image(
+    image_key: str,
+    current_user: User = Depends(get_current_user),
+) -> FileResponse:
+    file_path = _resolve_pipeline_image_path(current_user, image_key)
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Preview image not found. Re-run the related pipeline step.",
+        )
+
+    media_type = mimetypes.guess_type(file_path.name)[0] or "application/octet-stream"
+    return FileResponse(
+        path=file_path,
+        media_type=media_type,
+        filename=file_path.name,
+    )
 
 
 @router.post("/final-report")
@@ -361,6 +618,16 @@ async def generate_final_report(
     }
     _generate_pdf(report_path, report_payload)
 
+    email_result = await send_email(
+        to=email,
+        subject=f"eKYC Verification Report — {report_id}",
+        html_body=f"<h2>eKYC Verification Report</h2><p>Report ID: {report_id}</p>"
+                  f"<p>Decision: <strong>{decision.upper()}</strong></p>"
+                  f"<p>Final Score: {final_score}</p>"
+                  f"<p>Please find the detailed PDF report attached.</p>",
+        attachment_path=str(report_path),
+    )
+
     response = {
         "stage": "final_decision",
         "scores": report_payload["scores"],
@@ -369,8 +636,8 @@ async def generate_final_report(
         "report_download_url": f"/api/v1/features/reports/{report_id}",
         "email_delivery": {
             "to": email,
-            "status": "queued_dummy",
-            "note": "Email delivery is mocked for now. Real provider can be plugged later.",
+            "status": email_result.get("status", "unknown"),
+            "note": email_result.get("note", email_result.get("error", "Email processed")),
         },
         "generated_at": generated_at,
     }

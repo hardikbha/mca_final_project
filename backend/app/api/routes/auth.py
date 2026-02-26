@@ -1,13 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.rate_limiter import limiter
+from app.core.sanitize import sanitize_string
 from app.core.security import create_access_token, hash_password, verify_password
 from app.db.session import get_db_session
 from app.models.enums import Role
 from app.deps import get_current_user
 from app.models.user import User
 from app.schemas.auth import AuthResponse, LoginRequest, RegisterRequest, UserResponse
+from app.services.audit_service import log_audit_event
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
@@ -32,10 +35,11 @@ async def ensure_hardik_user(db: AsyncSession) -> User:
 
 
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("10/minute")
 async def register_user(
-    payload: RegisterRequest, db: AsyncSession = Depends(get_db_session)
+    request: Request, payload: RegisterRequest, db: AsyncSession = Depends(get_db_session)
 ) -> AuthResponse:
-    normalized_email = payload.email.strip().lower()
+    normalized_email = sanitize_string(payload.email.strip().lower())
     normalized_phone = payload.phone.strip()
     existing = await db.scalar(
         select(User).where(or_(User.email == normalized_email, User.phone == normalized_phone))
@@ -47,7 +51,7 @@ async def register_user(
         )
 
     user = User(
-        full_name=payload.full_name.strip(),
+        full_name=sanitize_string(payload.full_name.strip()),
         email=normalized_email,
         phone=normalized_phone,
         password_hash=hash_password(payload.password),
@@ -56,6 +60,7 @@ async def register_user(
     await db.commit()
     await db.refresh(user)
 
+    await log_audit_event(request, "register", user_id=user.user_id, details={"email": normalized_email})
     token = create_access_token(subject=str(user.user_id), role=user.role.value)
     return AuthResponse(
         access_token=token,
@@ -64,8 +69,9 @@ async def register_user(
 
 
 @router.post("/login", response_model=AuthResponse)
+@limiter.limit("10/minute")
 async def login_user(
-    payload: LoginRequest, db: AsyncSession = Depends(get_db_session)
+    request: Request, payload: LoginRequest, db: AsyncSession = Depends(get_db_session)
 ) -> AuthResponse:
     identifier = payload.identifier.strip().lower()
     if identifier == "hardik":
@@ -76,6 +82,7 @@ async def login_user(
                 detail="Invalid credentials",
             )
         token = create_access_token(subject=str(demo_user.user_id), role=demo_user.role.value)
+        await log_audit_event(request, "login", user_id=demo_user.user_id, details={"method": "demo"})
         return AuthResponse(
             access_token=token,
             user=UserResponse.model_validate(demo_user),
@@ -97,6 +104,7 @@ async def login_user(
         )
 
     token = create_access_token(subject=str(user.user_id), role=user.role.value)
+    await log_audit_event(request, "login", user_id=user.user_id, details={"identifier": identifier})
     return AuthResponse(
         access_token=token,
         user=UserResponse.model_validate(user),
