@@ -1,0 +1,13 @@
+flowchart LR
+    EU[End User] --> P0((eKYC Verification System))
+    P0 --> EU
+
+    AR[Admin Reviewer] --> P0
+    P0 --> AR
+
+    TP[Third-party API Consumer Future] --> P0
+    P0 --> TP
+
+    P0 --> D1[(Users and KYC Data Store)]
+    P0 --> D2[(Verification and Review Store)]
+    P0 --> D3[(Audit and Reports Store)]

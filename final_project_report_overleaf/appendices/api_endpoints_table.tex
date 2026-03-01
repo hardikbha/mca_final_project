@@ -1,0 +1,70 @@
+\section{API Endpoint Catalog}
+\label{app:api-catalog}
+\small
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\begin{longtable}{p{1.2cm}p{6.0cm}p{3.2cm}p{4.0cm}}
+\caption{Implemented REST Endpoints}\\
+\hline
+Method & Path & Tags & Summary \\
+\hline
+\endfirsthead
+\hline
+Method & Path & Tags & Summary \\
+\hline
+\endhead
+GET & \texttt{/api/v1/admin/audit-logs} & audit & List Audit Logs \\
+\hline
+GET & \texttt{/api/v1/admin/reviews/queue} & admin-review & List Flagged Sessions For Review \\
+\hline
+POST & \texttt{/api/v1/admin/reviews/{session\_id}/decision} & admin-review & Decide Flagged Session \\
+\hline
+GET & \texttt{/api/v1/analytics/latency} & analytics & Analytics Latency \\
+\hline
+GET & \texttt{/api/v1/analytics/overview} & analytics & Analytics Overview \\
+\hline
+GET & \texttt{/api/v1/analytics/trends} & analytics & Analytics Trends \\
+\hline
+POST & \texttt{/api/v1/auth/login} & auth & Login User \\
+\hline
+GET & \texttt{/api/v1/auth/me} & auth & Get Me \\
+\hline
+POST & \texttt{/api/v1/auth/register} & auth & Register User \\
+\hline
+GET & \texttt{/api/v1/documents/my} & documents & List My Documents \\
+\hline
+POST & \texttt{/api/v1/documents/upload} & documents & Upload Document \\
+\hline
+GET & \texttt{/api/v1/documents/{document\_id}} & documents & Get Document Details \\
+\hline
+POST & \texttt{/api/v1/documents/{document\_id}/process} & documents & Process Document \\
+\hline
+GET & \texttt{/api/v1/features/catalog} & features & Get Feature Catalog \\
+\hline
+POST & \texttt{/api/v1/features/deepfake} & features & Run Deepfake Detection \\
+\hline
+POST & \texttt{/api/v1/features/document-ocr} & features & Run Document Ocr \\
+\hline
+POST & \texttt{/api/v1/features/face-match} & features & Run Face Match \\
+\hline
+POST & \texttt{/api/v1/features/final-report} & features & Generate Final Report \\
+\hline
+GET & \texttt{/api/v1/features/images/{image\_key}} & features & Get Pipeline Image \\
+\hline
+POST & \texttt{/api/v1/features/liveness} & features & Run Liveness Check \\
+\hline
+GET & \texttt{/api/v1/features/reports/{report\_id}} & features & Download Report \\
+\hline
+GET & \texttt{/api/v1/features/state} & features & Get Pipeline State \\
+\hline
+GET & \texttt{/api/v1/system/status} & system & System Status \\
+\hline
+GET & \texttt{/api/v1/verification-sessions/my} & verification & List My Verification Sessions \\
+\hline
+POST & \texttt{/api/v1/verification-sessions/upload} & verification & Upload Verification Session \\
+\hline
+GET & \texttt{/api/v1/verification-sessions/{session\_id}} & verification & Get Verification Session \\
+\hline
+GET & \texttt{/health} & system & Health \\
+\hline
+\end{longtable}

@@ -1,0 +1,12 @@
+flowchart LR
+    U[User\nuser_id\nfull_name\nemail\nphone\npassword_hash\nis_verified\nkyc_status\nrole]
+    D[Document\ndocument_id\nuser_id\ndocument_type\ndocument_number\nfile_path\nocr_extracted_data\nis_verified]
+    VS[VerificationSession\nsession_id\nuser_id\nselfie_image_path\nvideo_path\nmatch_score\nliveness_score\ndeepfake_probability\nauthenticity_label\nstatus\nadmin_reviewed]
+    AR[AdminReview\nreview_id\nsession_id\nadmin_id\nreview_decision\nrejection_reason]
+    AL[AuditLog\nlog_id\nuser_id\naction\nip_address\nuser_agent\nadditional_data]
+
+    U -->|1 to many| D
+    U -->|1 to many| VS
+    U -->|1 to many| AL
+    VS -->|1 to 0..1| AR
+    U -->|1 to many| AR

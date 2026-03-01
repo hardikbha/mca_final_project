@@ -1,0 +1,21 @@
+flowchart TD
+    S1[1 User logs in or registers] --> S2[2 Frontend calls auth API]
+    S2 --> S3[3 Backend validates user and returns JWT]
+
+    S3 --> S4[4 User uploads document]
+    S4 --> S5[5 Backend runs document OCR and face extraction]
+    S5 --> S6[6 Document stage result stored]
+
+    S6 --> S7[7 User uploads live selfie]
+    S7 --> S8[8 Backend runs face match inference]
+    S8 --> S9[9 Face score stored]
+
+    S9 --> S10[10 Backend runs deepfake inference]
+    S10 --> S11[11 Deepfake score stored]
+
+    S11 --> S12[12 Backend runs liveness inference]
+    S12 --> S13[13 Liveness score stored]
+
+    S13 --> S14[14 Final decision and report generation]
+    S14 --> S15[15 Report ID and download URL returned]
+    S15 --> S16[16 User downloads PDF report]

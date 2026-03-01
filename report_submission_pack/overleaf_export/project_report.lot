@@ -1,0 +1,41 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Open-Source Tools for Identity Verification}}{14}{table.2.1}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {3.1}{\ignorespaces Work Breakdown Structure}}{19}{table.3.1}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Key Project Milestones}}{20}{table.3.2}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Team Roles and Responsibilities}}{23}{table.3.3}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces Risk Register}}{24}{table.3.4}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces User Classes and Characteristics}}{27}{table.4.1}%
+\contentsline {table}{\numberline {4.2}{Functional Requirements}}{28}{table.4.2}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces External Software Interfaces}}{33}{table.4.3}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Sprint Plan}}{35}{table.5.1}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Requirements Traceability Matrix (Sample)}}{36}{table.5.2}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {7.1}{\ignorespaces Feature Pipeline API Endpoints}}{60}{table.7.1}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {9.1}{\ignorespaces Backend Test Results}}{75}{table.9.1}%
+\contentsline {table}{\numberline {9.2}{\ignorespaces Frontend Test Results}}{77}{table.9.2}%
+\contentsline {table}{\numberline {9.3}{System Test Case Matrix}}{78}{table.9.3}%
+\contentsline {table}{\numberline {9.4}{\ignorespaces Negative and Boundary Test Cases}}{79}{table.9.4}%
+\contentsline {table}{\numberline {9.5}{\ignorespaces Significant Bugs Identified and Fixed}}{80}{table.9.5}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {10.1}{\ignorespaces RBAC Permission Matrix}}{82}{table.10.1}%
+\contentsline {table}{\numberline {10.2}{\ignorespaces Security Controls Implementation Status}}{86}{table.10.2}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {11.1}{\ignorespaces Typical Stage 1 OCR Output}}{89}{table.11.1}%
+\contentsline {table}{\numberline {11.2}{\ignorespaces Sample Final Report Summary}}{91}{table.11.2}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{Complete REST API Endpoint Reference}}{102}{table.A.1}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {B.1}{\ignorespaces users Table Schema}}{104}{table.B.1}%
+\contentsline {table}{\numberline {B.2}{\ignorespaces verification\_sessions Table Schema}}{105}{table.B.2}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {C.1}{\ignorespaces Backend Technology Stack}}{106}{table.C.1}%
+\contentsline {table}{\numberline {C.2}{\ignorespaces Frontend Technology Stack}}{107}{table.C.2}%
+\contentsline {table}{\numberline {C.3}{\ignorespaces Infrastructure and Deployment Stack}}{107}{table.C.3}%

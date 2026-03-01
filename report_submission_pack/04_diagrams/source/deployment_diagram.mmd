@@ -1,0 +1,35 @@
+flowchart TB
+    subgraph ClientLayer[Client Layer]
+      Browser[Browser Desktop or Mobile]
+    end
+
+    subgraph AppHost[Application Host]
+      FE[Frontend Container :5173]
+      BE[Backend Container :8000]
+    end
+
+    subgraph DataLayer[Data Layer]
+      PG[(PostgreSQL :5432)]
+      MG[(MongoDB :27017)]
+      RD[(Redis :6379)]
+      FS[(Storage uploads/reports/models)]
+    end
+
+    subgraph ExternalAI[External AI Services]
+      FSIM[Face Similarity API]
+      LIV[Liveness API]
+      DFK[Deepfake API]
+      OCR[Gemini OCR]
+    end
+
+    Browser --> FE
+    FE --> BE
+    BE --> PG
+    BE --> MG
+    BE --> RD
+    BE --> FS
+
+    BE --> FSIM
+    BE --> LIV
+    BE --> DFK
+    BE --> OCR

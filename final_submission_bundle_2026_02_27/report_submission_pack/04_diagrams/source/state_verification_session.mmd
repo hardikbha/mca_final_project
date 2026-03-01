@@ -1,0 +1,11 @@
+stateDiagram-v2
+    [*] --> pending
+    pending --> approved: Auto-decision pass
+    pending --> flagged: Threshold mismatch
+
+    flagged --> approved: Admin approves
+    flagged --> rejected: Admin rejects
+    flagged --> flagged: Request re-upload
+
+    approved --> [*]
+    rejected --> [*]

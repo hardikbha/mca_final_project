@@ -73,7 +73,7 @@ def _call_gradio_predict(
     normalized_api = _normalize_api_name(api_name)
 
     try:
-        with httpx.Client(timeout=timeout_seconds) as client:
+        with httpx.Client(timeout=timeout_seconds, verify=False) as client:
             uploaded_paths = [_upload_file(client, base_url, path) for path in image_paths]
             data = [{"path": uploaded_path, "meta": {"_type": "gradio.FileData"}} for uploaded_path in uploaded_paths]
             start_response = client.post(f"{base_url}/gradio_api/call{normalized_api}", json={"data": data})

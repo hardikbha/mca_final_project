@@ -1,0 +1,64 @@
+\chapter{Introduction and Objectives}
+
+\section{Project Title}
+\textbf{\projecttitle}
+
+\section{Introduction}
+The digital onboarding process in banking, fintech, and regulated service platforms depends on robust identity verification. Traditional eKYC workflows frequently rely on static document checks, manual verification queues, and weak selfie matching that can be bypassed using replay attacks, synthetic media, or deepfake-generated faces. This project addresses those gaps by implementing a practical multi-stage verification system that combines document handling, face comparison, deepfake risk analysis, liveness checks, and human review for flagged edge cases.
+
+The implemented solution focuses on a real operational pipeline rather than theoretical prototypes. The application is structured as a production-style full-stack system with modular APIs, role-based access control, persistent session records, and downloadable report generation. The workflow is observable at each stage to support explainability and auditability.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{main.png}
+\caption{Synopsis-approved high-level system view}
+\label{fig:main-overview}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{architecture_overview.png}
+\caption{Implementation architecture including external AI services}
+\label{fig:impl-arch}
+\end{figure}
+
+\section{Problem Statement}
+The core problem addressed in this project is:
+
+\textit{How to design and implement an eKYC system that can verify user identity using document and biometric evidence while reducing the risk of deepfake or spoof attacks, and produce a traceable decision outcome suitable for regulated workflows.}
+
+\section{Objectives}
+\subsection{Primary Objective}
+To implement a modular AI-assisted eKYC pipeline capable of processing identity documents, comparing biometric evidence, assessing authenticity risk, and producing final verification decisions with review controls.
+
+\subsection{Specific Objectives}
+\begin{enumerate}[label=\textbf{OBJ-\arabic*:}]
+\item Implement secure user registration and login with token-based authentication.
+\item Support document upload and OCR-based extraction with validation checks.
+\item Run face comparison using extracted document face and live selfie image.
+\item Run deepfake detection and liveness estimation using integrated model APIs.
+\item Aggregate stage scores into a final decision and generate a report PDF.
+\item Provide admin review queue and decision workflow for flagged sessions.
+\item Record audit events and provide analytics endpoints for reporting.
+\end{enumerate}
+
+\section{Scope}
+\subsection{In Scope}
+\begin{itemize}
+\item Authentication, user profile identification, and role-based authorization.
+\item Multi-format document upload (image/PDF) and processing.
+\item Face match, deepfake, liveness, and decision orchestration APIs.
+\item Admin review and final report download flow.
+\item Testable endpoints with structured responses and error handling.
+\end{itemize}
+
+\subsection{Out of Scope}
+\begin{itemize}
+\item Native Android/iOS applications.
+\item Direct national-ID authority integrations.
+\item Fully offline inference and model serving.
+\item Final enterprise-grade notification platform integration.
+\end{itemize}
+
+\section{Report Organization}
+This report presents a full SDLC-oriented implementation narrative. Chapters cover requirement analysis, planning, SRS, design diagrams, implementation modules, testing strategy and evidence, security posture, results, and future enhancements.

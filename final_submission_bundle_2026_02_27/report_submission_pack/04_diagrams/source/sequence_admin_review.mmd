@@ -1,0 +1,19 @@
+sequenceDiagram
+    participant A as Admin
+    participant FE as Frontend
+    participant BE as Backend API
+    participant DB as Database
+    participant AU as Audit Store
+
+    A->>FE: Open review dashboard
+    FE->>BE: GET /admin/reviews/queue
+    BE->>DB: Fetch flagged sessions
+    BE-->>FE: Queue items
+
+    A->>FE: Submit decision
+    FE->>BE: POST /admin/reviews/{session_id}/decision
+    BE->>DB: Validate session status
+    BE->>DB: Insert admin review
+    BE->>DB: Update session and user KYC status
+    BE->>AU: Log audit event
+    BE-->>FE: Decision result payload

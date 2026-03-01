@@ -1,0 +1,2069 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.12.13)  27 FEB 2026 12:45
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**project_report.tex
+(./project_report.tex
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/base/report.cls
+Document Class: report 2024/06/29 v1.4n Standard LaTeX document class
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2024/06/29 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count196
+\c@chapter=\count197
+\c@section=\count198
+\c@subsection=\count199
+\c@subsubsection=\count266
+\c@paragraph=\count267
+\c@subparagraph=\count268
+\c@figure=\count269
+\c@table=\count270
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen141
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2024/02/08 v1.3d Input encoding file
+\inpenc@prehook=\toks17
+\inpenc@posthook=\toks18
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks19
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+))
+\Gm@cnth=\count271
+\Gm@cntv=\count272
+\c@Gm@tempcnt=\count273
+\Gm@bindingoffset=\dimen142
+\Gm@wd@mp=\dimen143
+\Gm@odd@mp=\dimen144
+\Gm@even@mp=\dimen145
+\Gm@layoutwidth=\dimen146
+\Gm@layoutheight=\dimen147
+\Gm@layouthoffset=\dimen148
+\Gm@layoutvoffset=\dimen149
+\Gm@dimlist=\toks20
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2024/04/13 v1.2c Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen150
+\Gin@req@width=\dimen151
+)
+(/Users/hardiksharma/Library/texmf/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.
+sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)) (/usr/local/texlive/2025basic/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(/Users/hardiksharma/Library/texmf/tex/latex/hyperref/nameref.sty
+Package: nameref 2025-06-21 v2.57 Cross-referencing by name of section
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/gettitlestring/gettitlestr
+ing.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count274
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2025/02/11 v2.5l e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count275
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/stringenc/stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+)
+\@linkdim=\dimen152
+\Hy@linkcounter=\count276
+\Hy@pagecounter=\count277
+
+(/Users/hardiksharma/Library/texmf/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count278
+
+(/Users/hardiksharma/Library/texmf/tex/latex/hyperref/puenc.def
+File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+! Undefined control sequence.
+l.4109 \IfDocumentMetadataT
+                           
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Package hyperref Info: Hyper figures OFF on input line 4195.
+Package hyperref Info: Link nesting OFF on input line 4200.
+Package hyperref Info: Hyper index ON on input line 4203.
+Package hyperref Info: Plain pages OFF on input line 4210.
+Package hyperref Info: Backreferencing OFF on input line 4215.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4462.
+\c@Hy@tempcnt=\count279
+(/Users/hardiksharma/Library/texmf/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4801.
+\XeTeXLinkMargin=\dimen153
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count280
+\Field@Width=\dimen154
+\Fld@charsize=\dimen155
+Package hyperref Info: Hyper figures OFF on input line 6078.
+Package hyperref Info: Link nesting OFF on input line 6083.
+Package hyperref Info: Hyper index ON on input line 6086.
+Package hyperref Info: backreferencing OFF on input line 6093.
+Package hyperref Info: Link coloring OFF on input line 6098.
+Package hyperref Info: Link coloring with OCG OFF on input line 6103.
+Package hyperref Info: PDF/A mode OFF on input line 6108.
+\Hy@abspage=\count281
+\c@Item=\count282
+\c@Hfootnote=\count283
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+ (/Users/hardiksharma/Library/texmf/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
+\Fld@listcount=\count284
+\c@bookmark@seq@number=\count285
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/rerunfilecheck/rerunfilechec
+k.sty
+Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
+ (/usr/local/texlive/2025basic/texmf-dist/tex/latex/base/atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
+kage
+with kernel methods
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/generic/uniquecounter/uniquecounte
+r.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+85.
+)
+\Hy@SectionHShift=\skip51
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/setspace/setspace.sty
+Package: setspace 2022/12/04 v6.7b set line spacing
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count286
+\float@exts=\toks21
+\float@box=\box52
+\@float@everytoks=\toks22
+\@floatcapt=\box53
+)
+(/Users/hardiksharma/Library/texmf/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen156
+\lightrulewidth=\dimen157
+\cmidrulewidth=\dimen158
+\belowrulesep=\dimen159
+\belowbottomsep=\dimen160
+\aboverulesep=\dimen161
+\abovetopsep=\dimen162
+\cmidrulesep=\dimen163
+\cmidrulekern=\dimen164
+\defaultaddspace=\dimen165
+\@cmidla=\count287
+\@cmidlb=\count288
+\@aboverulesep=\dimen166
+\@belowrulesep=\dimen167
+\@thisruleclass=\count289
+\@lastruleclass=\count290
+\@thisrulewidth=\dimen168
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2024-10-27 v4.22 Multi-page Table package (DPC)
+\LTleft=\skip52
+\LTright=\skip53
+\LTpre=\skip54
+\LTpost=\skip55
+\LTchunksize=\count291
+\LTcapwidth=\dimen169
+\LT@head=\box54
+\LT@firsthead=\box55
+\LT@foot=\box56
+\LT@lastfoot=\box57
+\LT@gbox=\box58
+\LT@cols=\count292
+\LT@rows=\count293
+\c@LT@tables=\count294
+\c@LT@chunks=\count295
+\LT@p@ftn=\toks23
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/tools/array.sty
+Package: array 2024/10/17 v2.6g Tabular extension package (FMi)
+\col@sep=\dimen170
+\ar@mcellbox=\box59
+\extrarowheight=\dimen171
+\NC@list=\toks24
+\extratabsurround=\skip56
+\backup@length=\skip57
+\ar@cellbox=\box60
+)
+(/Users/hardiksharma/Library/texmf/tex/latex/multirow/multirow.sty
+Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
+\multirow@colwidth=\skip58
+\multirow@cntb=\count296
+\multirow@dima=\skip59
+\bigstrutjot=\dimen172
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count297
+\lst@gtempboxa=\box61
+\lst@token=\toks25
+\lst@length=\count298
+\lst@currlwidth=\dimen173
+\lst@column=\count299
+\lst@pos=\count300
+\lst@lostspace=\dimen174
+\lst@width=\dimen175
+\lst@newlines=\count301
+\lst@lineno=\count302
+\lst@maxwidth=\dimen176
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/listings/lstpatch.sty
+File: lstpatch.sty 2024/09/23 1.10c (Carsten Heinz)
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
+\c@lstnumber=\count303
+\lst@skipnumbers=\count304
+\lst@framebox=\box62
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2024/09/23 1.10c listings configuration
+))
+Package: listings 2024/09/23 1.10c (Carsten Heinz)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 274.
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
+
+\f@nch@headwidth=\skip60
+\f@nch@offset@elh=\skip61
+\f@nch@offset@erh=\skip62
+\f@nch@offset@olh=\skip63
+\f@nch@offset@orh=\skip64
+\f@nch@offset@elf=\skip65
+\f@nch@offset@erf=\skip66
+\f@nch@offset@olf=\skip67
+\f@nch@offset@orf=\skip68
+\f@nch@height=\skip69
+\f@nch@footalignment=\skip70
+\f@nch@widthL=\skip71
+\f@nch@widthC=\skip72
+\f@nch@widthR=\skip73
+\@temptokenb=\toks26
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2024/11/05 v2.17t AMS math features
+\@mathmargin=\skip74
+
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks27
+\ex@=\dimen177
+))
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen178
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count305
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count306
+\leftroot@=\count307
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count308
+\DOTSCASE@=\count309
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box63
+\strutbox@=\box64
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen179
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count310
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count311
+\dotsspace@=\muskip18
+\c@parentequation=\count312
+\dspbrk@lvl=\count313
+\tag@help=\toks28
+\row@=\count314
+\column@=\count315
+\maxfields@=\count316
+\andhelp@=\toks29
+\eqnshift@=\dimen180
+\alignsep@=\dimen181
+\tagshift@=\dimen182
+\tagwidth@=\dimen183
+\totwidth@=\dimen184
+\lineht@=\dimen185
+\@envbody=\toks30
+\multlinegap=\skip75
+\multlinetaggap=\skip76
+\mathdisplay@stack=\toks31
+LaTeX Info: Redefining \[ on input line 2953.
+LaTeX Info: Redefining \] on input line 2954.
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/parskip/parskip.sty
+Package: parskip 2021-03-14 v2.0h non-zero parskip adjustments
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 28.
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/l3backend/l3backend-pdftex.d
+ef
+File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count317
+\l__pdf_internal_box=\box65
+)
+No file project_report.aux.
+\openout1 = `project_report.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 90.
+LaTeX Font Info:    ... okay on input line 90.
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(72.26999pt, 452.9679pt, 72.26999pt)
+* v-part:(T,H,B)=(72.26999pt, 700.50687pt, 72.26999pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=452.9679pt
+* \textheight=700.50687pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=-37.0pt
+* \headheight=15.0pt
+* \headsep=25.0pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=35.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count318
+\scratchdimen=\dimen186
+\scratchbox=\box66
+\nofMPsegments=\count319
+\nofMParguments=\count320
+\everyMPshowfont=\toks32
+\MPscratchCnt=\count321
+\MPscratchDim=\dimen187
+\MPnumerator=\count322
+\makeMPintoPDFobject=\count323
+\everyMPtoPDFconversion=\toks33
+)
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.s
+ty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+ (/usr/local/texlive/2025basic/texmf-dist/tex/latex/grfext/grfext.sty
+Package: grfext 2019/12/03 v1.3 Manage graphics extensions (HO)
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 504.
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+Package hyperref Info: Link coloring ON on input line 90.
+\@outlinefile=\write3
+\openout3 = `project_report.out'.
+
+\c@lstlisting=\count324
+
+
+[1
+
+{/Users/hardiksharma/Library/texlive/2025basic/texmf-var/fonts/map/pdftex/updma
+p/pdftex.map}]
+
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.171 \newpage
+               [1]
+
+[2]
+
+[3]
+Overfull \hbox (19.32237pt too wide) in paragraph at lines 238--239
+[]\T1/cmr/m/n/12 The back-end is im-ple-mented in \T1/cmr/bx/n/12 Python 3.12 w
+ith FastAPI \T1/cmr/m/n/12 and asyn-chronous SQLAlchemy
+ []
+
+
+
+[4]
+No file project_report.toc.
+\tf@toc=\write4
+\openout4 = `project_report.toc'.
+
+
+
+[5
+
+]
+No file project_report.lof.
+\tf@lof=\write5
+\openout5 = `project_report.lof'.
+
+
+
+[6
+
+]
+No file project_report.lot.
+\tf@lot=\write6
+\openout6 = `project_report.lot'.
+
+
+
+[7
+
+]
+Chapter 1.
+
+
+[8
+
+]
+
+[9]
+
+[10]
+
+[11]
+Overfull \hbox (8.97751pt too wide) in paragraph at lines 354--355
+[]\T1/cmr/bx/n/12 Secondary Cat-e-gories: \T1/cmr/m/n/12 Com-puter Vi-sion, Im-
+age Pro-cess-ing, Web De-vel-op-ment, RDBMS
+ []
+
+
+
+[12]
+Chapter 2.
+
+
+[13
+
+]
+Overfull \hbox (29.0534pt too wide) in paragraph at lines 406--417
+ [][] 
+ []
+
+
+
+[14
+pdfTeX warning (ext4): destination with the same identifier (name{table.2.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.429     \item \textbf
+                       {Lack of transparency:} Commercial systems give a bin...
+]
+
+[15]
+
+[16]
+<./images/architecture_overview.png, id=128, 1377.145pt x 905.3825pt>
+File: ./images/architecture_overview.png Graphic file (type png)
+<use ./images/architecture_overview.png>
+Package pdftex.def Info: ./images/architecture_overview.png  used on input line
+ 494.
+(pdftex.def)             Requested size: 452.9679pt x 297.79628pt.
+
+
+[17
+pdfTeX warning (ext4): destination with the same identifier (name{figure.2.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.500     \item \textbf
+                       {Stage 2 -- Face Matching:} User provides a live self...
+ <./images/architecture_overview.png>]
+
+[18]
+Chapter 3.
+
+Overfull \hbox (54.3015pt too wide) in paragraph at lines 520--538
+ [][] 
+ []
+
+
+
+[19
+
+
+pdfTeX warning (ext4): destination with the same identifier (name{table.3.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.564 
+      ]
+<./images/gantt_chart.png, id=156, 3432.825pt x 1212.53pt>
+File: ./images/gantt_chart.png Graphic file (type png)
+<use ./images/gantt_chart.png>
+Package pdftex.def Info: ./images/gantt_chart.png  used on input line 571.
+(pdftex.def)             Requested size: 452.9679pt x 159.98415pt.
+
+
+[20
+pdfTeX warning (ext4): destination with the same identifier (name{table.3.2}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.576 
+      
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.576 
+       <./images/gantt_chart.png>]
+<./images/pert_chart.png, id=166, 1109.14375pt x 2862.695pt>
+File: ./images/pert_chart.png Graphic file (type png)
+<use ./images/pert_chart.png>
+Package pdftex.def Info: ./images/pert_chart.png  used on input line 583.
+(pdftex.def)             Requested size: 362.37569pt x 935.30084pt.
+
+
+[21]
+Overfull \vbox (267.42665pt too high) has occurred while \output is active []
+
+
+
+[22
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.2}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.586 
+       <./images/pert_chart.png>]
+Overfull \hbox (23.79073pt too wide) in paragraph at lines 614--614
+[]|\T1/cmr/bx/n/12 Probability| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 616--616
+[]|\T1/cmr/m/n/12 External API
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 616--616
+\T1/cmr/m/n/12 un-avail-abil-ity
+ []
+
+
+Underfull \hbox (badness 1365) in paragraph at lines 616--616
+\T1/cmr/m/n/12 (Gra-dio, Hug-ging-
+ []
+
+
+Underfull \hbox (badness 5077) in paragraph at lines 617--617
+[]|\T1/cmr/m/n/12 Gemini OCR in-
+ []
+
+
+Underfull \hbox (badness 4036) in paragraph at lines 617--617
+\T1/cmr/m/n/12 ac-cu-racy on low-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 617--618
+[]|\T1/cmr/m/n/12 Pre-processing, qual-ity
+ []
+
+
+Underfull \hbox (badness 1406) in paragraph at lines 618--618
+[]|\T1/cmr/m/n/12 SQLite lim-i-ta-tions
+ []
+
+
+Underfull \hbox (badness 1436) in paragraph at lines 619--620
+[]|\T1/cmr/m/n/12 Audit log-ging de-grades
+ []
+
+
+Underfull \hbox (badness 2173) in paragraph at lines 620--620
+[]|\T1/cmr/m/n/12 JWT se-cret com-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 620--620
+[]|\T1/cmr/m/n/12 Very
+ []
+
+
+Underfull \hbox (badness 1308) in paragraph at lines 620--621
+\T1/cmr/m/n/12 cod-ing; doc-u-mented in
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 621--622
+[]|\T1/cmr/m/n/12 Strict in-scope/out-of-
+ []
+
+
+
+[23
+pdfTeX warning (ext4): destination with the same identifier (name{table.3.3}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.625 
+      ]
+
+[24
+pdfTeX warning (ext4): destination with the same identifier (name{table.3.4}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.633 \end{itemize}
+                   ]
+
+[25]
+Chapter 4.
+
+
+[26
+
+]
+Underfull \hbox (badness 1755) in paragraph at lines 678--678
+[]|\T1/cmr/m/n/12 Staff with KYC re-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 678--679
+[]|\T1/cmr/m/n/12 View flagged ses-sions,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 678--679
+\T1/cmr/m/n/12 ap-prove/re-jec-t/re-quest
+ []
+
+
+
+[27
+pdfTeX warning (ext4): destination with the same identifier (name{table.4.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.696     \item U
+                 sers have a camera for webcam-based selfie capture.]
+Overfull \hbox (72.40236pt too wide) in paragraph at lines 697--698
+[]\T1/cmtt/m/n/12 GEMINI_API_KEY\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 DEEPFAKE_HF_TO
+KEN\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 FACE_SIMILARITY_SPACE_URL\T1/cmr/m/n/12 , a
+nd \T1/cmtt/m/n/12 LIVENESS_SPACE_URL
+ []
+
+
+Overfull \hbox (7.59703pt too wide) in alignment at lines 702--707
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (7.59703pt too wide) in alignment at lines 707--712
+ [] [] [] [] [] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 713--713
+[]|\T1/cmr/m/n/12 User reg-is-ters with
+ []
+
+
+Underfull \hbox (badness 2035) in paragraph at lines 713--713
+\T1/cmr/m/n/12 full_name, email, phone,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 713--713
+\T1/cmr/m/n/12 unique-ness and re-turns
+ []
+
+
+Underfull \hbox (badness 1748) in paragraph at lines 714--714
+\T1/cmr/m/n/12 pass-word; sys-tem re-turns
+ []
+
+
+Underfull \hbox (badness 5622) in paragraph at lines 715--715
+\T1/cmr/m/n/12 trieve own pro-file (role,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 716--716
+\T1/cmr/m/n/12 ment im-age (Aad-haar/-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 716--716
+\T1/cmr/m/n/12 PAN/-Pass-port/DL/Voter
+ []
+
+
+Underfull \hbox (badness 2913) in paragraph at lines 716--716
+\T1/cmr/m/n/12 ID) as JPEG, PNG, or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 717--717
+\T1/cmr/m/n/12 (name, DOB, doc-u-ment
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 717--717
+\T1/cmr/m/n/12 num-ber, ad-dress) us-ing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 718--718
+\T1/cmr/m/n/12 num-ber for-mat against
+ []
+
+
+Underfull \hbox (badness 2478) in paragraph at lines 722--722
+[]|\T1/cmr/m/n/12 Face match end-point re-
+ []
+
+
+Underfull \hbox (badness 2635) in paragraph at lines 722--722
+\T1/cmr/m/n/12 turns a per-cent-age score
+ []
+
+
+Underfull \hbox (badness 2158) in paragraph at lines 723--723
+[]|\T1/cmr/m/n/12 System screens the selfie
+ []
+
+
+Underfull \hbox (badness 2809) in paragraph at lines 725--725
+\T1/cmr/m/n/12 mines ap-proved or man-
+ []
+
+
+Underfull \hbox (badness 1983) in paragraph at lines 726--726
+\T1/cmr/m/n/12 load-able PDF ver-i-fi-ca-tion
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 727--727
+\T1/cmr/m/n/12 flagged (man-ual_review)
+ []
+
+
+Underfull \hbox (badness 6995) in paragraph at lines 728--728
+[]|\T1/cmr/m/n/12 Reviewer/admin can ap-
+ []
+
+
+Underfull \hbox (badness 4699) in paragraph at lines 731--731
+[]|\T1/cmr/m/n/12 Admin can view 30-day
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 731--731
+\T1/cmr/m/n/12 daily trend data (ap-
+ []
+
+
+Underfull \hbox (badness 2334) in paragraph at lines 732--732
+\T1/cmr/m/n/12 av-er-age and P95 la-tency
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 734--734
+[]|\T1/cmr/m/n/12 Authenticated im-age re-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 734--734
+\T1/cmr/m/n/12 a pro-tected end-point
+ []
+
+
+Overfull \hbox (7.59703pt too wide) in alignment at lines 712--736
+ [] [] [] [] [] 
+ []
+
+[28] [29]
+Overfull \hbox (7.72726pt too wide) in paragraph at lines 742--743
+[]\T1/cmr/m/n/12 API re-sponse time for all non-AI end-points (auth, ses-sion C
+RUD, an-a-lyt-ics): $\OML/cmm/m/it/12 <$\T1/cmr/m/n/12 500 ms
+ []
+
+
+
+[30]
+Overfull \hbox (83.79391pt too wide) in paragraph at lines 763--764
+[]\T1/cmr/m/n/12 Application startup cre-ates all re-quired database ta-bles au
+-to-mat-i-cally (\T1/cmtt/m/n/12 AUTO_CREATE_SCHEMA=true\T1/cmr/m/n/12 ). 
+ []
+
+
+
+[31]
+
+[32]
+Overfull \hbox (82.13354pt too wide) in paragraph at lines 810--823
+ [][] 
+ []
+
+
+
+[33
+pdfTeX warning (ext4): destination with the same identifier (name{table.4.3}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.843 \chapter
+              {Engineering Paradigm and Methodology}]
+Chapter 5.
+
+Overfull \hbox (8.3641pt too wide) in paragraph at lines 862--880
+ [][] 
+ []
+
+
+
+[34
+
+]
+
+[35
+pdfTeX warning (ext4): destination with the same identifier (name{table.5.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.893 \end{enumerate}
+                     ]
+
+[36
+pdfTeX warning (ext4): destination with the same identifier (name{table.5.2}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.933 \chapter
+              {System Modeling and Diagrams}]
+Chapter 6.
+<./images/dfd_level0.png, id=300, 695.59875pt x 629.35126pt>
+File: ./images/dfd_level0.png Graphic file (type png)
+<use ./images/dfd_level0.png>
+Package pdftex.def Info: ./images/dfd_level0.png  used on input line 943.
+(pdftex.def)             Requested size: 362.37569pt x 327.85992pt.
+
+
+[37
+
+]
+<./images/dfd_level1.png, id=308, 1748.5325pt x 834.11626pt>
+File: ./images/dfd_level1.png Graphic file (type png)
+<use ./images/dfd_level1.png>
+Package pdftex.def Info: ./images/dfd_level1.png  used on input line 960.
+(pdftex.def)             Requested size: 452.9679pt x 216.076pt.
+
+
+[38
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.963 
+       <./images/dfd_level0.png>]
+
+[39
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.2}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.980 \section
+              {Use Case Diagram} <./images/dfd_level1.png>]
+<./images/use_case_diagram.png, id=322, 505.89pt x 2455.1725pt>
+File: ./images/use_case_diagram.png Graphic file (type png)
+<use ./images/use_case_diagram.png>
+Package pdftex.def Info: ./images/use_case_diagram.png  used on input line 984.
+
+(pdftex.def)             Requested size: 452.9679pt x 2198.35857pt.
+
+
+[40]
+
+[41]
+Overfull \vbox (1583.15036pt too high) has occurred while \output is active []
+
+
+
+[42
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.3}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.987 
+       <./images/use_case_diagram.png>]
+<./images/activity_workflow.png, id=339, 1038.88126pt x 2096.83376pt>
+File: ./images/activity_workflow.png Graphic file (type png)
+<use ./images/activity_workflow.png>
+Package pdftex.def Info: ./images/activity_workflow.png  used on input line 101
+8.
+(pdftex.def)             Requested size: 452.9679pt x 914.22702pt.
+
+
+[43]
+
+[44]
+Overfull \vbox (299.01881pt too high) has occurred while \output is active []
+
+
+
+[45
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.4}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1021 
+        <./images/activity_workflow.png>]
+<./images/sequence_user_verification.png, id=355, 277.035pt x 1852.9225pt>
+File: ./images/sequence_user_verification.png Graphic file (type png)
+<use ./images/sequence_user_verification.png>
+Package pdftex.def Info: ./images/sequence_user_verification.png  used on input
+ line 1042.
+(pdftex.def)             Requested size: 452.9679pt x 3029.65208pt.
+
+
+[46]
+
+[47]
+Overfull \vbox (2446.83199pt too high) has occurred while \output is active []
+
+
+
+[48
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.5}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1045 
+        <./images/sequence_user_verification.png>]
+<./images/sequence_admin_review.png, id=383, 1416.29124pt x 701.62125pt>
+File: ./images/sequence_admin_review.png Graphic file (type png)
+<use ./images/sequence_admin_review.png>
+Package pdftex.def Info: ./images/sequence_admin_review.png  used on input line
+ 1062.
+(pdftex.def)             Requested size: 452.9679pt x 224.39491pt.
+<./images/state_verification_session.png, id=384, 469.755pt x 437.635pt>
+File: ./images/state_verification_session.png Graphic file (type png)
+<use ./images/state_verification_session.png>
+Package pdftex.def Info: ./images/state_verification_session.png  used on input
+ line 1070.
+(pdftex.def)             Requested size: 339.72592pt x 316.49928pt.
+
+
+[49
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.6}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1073 
+        <./images/sequence_admin_review.png>]
+<./images/class_backend_domain.png, id=399, 3037.3475pt x 338.26375pt>
+File: ./images/class_backend_domain.png Graphic file (type png)
+<use ./images/class_backend_domain.png>
+Package pdftex.def Info: ./images/class_backend_domain.png  used on input line 
+1095.
+(pdftex.def)             Requested size: 452.9679pt x 50.44316pt.
+
+
+[50
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.7}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1098 
+        <./images/state_verification_session.png>]
+<./images/er_database.png, id=407, 1481.535pt x 410.53375pt>
+File: ./images/er_database.png Graphic file (type png)
+<use ./images/er_database.png>
+Package pdftex.def Info: ./images/er_database.png  used on input line 1113.
+(pdftex.def)             Requested size: 452.9679pt x 125.51642pt.
+
+
+[51
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.8}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1120     \item \textbf
+                        {USER -- VERIFICATION\_SESSION:} 1:N (one user can h...
+
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.9}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1120     \item \textbf
+                        {USER -- VERIFICATION\_SESSION:} 1:N (one user can h...
+ <./images/class_backend_domain.png> <./images/er_database.png>]
+<./images/deployment_diagram.png, id=418, 1699.34875pt x 590.205pt>
+File: ./images/deployment_diagram.png Graphic file (type png)
+<use ./images/deployment_diagram.png>
+Package pdftex.def Info: ./images/deployment_diagram.png  used on input line 11
+30.
+(pdftex.def)             Requested size: 452.9679pt x 157.31316pt.
+
+
+[52
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.10})
+ has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1141     \item \textbf
+                        {External}: Gemini API, HuggingFace API, Gradio Spac...
+ <./images/deployment_diagram.png>]
+<./images/decision_control_flow.png, id=426, 511.9125pt x 2349.77875pt>
+File: ./images/decision_control_flow.png Graphic file (type png)
+<use ./images/decision_control_flow.png>
+Package pdftex.def Info: ./images/decision_control_flow.png  used on input line
+ 1148.
+(pdftex.def)             Requested size: 362.37569pt x 1663.37082pt.
+
+
+[53]
+
+[54]
+Overfull \vbox (1027.8627pt too high) has occurred while \output is active []
+
+
+
+[55
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.11})
+ has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1151 
+        <./images/decision_control_flow.png>] (./project_report_part2.tex
+
+[56]
+Chapter 7.
+File: ./images/architecture_overview.png Graphic file (type png)
+<use ./images/architecture_overview.png>
+Package pdftex.def Info: ./images/architecture_overview.png  used on input line
+ 12.
+(pdftex.def)             Requested size: 452.9679pt x 297.79628pt.
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+)
+
+[57
+
+
+pdfTeX warning (ext4): destination with the same identifier (name{figure.7.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.20 ...tyle, caption=Backend Directory Structure]
+                                                  ]
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
+nput line 20.
+
+
+[58]
+Underfull \hbox (badness 10000) in paragraph at lines 81--82
+[]|\T1/cmr/m/n/12 Upload doc-u-ment, run
+ []
+
+
+
+[59] (/usr/local/texlive/2025basic/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+)
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 97.
+
+
+[60
+pdfTeX warning (ext4): destination with the same identifier (name{table.7.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.116     user_id 
+                  UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,]
+
+[61]
+
+[62]
+Overfull \hbox (18.40735pt too wide) in paragraph at lines 189--190
+[]\T1/cmr/m/n/12 Client sends POST \T1/cmtt/m/n/12 /auth/login \T1/cmr/m/n/12 w
+ith \T1/cmtt/m/n/12 identifier \T1/cmr/m/n/12 (email/-phone/-name) and \T1/cmtt
+/m/n/12 password\T1/cmr/m/n/12 . 
+ []
+
+(/usr/local/texlive/2025basic/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+)
+
+[63]
+
+[64]
+
+[65]
+Chapter 8.
+
+Overfull \hbox (34.08115pt too wide) in paragraph at lines 278--279
+[]\T1/cmr/bx/n/12 Async: \T1/cmr/m/n/12 All I/O-bound op-er-a-tions (database q
+ueries, ex-ter-nal API calls) use \T1/cmtt/m/n/12 async/await\T1/cmr/m/n/12 . 
+ []
+
+
+Overfull \hbox (53.57166pt too wide) in paragraph at lines 280--281
+[]\T1/cmr/bx/n/12 Naming: \T1/cmtt/m/n/12 snake_case \T1/cmr/m/n/12 for func-ti
+ons and vari-ables; \T1/cmtt/m/n/12 PascalCase \T1/cmr/m/n/12 for classes; \T1/
+cmtt/m/n/12 UPPER_SNAKE_CASE
+ []
+
+
+Overfull \hbox (1.81319pt too wide) in paragraph at lines 290--291
+[]\T1/cmr/bx/n/12 No any: \T1/cmtt/m/n/12 any \T1/cmr/m/n/12 type is avoided; a
+ll API re-sponse types are de-fined in \T1/cmtt/m/n/12 types/index.ts\T1/cmr/m/
+n/12 . 
+ []
+
+
+
+[66
+
+]
+Overfull \hbox (101.32301pt too wide) in paragraph at lines 292--293
+\T1/cmr/m/n/12 to ex-plic-itly dis-card the re-turned promise (sat-is-fy-ing th
+e \T1/cmtt/m/n/12 @typescript-eslint/no-floating-promises
+ []
+
+
+
+[67]
+
+[68]
+
+[69]
+
+[70]
+
+[71]
+
+[72]
+Overfull \hbox (43.84695pt too wide) in paragraph at lines 529--530
+[]\T1/cmr/m/n/12 All API func-tions in \T1/cmtt/m/n/12 services/api.ts \T1/cmr/
+m/n/12 ac-cept typed pa-ram-e-ters and re-turn \T1/cmtt/m/n/12 Promise<{data:
+ []
+
+
+Overfull \hbox (108.0234pt too wide) in paragraph at lines 532--533
+[]\T1/cmr/m/n/12 Protected im-age URLs are never di-rectly em-bed-ded; im-ages 
+are fetched via \T1/cmtt/m/n/12 fetchProtectedBlob(token,
+ []
+
+
+
+[73]
+Chapter 9.
+
+Overfull \hbox (43.78761pt too wide) in paragraph at lines 569--588
+ [][] 
+ []
+
+
+
+[74
+
+]
+
+[75
+pdfTeX warning (ext4): destination with the same identifier (name{table.9.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.615     assert 
+                 result["status"] == "approved"]
+Overfull \hbox (39.18456pt too wide) in paragraph at lines 641--659
+ [][] 
+ []
+
+
+
+[76]
+Underfull \hbox (badness 10000) in paragraph at lines 691--691
+[]|\T1/cmr/m/n/12 AUTH-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 691--691
+[]|\T1/cmr/m/n/12 valid email/-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 692--692
+[]|\T1/cmr/m/n/12 AUTH-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 693--693
+[]|\T1/cmr/m/n/12 AUTH-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 694--694
+[]|\T1/cmr/m/n/12 AUTH-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 695--695
+[]|\T1/cmr/m/n/12 AUTH-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 696--696
+[]|\T1/cmr/m/n/12 upload suc-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 700--700
+[]|\T1/cmr/m/n/12 400 miss-ing
+ []
+
+
+Underfull \hbox (badness 1237) in paragraph at lines 701--701
+[]|\T1/cmr/m/n/12 score + ver-
+ []
+
+
+Underfull \hbox (badness 2689) in paragraph at lines 702--702
+[]|\T1/cmr/m/n/12 low deep-fake
+ []
+
+
+Underfull \hbox (badness 3471) in paragraph at lines 703--703
+[]|\T1/cmr/m/n/12 high live-ness
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 704--704
+[]|\T1/cmr/m/n/12 400 miss-ing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 706--706
+[]|\T1/cmr/m/n/12 ADM-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 707--707
+[]|\T1/cmr/m/n/12 ADM-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 708--708
+[]|\T1/cmr/m/n/12 ADM-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 708--708
+[]|\T1/cmr/m/n/12 session ap-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 709--709
+[]|\T1/cmr/m/n/12 aggregate
+ []
+
+
+
+[77
+pdfTeX warning (ext4): destination with the same identifier (name{table.9.2}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.714 \end{longtable}
+                     ] [78]
+Underfull \hbox (badness 2173) in paragraph at lines 725--725
+[]|\T1/cmr/m/n/12 422 Un-pro-cess-able En-
+ []
+
+
+Underfull \hbox (badness 2173) in paragraph at lines 726--726
+[]|\T1/cmr/m/n/12 422 Un-pro-cess-able En-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 746--746
+[]|\T1/cmr/m/n/12 OCR
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 746--746
+\T1/cmr/m/n/12 re-turns
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 746--746
+\T1/cmr/m/n/12 empty
+ []
+
+
+Underfull \hbox (badness 1454) in paragraph at lines 746--746
+[]|\T1/cmr/m/n/12 Gemini re-sponse wrapped
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 747--747
+[]|\T1/cmr/m/n/12 Webcam
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 747--747
+\T1/cmr/m/n/12 video
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 747--748
+[]|\T1/cmr/m/n/12 Use
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 747--748
+\T1/cmtt/m/n/12 requestAnimationFrame
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 748--748
+[]|\T1/cmr/m/n/12 Chart.js
+ []
+
+
+Underfull \hbox (badness 1253) in paragraph at lines 748--749
+[]|\T1/cmr/m/n/12 Change \T1/cmtt/m/n/12 "700" \T1/cmr/m/n/12 to \T1/cmtt/m/n/1
+2 700 as
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 750--750
+[]|\T1/cmr/m/n/12 MongoDB
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 750--750
+\T1/cmr/m/n/12 con-nec-tion
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 750--750
+\T1/cmr/m/n/12 freezes
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 751--751
+[]|\T1/cmr/m/n/12 Session
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 751--751
+\T1/cmr/m/n/12 state lost
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 751--751
+\T1/cmr/m/n/12 on page
+ []
+
+
+Underfull \hbox (badness 1127) in paragraph at lines 751--752
+[]|\T1/cmr/m/n/12 Re-fetches from \T1/cmtt/m/n/12 /auth/me
+ []
+
+
+
+[79
+pdfTeX warning (ext4): destination with the same identifier (name{table.9.4}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.755 
+      ]
+
+[80
+pdfTeX warning (ext4): destination with the same identifier (name{table.9.5}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.759 \chapter
+              {Security, Access Rights, and Data Protection}]
+Chapter 10.
+
+
+[81
+
+]
+! Undefined control sequence.
+l.815 Register / Login & \checkmark
+                                    & \checkmark & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.815 Register / Login & \checkmark & \checkmark
+                                                 & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.815 ...in & \checkmark & \checkmark & \checkmark
+                                                   \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.816 Upload document & \checkmark
+                                   & \checkmark & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.816 Upload document & \checkmark & \checkmark
+                                                & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.816 ...nt & \checkmark & \checkmark & \checkmark
+                                                   \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.817 Run pipeline stages & \checkmark
+                                       & \checkmark & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.817 ...pipeline stages & \checkmark & \checkmark
+                                                   & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.817 ...es & \checkmark & \checkmark & \checkmark
+                                                   \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.818 Download own report & \checkmark
+                                       & \checkmark & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.818 ...load own report & \checkmark & \checkmark
+                                                   & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.818 ...rt & \checkmark & \checkmark & \checkmark
+                                                   \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.819 View flagged queue & \texttimes & \checkmark
+                                                   & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.819 ...ue & \texttimes & \checkmark & \checkmark
+                                                   \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.820 ...reject sessions & \texttimes & \checkmark
+                                                   & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.820 ...ns & \texttimes & \checkmark & \checkmark
+                                                   \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.821 ...ytics dashboard & \texttimes & \checkmark
+                                                   & \checkmark \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.821 ...rd & \texttimes & \checkmark & \checkmark
+                                                   \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.822 ...gs & \texttimes & \texttimes & \checkmark
+                                                   \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.823 ...gs & \texttimes & \texttimes & \checkmark
+                                                   \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+
+[82
+pdfTeX warning (ext4): destination with the same identifier (name{table.10.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.830 ...onstyle, caption=Role-Based Dependencies]
+                                                  ]
+Overfull \hbox (2.94354pt too wide) in paragraph at lines 844--845
+\T1/cmr/m/n/12 Rate lim-it-ing is im-ple-mented us-ing \T1/cmtt/m/n/12 slowapi 
+\T1/cmr/m/n/12 (a FastAPI-compatible port of Flask-Limiter): 
+ []
+
+
+
+[83]
+
+[84]
+Overfull \hbox (4.2217pt too wide) in paragraph at lines 935--936
+[]\T1/cmr/m/n/12 Logged events in-clude: user reg-is-tra-tion, lo-gin (suc-cess
+/-fail-ure), doc-u-ment up-load, pipeline
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 946--946
+[]|\T1/cmr/m/n/12 Password hash-ing
+ []
+
+
+
+[85]
+
+[86
+pdfTeX warning (ext4): destination with the same identifier (name{table.10.2}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.970 \end{itemize}
+                   ]
+
+[87]
+Chapter 11.
+
+
+[88
+
+]
+
+[89
+pdfTeX warning (ext4): destination with the same identifier (name{table.11.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1045     \item T
+                  he analysed image.]
+
+[90]
+
+[91
+pdfTeX warning (ext4): destination with the same identifier (name{table.11.2}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1116 ...C Status Distribution (Doughnut Chart):}
+                                                   All-time breakdown of ses...
+]
+
+[92]
+Chapter 12.
+
+Overfull \hbox (29.617pt too wide) in paragraph at lines 1151--1152
+[]\T1/cmr/bx/n/12 Rich Ad-min-is-tra-tive Tool-ing: \T1/cmr/m/n/12 An ad-min re
+-view queue with man-ual approve/reject/re-
+ []
+
+
+
+[93
+
+]
+
+[94]
+
+[95]
+
+[96]
+
+[97
+
+]
+Overfull \hbox (89.96736pt too wide) in paragraph at lines 1253--1254
+[]\T1/cmr/m/n/12 Hugging Face. (2024). \T1/cmr/m/it/12 In-fer-ence API Doc-u-me
+n-ta-tion\T1/cmr/m/n/12 . Avail-able at: https://huggingface.co/docs/api-
+ []
+
+
+
+[98]
+
+[99
+
+]
+
+[100]
+
+[101]
+Appendix A.
+
+Overfull \hbox (17.87619pt too wide) in paragraph at lines 1317--1317
+[]|\T1/cmr/bx/n/12 Method| 
+ []
+
+
+Overfull \hbox (17.87619pt too wide) in paragraph at lines 1322--1322
+[]|\T1/cmr/bx/n/12 Method| 
+ []
+
+
+Overfull \hbox (3.68661pt too wide) in paragraph at lines 1325--1325
+[]|\T1/cmr/m/n/12 POST| 
+ []
+
+
+Overfull \hbox (3.68661pt too wide) in paragraph at lines 1326--1326
+[]|\T1/cmr/m/n/12 POST| 
+ []
+
+
+Overfull \hbox (3.68661pt too wide) in paragraph at lines 1328--1328
+[]|\T1/cmr/m/n/12 POST| 
+ []
+
+
+Overfull \hbox (3.33536pt too wide) in paragraph at lines 1328--1328
+[]|\T1/cmr/m/n/12 /api/v1/features/document-
+ []
+
+
+Underfull \hbox (badness 1527) in paragraph at lines 1328--1329
+[]|\T1/cmr/m/n/12 Upload doc-u-ment +
+ []
+
+
+Overfull \hbox (3.68661pt too wide) in paragraph at lines 1329--1329
+[]|\T1/cmr/m/n/12 POST| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1329--1329
+[]|\T1/cmr/m/n/12 /api/v1/features/face-
+ []
+
+
+Underfull \hbox (badness 1142) in paragraph at lines 1329--1330
+[]|\T1/cmr/m/n/12 Submit selfie + run
+ []
+
+
+Overfull \hbox (3.68661pt too wide) in paragraph at lines 1330--1330
+[]|\T1/cmr/m/n/12 POST| 
+ []
+
+
+Underfull \hbox (badness 1448) in paragraph at lines 1330--1331
+[]|\T1/cmr/m/n/12 Run deep-fake de-tec-
+ []
+
+
+Overfull \hbox (3.68661pt too wide) in paragraph at lines 1331--1331
+[]|\T1/cmr/m/n/12 POST| 
+ []
+
+
+Overfull \hbox (3.68661pt too wide) in paragraph at lines 1332--1332
+[]|\T1/cmr/m/n/12 POST| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1332--1332
+[]|\T1/cmr/m/n/12 /api/v1/features/final-
+ []
+
+
+Underfull \hbox (badness 3849) in paragraph at lines 1332--1333
+[]|\T1/cmr/m/n/12 Generate fi-nal de-ci-
+ []
+
+
+Overfull \hbox (8.23pt too wide) in paragraph at lines 1333--1333
+[]|\T1/cmr/m/n/12 /api/v1/features/report/{id}| 
+ []
+
+
+Overfull \hbox (18.73714pt too wide) in paragraph at lines 1334--1334
+[]|\T1/cmr/m/n/12 /api/v1/features/images/{key}| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1336--1337
+[]|\T1/cmr/m/n/12 30-day daily trend
+ []
+
+
+Overfull \hbox (3.68661pt too wide) in paragraph at lines 1339--1339
+[]|\T1/cmr/m/n/12 POST| 
+ []
+
+
+Overfull \hbox (5.94579pt too wide) in paragraph at lines 1339--1339
+[]|\T1/cmr/m/n/12 /api/v1/admin/reviews/{id}| 
+ []
+
+
+Underfull \hbox (badness 2644) in paragraph at lines 1339--1340
+[]|\T1/cmr/m/n/12 Submit re-view de-ci-
+ []
+
+
+Underfull \hbox (badness 1077) in paragraph at lines 1340--1341
+[]|\T1/cmr/m/n/12 Query au-dit log en-
+ []
+
+[102
+
+]
+
+[103]
+Appendix B.
+
+Overfull \hbox (56.99133pt too wide) in paragraph at lines 1353--1368
+ [][] 
+ []
+
+
+Overfull \hbox (83.39594pt too wide) in paragraph at lines 1373--1391
+ [][] 
+ []
+
+
+
+[104
+
+
+pdfTeX warning (ext4): destination with the same identifier (name{table.B.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1392 
+       ]
+
+[105
+pdfTeX warning (ext4): destination with the same identifier (name{table.B.2}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1396 \chapter
+               {Technologies and Library Versions}]
+Appendix C.
+
+
+[106
+
+
+pdfTeX warning (ext4): destination with the same identifier (name{table.C.1}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1448 
+       ])
+
+[107
+pdfTeX warning (ext4): destination with the same identifier (name{table.C.2}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1166 \end{document}
+                     
+pdfTeX warning (ext4): destination with the same identifier (name{table.C.3}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1166 \end{document}
+                     ] (./project_report.aux)
+ ***********
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+ ***********
+
+
+Package rerunfilecheck Warning: File `project_report.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `project_report.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  EA5328AE07C794E532C6186A6906C935;27933.
+ ) 
+Here is how much of TeX's memory you used:
+ 14577 strings out of 474662
+ 220241 string characters out of 5751108
+ 1072812 words of memory out of 5000000
+ 36600 multiletter control sequences out of 15000+600000
+ 573916 words of font info for 65 fonts, out of 8000000 for 9000
+ 319 hyphenation exceptions out of 8191
+ 75i,13n,79p,773b,2072s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ </Users/hardiksharma/Library/texlive/2025basic/texmf-var/fonts/pk/ljfour/jkn
+appen/ec/ectt1000.600pk> </Users/hardiksharma/Library/texlive/2025basic/texmf-v
+ar/fonts/pk/ljfour/jknappen/ec/ecrm0600.600pk> </Users/hardiksharma/Library/tex
+live/2025basic/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1200.600pk> </Users/ha
+rdiksharma/Library/texlive/2025basic/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt
+1200.600pk> </Users/hardiksharma/Library/texlive/2025basic/texmf-var/fonts/pk/l
+jfour/jknappen/ec/ecrm1095.600pk> </Users/hardiksharma/Library/texlive/2025basi
+c/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600pk> </Users/hardiksharma/Li
+brary/texlive/2025basic/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx2488.600pk> <
+/Users/hardiksharma/Library/texlive/2025basic/texmf-var/fonts/pk/ljfour/jknappe
+n/ec/ecbx1200.600pk> </Users/hardiksharma/Library/texlive/2025basic/texmf-var/f
+onts/pk/ljfour/jknappen/ec/ecrm1200.600pk> </Users/hardiksharma/Library/texlive
+/2025basic/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> </Users/hardik
+sharma/Library/texlive/2025basic/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx2074
+.600pk> </Users/hardiksharma/Library/texlive/2025basic/texmf-var/fonts/pk/ljfou
+r/jknappen/ec/ecrm1440.600pk> </Users/hardiksharma/Library/texlive/2025basic/te
+xmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk></usr/local/texlive/2025basi
+c/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2025
+basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2
+025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive
+/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on project_report.pdf (108 pages, 1566721 bytes).
+PDF statistics:
+ 2191 PDF objects out of 2487 (max. 8388607)
+ 1326 compressed objects within 14 object streams
+ 849 named destinations out of 1000 (max. 500000)
+ 71 words of extra memory for PDF output out of 10000 (max. 10000000)
+

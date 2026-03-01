@@ -1,0 +1,26 @@
+flowchart LR
+    U[End User] --> F[React Frontend]
+    A[Admin Reviewer] --> F
+    F -->|REST API| B[FastAPI Backend]
+
+    subgraph CorePipeline[Verification Pipeline]
+      B --> DOC[Document OCR and Validation]
+      B --> FM[Face Match]
+      B --> DF[Deepfake Detection]
+      B --> LV[Liveness Detection]
+      B --> DE[Decision Engine and PDF Report]
+    end
+
+    DOC --> SQL[(PostgreSQL/SQLite)]
+    FM --> SQL
+    DF --> SQL
+    LV --> SQL
+    DE --> SQL
+
+    B --> MONGO[(MongoDB Audit Logs)]
+    B --> REDIS[(Redis Cache and Rate Limit)]
+
+    FM --> EXT1[Gradio Face Similarity Space]
+    LV --> EXT2[Gradio Liveness Space]
+    DF --> EXT3[HuggingFace Deepfake Space]
+    DOC --> EXT4[Gemini OCR for images]

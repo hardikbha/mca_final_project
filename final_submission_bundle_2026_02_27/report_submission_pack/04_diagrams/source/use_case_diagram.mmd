@@ -1,0 +1,32 @@
+flowchart LR
+    User[Actor: End User]
+    Admin[Actor: Reviewer/Admin]
+
+    UC1((Register Account))
+    UC2((Login))
+    UC3((Upload Document))
+    UC4((Process OCR and Validation))
+    UC5((Upload Live Face))
+    UC6((Run Deepfake Check))
+    UC7((Run Liveness Check))
+    UC8((Generate Final Report))
+    UC9((Download Report))
+
+    UC10((View Flagged Queue))
+    UC11((Approve or Reject Session))
+    UC12((View Analytics Dashboard))
+
+    User --> UC1
+    User --> UC2
+    User --> UC3
+    User --> UC4
+    User --> UC5
+    User --> UC6
+    User --> UC7
+    User --> UC8
+    User --> UC9
+
+    Admin --> UC2
+    Admin --> UC10
+    Admin --> UC11
+    Admin --> UC12

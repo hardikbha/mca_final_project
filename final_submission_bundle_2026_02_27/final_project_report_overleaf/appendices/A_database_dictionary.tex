@@ -1,0 +1,75 @@
+\chapter{Database Dictionary and Constraints}
+\label{app:db-dictionary}
+
+\section{users}
+\begin{longtable}{p{3.4cm}p{3.0cm}p{7.0cm}}
+\caption{Users Table Dictionary}\\
+\toprule
+Field & Type & Notes \\
+\midrule
+user\_id & UUID (PK) & Unique user identifier \\
+full\_name & varchar(255) & User full name \\
+email & varchar(255) & Unique, indexed \\
+phone & varchar(15) & Unique, indexed \\
+password\_hash & varchar(255) & Bcrypt hash \\
+is\_verified & boolean & Verification flag \\
+kyc\_status & enum & pending/approved/rejected/under\_review \\
+role & enum & user/admin/reviewer \\
+created\_at & timestamp tz & Record creation time \\
+updated\_at & timestamp tz & Record update time \\
+\bottomrule
+\end{longtable}
+
+\section{documents}
+\begin{longtable}{p{3.4cm}p{3.0cm}p{7.0cm}}
+\caption{Documents Table Dictionary}\\
+\toprule
+Field & Type & Notes \\
+\midrule
+document\_id & UUID (PK) & Document identifier \\
+user\_id & UUID (FK) & References users.user\_id \\
+document\_type & enum & aadhaar/pan/passport/driving\_license/voter\_id/... \\
+document\_number & varchar(50) & Optional declared number \\
+file\_path & varchar(500) & Storage path \\
+ocr\_extracted\_data & JSON & OCR/validation payload \\
+upload\_timestamp & timestamp tz & Upload time \\
+is\_verified & boolean & Document verification flag \\
+\bottomrule
+\end{longtable}
+
+\section{verification\_sessions}
+\begin{longtable}{p{3.4cm}p{3.0cm}p{7.0cm}}
+\caption{Verification Sessions Table Dictionary}\\
+\toprule
+Field & Type & Notes \\
+\midrule
+session\_id & UUID (PK) & Session identifier \\
+user\_id & UUID (FK) & References users.user\_id \\
+selfie\_image\_path & varchar(500) & Selfie file path \\
+video\_path & varchar(500) & Optional liveness video path \\
+id\_face\_embedding & JSON & Reference face metadata \\
+selfie\_face\_embedding & JSON & Selfie embedding metadata \\
+match\_score & float & Check constraint 0--100 \\
+liveness\_score & float & Check constraint 0--100 \\
+deepfake\_probability & float & Check constraint 0--100 \\
+authenticity\_label & enum & real/fake \\
+quality\_checks & JSON & Decision-support metadata \\
+timestamp & timestamp tz & Event timestamp \\
+status & enum & pending/approved/rejected/flagged \\
+admin\_reviewed & boolean & Review completion indicator \\
+\bottomrule
+\end{longtable}
+
+\section{admin\_reviews and audit\_logs}
+\begin{itemize}
+\item \\texttt{admin\\_reviews} stores reviewer decision actions with reason field constraints.
+\item \\texttt{audit\\_logs} stores actor/action metadata for traceability and operational review.
+\end{itemize}
+
+\section{Important SQL Constraints}
+\begin{enumerate}
+\item unique user email and phone
+\item score value range checks in verification sessions
+\item rejection reason required when decision is rejected
+\item referential integrity across users, documents, sessions, and reviews
+\end{enumerate}

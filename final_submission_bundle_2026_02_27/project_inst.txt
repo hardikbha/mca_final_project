@@ -1,0 +1,93 @@
+POINTS TO REMEMBER WHILE PREPARING THE PROJECT REPORT
+
+  Project Report Formulation:
+ The project report should contain the following:
+
+ (i)   Original copy of the Approved Proforma and Project Proposal.
+
+(ii)   Bio-data of the guide with her/his signature and date.
+
+(iii)   Certificate of Originality (Format given on Page 23).
+
+(iv)  Project documentation.
+
+ 2.   The project documentation may be about 100 to 125 pages (excluding coding). The project documentation details should not be too generic in nature. Appropriate project report  documentation should be done, like, how you have done the analysis, problem formulation, design, coding and testing, etc., in respect of your project. To be more specific, whatever the theory in respect of these topics is available in the reference books should be avoided as far as possible. The project documentation should be in respect of your project only. The project documentation should include the topics given below. Each and every component shown below carries certain weightage in the project report evaluation.
+
+ 
+
+Table of Contents/Index with page numbering
+
+Introduction/Objectives
+System Analysis
+Identification of Need
+
+Project Planning and Project Scheduling (PERT Chart and Gantt Chart both)
+
+Software requirement specifications (SRS)
+
+Software Engineering Paradigm applied
+
+Data models (like DFD), Control Flow diagrams, State Diagrams/Sequence diagrams, Entity Relationship Model, Class Diagrams/CRC Models/Collaboration Diagrams/Use-case Diagrams/Activity Diagrams and other models depending upon your project requirements
+
+System Design
+Modularisation details
+
+Data integrity and constraints
+
+Database design, Procedural Design/Object Oriented Design
+
+User Interface Design
+
+Test Cases (Unit Test Cases and System Test Cases)
+
+Coding
+SQL commands/Object description for (i) data or database creation (along with constraints), (ii) data collection, cleaning and generation and insertion into data structure or tables   and (iii) access rights for different users
+
+Complete Project Coding
+
+Comments and Description of Coding segments
+
+Standardization of the coding
+Code Efficiency
+
+Error handling 
+
+Parameters calling/passing
+
+Validation checks
+
+Testing
+Testing techniques and Testing strategies used 
+Testing Plan used
+
+Test reports for Unit Test Cases and System Test Cases
+
+Debugging and Code improvement
+
+System Security measures (Implementation of security for the project developed)
+Database/data securityCreation of User profiles and access rights
+
+Reports (sample layouts should be placed)
+Future scope and further enhancement of the Project
+Bibliography
+ Appendices (if any)
+Glossary.
+ 3.  The project report should normally be typed with single line spacing. All the pages, tables and figures must be numbered. Tables and figures should contain titles.
+
+ 4.  If any project report is received in the absence of the approved project proposal proforma (in original), project synopsis, bio-data of the guide with her/his signature on it, certificate of originality, it will be summarily rejected and returned to the student for compliance. 
+
+ 5.      Throughout the project report, the title of the project should be the same as per the approved synopsis. Signature of the Project Guide in the Certificate of Originality should match with the signature in the Project Proposal proforma also.
+
+ 6.    Only single pdf file of the original project report (soft copy) is to be submitted to the Nodal Regional Director online through Learning management System (LMS) by the date mentioned in the Calendar for the project. One softcopy of the same Project Report and the CD containing the executable file(s) must be retained by the student, which should be produced before the examiner at the time of viva-voce. 
+
+7.  Title of the project should be kept the same throughout the project.
+
+ 8. Student should be involved in each and every phase of Project Development. If it is found that student is not involved in any phase for example coding phase, it may lead to the rejection/disqualifying of the project at any stage.
+
+Submission status
+Submission status	No submissions have been made yet
+Grading status	Not graded
+Time remaining	Assignment is overdue by: 88 days 5 hours
+Last modified	-
+Submission comments	
+Comments (0)

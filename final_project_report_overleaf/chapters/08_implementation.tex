@@ -1,0 +1,72 @@
+\chapter{Coding and Implementation Details}
+
+\section{Technology Stack}
+\begin{longtable}{p{3.5cm}p{3.5cm}p{6.0cm}}
+\caption{Technology Stack Used in Implementation}\\
+\toprule
+Layer & Technology & Purpose \\
+\midrule
+Frontend & React + TypeScript + Vite & User-facing workflow and admin dashboard \\
+Backend & FastAPI + Python & REST APIs and pipeline orchestration \\
+Relational Data & PostgreSQL/SQLite & User/doc/session/review persistence \\
+Audit Data & MongoDB & Event-level logging \\
+Cache/Rate & Redis + slowapi & Cache helpers and request throttling \\
+Inference Integrations & Gradio/HuggingFace APIs & Face/deepfake/liveness scoring \\
+Containerization & Docker Compose & Multi-service local deployment \\
+\bottomrule
+\end{longtable}
+
+\section{Backend Implementation}
+\subsection{Authentication and Session Security}
+Authentication routes create and validate JWT tokens. Passwords are stored with bcrypt hashing. Demo admin login is enabled to support evaluator-friendly testing.
+
+\subsection{Document Pipeline}
+Document upload APIs enforce MIME/extension/size checks. Processing route stores OCR extraction payload, validation status, quality score, and recommended next action.
+
+\subsection{Biometric and Authenticity Stages}
+Face matching, deepfake, and liveness routes call dedicated service wrappers that normalize external model responses into application-consumable score payloads.
+
+\subsection{Decision and Report Generation}
+Final report generation aggregates stage outputs, applies threshold policy rules, and builds downloadable PDF with score breakdown and decision status.
+
+\subsection{Admin Workflow}
+Flagged sessions are exposed to reviewer/admin roles. Decisions trigger updates in both verification session status and user KYC status.
+
+\section{Frontend Implementation}
+The frontend consumes backend APIs and drives stage-by-stage user actions. Token persistence and protected fetches are implemented for secured routes. UI components separate auth, pipeline stages, and admin dashboard concerns.
+
+\section{Key Algorithmic Logic}
+\subsection{Decision Aggregation Formula}
+Let:
+\begin{align*}
+\text{document\_authenticity} &= 100 - \text{document\_forgery\_score} \\
+\text{deepfake\_authenticity} &= 100 - \text{deepfake\_score}
+\end{align*}
+
+Then:
+\[
+\text{final\_score} = \frac{\text{document\_authenticity} + \text{face\_match\_score} + \text{deepfake\_authenticity} + \text{liveness\_score}}{4}
+\]
+
+Decision is auto-approved only when all configured thresholds are satisfied.
+
+\subsection{Input Validation Logic}
+Validation includes:
+\begin{itemize}
+\item non-empty upload checks,
+\item size enforcement,
+\item MIME whitelist,
+\item extension/MIME consistency,
+\item route-level dependency sequencing.
+\end{itemize}
+
+\section{Code Quality and Standardization}
+\begin{itemize}
+\item Clear route and service separation.
+\item Enum-based status and role modeling.
+\item Typed request/response schemas in backend and frontend.
+\item Structured error responses for predictable client behavior.
+\end{itemize}
+
+\section{Error Handling and Parameter Passing}
+Request parameters are validated by FastAPI schemas and route signatures. File and form payload handling is explicitly implemented for each stage endpoint.

@@ -1,0 +1,83 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{pdflscape}
+\usepackage{amsmath}
+\usepackage{url}
+
+\graphicspath{{figures/}}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue,
+  pdftitle={AI-Based Real-Time eKYC System for Deepfake-Free Identity Verification},
+  pdfauthor={Hardik Sharma}
+}
+
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+\setlength{\parskip}{0.4em}
+\setlength{\parindent}{0pt}
+\onehalfspacing
+
+\newcommand{\projecttitle}{AI-Based Real-Time eKYC System for Deepfake-Free Identity Verification}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\projecttitle}
+\fancyhead[R]{\thepage}
+
+\begin{document}
+
+\input{frontmatter/title_page}
+\input{frontmatter/certificate}
+\input{frontmatter/abstract}
+
+\pagenumbering{roman}
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+
+\pagenumbering{arabic}
+
+\input{chapters/01_introduction}
+\input{chapters/02_system_analysis}
+\input{chapters/03_project_planning}
+\input{chapters/04_srs}
+\input{chapters/05_engineering_paradigm}
+\input{chapters/06_modeling_diagrams}
+\input{chapters/07_system_design}
+\input{chapters/08_implementation}
+\input{chapters/09_testing}
+\input{chapters/10_security}
+\input{chapters/11_results}
+\input{chapters/12_conclusion_future_scope}
+
+\appendix
+\input{appendices/A_database_dictionary}
+\input{appendices/api_endpoints_table}
+\input{appendices/B_test_matrix}
+\input{appendices/C_compliance_gap}
+\input{appendices/D_completeness_audit}
+
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

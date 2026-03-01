@@ -1,0 +1,61 @@
+\chapter{Project Planning and Scheduling}
+
+\section{Execution Strategy}
+The project followed an incremental implementation model. Core platform and authentication were stabilized first, then document and verification modules were integrated, followed by admin review and reporting.
+
+\section{Work Breakdown Structure}
+\begin{enumerate}
+\item Foundation setup (repo, services, API shell)
+\item Data model and migration setup
+\item Auth and user management implementation
+\item Document ingestion and OCR pipeline
+\item Face/deepfake/liveness integration
+\item Decision engine and report generation
+\item Admin review workflow
+\item Analytics, security controls, testing, and packaging
+\end{enumerate}
+
+\section{Milestones}
+\begin{longtable}{p{2.2cm}p{6.5cm}p{5.8cm}}
+\caption{Milestone Register}\\
+\toprule
+Milestone & Target Deliverable & Outcome \\
+\midrule
+M1 & Backend/Frontend baseline and connectivity checks & Completed \\
+M2 & Auth and persistent user schema & Completed \\
+M3 & Document upload + process APIs & Completed \\
+M4 & Multi-stage verification endpoints & Completed \\
+M5 & Admin review queue and decisions & Completed \\
+M6 & Final report generation and download flow & Completed \\
+M7 & Test pass evidence and report packaging & In progress at final packaging stage \\
+\bottomrule
+\end{longtable}
+
+\section{Gantt and PERT Evidence}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{gantt_chart.png}
+\caption{Synopsis-approved Gantt chart}
+\label{fig:gantt}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{pert_chart.png}
+\caption{Synopsis-approved PERT chart}
+\label{fig:pert}
+\end{figure}
+
+\section{Risk Register}
+\begin{longtable}{p{1.7cm}p{5.0cm}p{2.2cm}p{5.4cm}}
+\caption{Project Risk Register}\\
+\toprule
+Risk ID & Risk Description & Severity & Mitigation \\
+\midrule
+R1 & External model API instability or downtime & High & Timeout handling, fallback messaging, retry-friendly UI \\
+R2 & Poor image quality from end users & Medium & Quality checks and manual review escalation \\
+R3 & Threshold tuning mismatch in production environment & Medium & Configurable thresholds and reviewer override path \\
+R4 & Late report assembly and formatting defects & Medium & Early packaging folder and checklist-driven submission prep \\
+R5 & Security/config misconfiguration in deployment & High & Environment-variable controls and explicit deployment notes \\
+\bottomrule
+\end{longtable}

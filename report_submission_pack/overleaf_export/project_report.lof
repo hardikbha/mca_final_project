@@ -1,0 +1,30 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces System Architecture Overview showing frontend, backend, databases, and external services}}{17}{figure.2.1}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Gantt Chart showing the 24-week project timeline with overlapping phases}}{20}{figure.3.1}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces PERT Chart showing task dependencies and critical path}}{22}{figure.3.2}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces DFD Level 0 -- System Context Diagram}}{38}{figure.6.1}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces DFD Level 1 -- Major System Processes}}{39}{figure.6.2}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Use Case Diagram showing actor-system interactions}}{42}{figure.6.3}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Activity Diagram showing the full user verification workflow}}{45}{figure.6.4}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Sequence Diagram -- User Identity Verification Flow}}{48}{figure.6.5}%
+\contentsline {figure}{\numberline {6.6}{\ignorespaces Sequence Diagram -- Admin Review Workflow}}{49}{figure.6.6}%
+\contentsline {figure}{\numberline {6.7}{\ignorespaces State Machine Diagram for a Verification Session}}{50}{figure.6.7}%
+\contentsline {figure}{\numberline {6.8}{\ignorespaces Class Diagram -- Backend Domain Model}}{51}{figure.6.8}%
+\contentsline {figure}{\numberline {6.9}{\ignorespaces Entity-Relationship Diagram}}{51}{figure.6.9}%
+\contentsline {figure}{\numberline {6.10}{\ignorespaces Deployment Diagram showing Docker Compose service topology}}{52}{figure.6.10}%
+\contentsline {figure}{\numberline {6.11}{\ignorespaces Decision Engine Control Flow}}{55}{figure.6.11}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces System Module Architecture}}{57}{figure.7.1}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }

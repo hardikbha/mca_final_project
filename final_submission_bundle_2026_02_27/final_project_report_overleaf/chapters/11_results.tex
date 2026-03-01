@@ -1,0 +1,33 @@
+\chapter{Results, Reports, and Output Layouts}
+
+\section{Pipeline Stage Outputs}
+The implementation produces stage-specific responses that include operational metadata and scores. The final decision API aggregates those stage outputs and returns report identifiers and download paths.
+
+\section{Outcome Characteristics}
+\begin{itemize}
+\item Each verification stage returns explicit score-like outputs.
+\item Decision engine applies threshold logic and outputs either approval or manual review.
+\item Admin review enables human override and final status closure.
+\item PDF report generation provides persistent downloadable evidence.
+\end{itemize}
+
+\section{Sample Visual Evidence Slots}
+Insert screenshots from actual runs in the following sequence:
+\begin{enumerate}
+\item login/register screens,
+\item document upload and processing output,
+\item face/deepfake/liveness stage outputs,
+\item final report generation,
+\item admin review decisions,
+\item analytics views,
+\item automated test execution outputs.
+\end{enumerate}
+
+\section{Reports and Layouts}
+The generated report includes report ID, generation timestamp, destination email reference, score summary, and final decision label. This format satisfies the need for concise verifiable output while supporting manual review escalation where needed.
+
+\section{Performance Observations}
+Response times vary by stage due to external inference latency. The architecture captures stage-level timing and exposes approximate latency metrics through analytics endpoint payloads.
+
+\section{Result Interpretation}
+The multi-signal decision flow reduces dependence on any single biometric or document signal. Cases failing policy thresholds are not auto-approved and require reviewer intervention, improving safety posture.

@@ -1,0 +1,47 @@
+\chapter{Software Engineering Paradigm Applied}
+
+\section{Chosen Paradigm}
+An iterative, module-first SDLC approach was used to align development with practical risk and integration dependencies. Instead of building all components simultaneously, the project progressed via working vertical slices.
+
+\section{Why Iterative Delivery Was Used}
+\begin{itemize}
+\item External model APIs introduce integration uncertainty.
+\item Core security and data entities must stabilize before feature layering.
+\item Admin review and reporting depend on prior pipeline outputs.
+\item Testability improves when modules are delivered in dependency order.
+\end{itemize}
+
+\section{Iteration Breakdown}
+\subsection{Iteration 1: Foundation}
+Backend route scaffolding, frontend shell, DB/migration setup, connectivity status and health checks.
+
+\subsection{Iteration 2: Authentication and Data Layer}
+Registration/login endpoints, JWT token model, user schema and role infrastructure.
+
+\subsection{Iteration 3: Document Pipeline}
+Upload controls, OCR extraction, document field validation, quality assessment storage.
+
+\subsection{Iteration 4: Biometric and Authenticity Stages}
+Face match integration, deepfake and liveness inference, stage-wise response handling.
+
+\subsection{Iteration 5: Decision and Review}
+Final score aggregation, PDF report generation, manual review queue and admin actions.
+
+\subsection{Iteration 6: Testing and Packaging}
+Automated test runs, evidence consolidation, report and diagram packaging for submission.
+
+\section{Traceability Matrix}
+\begin{longtable}{p{2.0cm}p{4.2cm}p{4.2cm}p{3.8cm}}
+\caption{Requirement to Module to Test Traceability}\\
+\toprule
+Requirement & Module & Endpoint/Code Area & Test Evidence \\
+\midrule
+Auth control & Auth module & \\texttt{auth.py}, \\texttt{security.py} & Auth smoke tests \\
+Document validation & Document module & \\texttt{documents.py}, \\texttt{document\\_processing.py} & Document smoke + manual matrix \\
+Face verification & Features module & \\texttt{features.py}, \\texttt{gradio\\_face\\_services.py} & Stage validation (manual) \\
+Deepfake detection & Features module & \\texttt{deepfake\\_inference.py} & Stage validation (manual) \\
+Liveness scoring & Features module & \\texttt{gradio\\_face\\_services.py} & Stage validation (manual) \\
+Admin decisioning & Admin module & \\texttt{admin\\_review.py} & Manual review test cases \\
+Analytics reporting & Analytics module & \\texttt{analytics.py} & API checks \\
+\bottomrule
+\end{longtable}

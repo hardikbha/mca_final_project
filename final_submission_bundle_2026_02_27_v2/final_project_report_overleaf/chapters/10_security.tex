@@ -1,0 +1,53 @@
+\chapter{Security Measures, Access Rights, and Data Protection}
+
+\section{Security Objectives}
+The implementation targets secure access control, upload validation, traceability of sensitive operations, and route-level protection for privileged actions.
+
+\section{Implemented Security Controls}
+\begin{longtable}{p{4.2cm}p{7.2cm}p{2.5cm}}
+\caption{Security Control Implementation Status}\\
+\toprule
+Control & Implementation Detail & Status \\
+\midrule
+Authentication & JWT-based bearer authentication with signed tokens & Implemented \\
+Password security & Bcrypt hashing through passlib context & Implemented \\
+Authorization & Role guard for reviewer/admin-only routes & Implemented \\
+Input sanitization & String sanitization used in key auth flows & Partial \\
+Upload hardening & MIME/type/size and extension validation checks & Implemented \\
+Rate limiting & slowapi limiter configured with redis storage & Implemented \\
+Audit logging & Action-level logs to MongoDB (best-effort write) & Partial \\
+Error control & Structured failure responses for external API failures & Implemented \\
+\bottomrule
+\end{longtable}
+
+\section{Database/Data Security and Access Rights}
+\subsection{Role Matrix}
+\begin{longtable}{p{3.0cm}p{8.8cm}}
+\caption{Role-Based Access Rights}\\
+\toprule
+Role & Access Rights \\
+\midrule
+User & Register, login, upload/process own documents, run own verification stages, generate/download own report \\
+Reviewer & All user-level auth access plus flagged queue review actions \\
+Admin & Reviewer capabilities plus overall administrative operations and analytics access \\
+\bottomrule
+\end{longtable}
+
+\subsection{Data Integrity Protections}
+\begin{itemize}
+\item relational integrity through foreign keys.
+\item enum restriction for state-like fields.
+\item range checks for score values.
+\item conditional check for rejection reason.
+\end{itemize}
+
+\section{Security Limitations and Mitigations}
+\begin{itemize}
+\item Email provider integration is mock/log-based in current implementation.
+\item Encryption-at-rest configuration is deployment-level and should be documented in hosting setup.
+\item External model dependencies introduce reliability and trust boundary concerns.
+\item Additional penetration and threat-model testing is recommended before production rollout.
+\end{itemize}
+
+\section{Compliance Preparedness}
+The design supports compliance documentation through clear workflow stages, audit traces, and report-level decision summaries. Final deployment must complete operational controls such as TLS termination, key rotation, retention policy governance, and monitoring procedures.

@@ -111,7 +111,10 @@ function AppInner() {
       <section className="pipeline-section" id="section-ocr">
         <div className="section-header">
           <span className="section-badge">1</span>
-          <h2>Document OCR + Forgery</h2>
+          <div className="section-header-sub">
+            <h2>Document OCR &amp; Face Extraction</h2>
+            <p className="section-desc">Upload your ID document — extracts identity fields, checks for forgery, and isolates the face photo for Step 2</p>
+          </div>
         </div>
         <OcrTab token={token} result={documentResult}
           onResult={(r) => { setDocumentResult(r); setFinalResult(null); }}
@@ -122,7 +125,10 @@ function AppInner() {
       <section className="pipeline-section" id="section-face">
         <div className="section-header">
           <span className="section-badge">2</span>
-          <h2>Face Verification</h2>
+          <div className="section-header-sub">
+            <h2>Face Verification</h2>
+            <p className="section-desc">Upload a selfie or capture one with your webcam — compared against the face from Step 1</p>
+          </div>
         </div>
         <FaceMatchTab token={token} result={faceResult}
           referenceFaceImageUrl={documentResult?.reference_face_image_url ?? null}

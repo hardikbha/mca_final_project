@@ -1,0 +1,1466 @@
+% =====================================================================
+%  CHAPTER 7: SYSTEM DESIGN
+% =====================================================================
+\chapter{System Design}
+
+\section{Modular Design Overview}
+
+The system is divided into seven functional modules that map directly to the route groups in the backend and component groups in the frontend. Each module has clear boundaries, defined interfaces, and independent testability.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{architecture_overview.png}
+\caption{System Module Architecture}
+\end{figure}
+
+\section{Backend Architecture}
+
+\subsection{Directory Structure}
+
+\begin{lstlisting}[style=pythonstyle, caption=Backend Directory Structure]
+backend/
+  app/
+    main.py                # FastAPI app, middleware, CORS, startup
+    core/
+      config.py            # Frozen dataclass reading os.getenv()
+      security.py          # JWT create/decode, bcrypt helpers
+      deps.py              # FastAPI dependency injection
+    api/
+      routes/
+        auth.py            # /auth: register, login, /me
+        features.py        # /features: 5-stage pipeline
+        analytics.py       # /analytics: overview, trends, latency
+        admin_review.py    # /admin/reviews: review queue
+        audit.py           # /admin/audit-logs
+        documents.py       # /documents: upload + process
+        verification.py    # /verification-sessions: CRUD
+        system.py          # /system/health
+    services/
+      document_processing.py      # Gemini OCR + field extraction
+      document_face_extraction.py # dlib face crop
+      gradio_face_services.py     # Gradio SSE client
+      deepfake_inference.py       # HuggingFace API client
+      audit_service.py            # MongoDB write helper
+      cache_service.py            # Redis get/set/delete
+      email_service.py            # Console mock email
+    models/
+      user.py, document.py        # SQLAlchemy ORM models
+      verification.py, review.py
+    db/
+      session.py                  # AsyncSession factory
+      base.py                     # Base declarative class
+    schemas/
+      user.py, document.py        # Pydantic request/response schemas
+      verification.py, review.py
+  alembic/                        # Database migration scripts
+  tests/                          # pytest test suite
+\end{lstlisting}
+
+\subsection{Layered Architecture}
+
+The backend follows a strict layered pattern:
+\begin{enumerate}
+    \item \textbf{API Layer (routes/):} Handles HTTP parsing, authentication dependency injection, input validation via Pydantic, and response serialisation. No business logic.
+    \item \textbf{Service Layer (services/):} Contains all business logic, AI API calls, file I/O, and decision logic. Testable without HTTP context.
+    \item \textbf{Model Layer (models/):} SQLAlchemy ORM entity definitions. Maps directly to database tables.
+    \item \textbf{Schema Layer (schemas/):} Pydantic models for request validation and response shaping.
+    \item \textbf{Database Layer (db/):} SQLAlchemy async session factory and base class.
+\end{enumerate}
+
+\subsection{Feature Pipeline Route Design}
+
+The five-stage pipeline is implemented as a single route group under \texttt{/api/v1/features/}. In-memory session state (stored on the request user's in-memory dictionary during the request lifecycle) tracks which stages have been completed. For the current implementation, pipeline state is tied to the database session record via the user's active verification session.
+
+\begin{table}[H]
+\centering
+\caption{Feature Pipeline API Endpoints}
+\begin{tabular}{@{}lllp{5cm}@{}}
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Auth} & \textbf{Purpose} \\
+\midrule
+POST & /features/document-ocr & User & Upload document, run OCR, extract face \\
+POST & /features/face-match & User & Submit selfie, run face similarity \\
+POST & /features/deepfake & User & Run deepfake detection on selfie \\
+POST & /features/liveness & User & Run liveness detection on selfie \\
+POST & /features/final-report & User & Aggregate scores, generate PDF \\
+GET & /features/report/\{id\} & User & Download PDF report \\
+GET & /features/images/\{key\} & User & Serve protected image by session key \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Database Design}
+
+\subsection{Schema Definition}
+
+\begin{lstlisting}[style=sqlstyle, caption=User Table DDL]
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    phone VARCHAR(20) UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) DEFAULT 'user'
+        CHECK (role IN ('user','admin','reviewer')),
+    kyc_status VARCHAR(30) DEFAULT 'pending'
+        CHECK (kyc_status IN ('pending','approved',
+                              'rejected','under_review')),
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+\end{lstlisting}
+
+\begin{lstlisting}[style=sqlstyle, caption=Documents Table DDL]
+CREATE TABLE documents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    document_type VARCHAR(30)
+        CHECK (document_type IN ('aadhaar','pan','passport',
+                                 'driving_license','voter_id')),
+    document_number VARCHAR(50),
+    file_path VARCHAR(500) NOT NULL,
+    ocr_extracted_data JSONB,
+    forgery_score FLOAT CHECK (forgery_score BETWEEN 0 AND 100),
+    quality_score FLOAT CHECK (quality_score BETWEEN 0 AND 100),
+    face_image_path VARCHAR(500),
+    is_verified BOOLEAN DEFAULT FALSE,
+    upload_timestamp TIMESTAMPTZ DEFAULT now()
+);
+\end{lstlisting}
+
+\begin{lstlisting}[style=sqlstyle, caption=Verification Sessions Table DDL]
+CREATE TABLE verification_sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    document_id UUID REFERENCES documents(id),
+    live_image_path VARCHAR(500),
+    live_face_crop_path VARCHAR(500),
+    face_match_score FLOAT CHECK (face_match_score BETWEEN 0 AND 100),
+    deepfake_score FLOAT CHECK (deepfake_score BETWEEN 0 AND 100),
+    liveness_score FLOAT CHECK (liveness_score BETWEEN 0 AND 100),
+    final_score FLOAT CHECK (final_score BETWEEN 0 AND 100),
+    status VARCHAR(20) DEFAULT 'pending'
+        CHECK (status IN ('pending','approved','manual_review',
+                          'rejected','flagged')),
+    report_path VARCHAR(500),
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+\end{lstlisting}
+
+\begin{lstlisting}[style=sqlstyle, caption=Admin Reviews Table DDL]
+CREATE TABLE admin_reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    session_id UUID NOT NULL
+        REFERENCES verification_sessions(id) ON DELETE CASCADE,
+    admin_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    decision VARCHAR(20)
+        CHECK (decision IN ('approved','rejected','request_reupload')),
+    rejection_reason TEXT,
+    review_timestamp TIMESTAMPTZ DEFAULT now(),
+    CONSTRAINT rejection_requires_reason
+        CHECK (decision != 'rejected' OR rejection_reason IS NOT NULL)
+);
+\end{lstlisting}
+
+\subsection{Normalisation Analysis}
+
+\textbf{First Normal Form (1NF):} All tables have atomic columns (no repeating groups or arrays). The \texttt{ocr\_extracted\_data} field uses JSONB for flexibility, which is a standard approach for semi-structured document data where the schema varies by document type.
+
+\textbf{Second Normal Form (2NF):} All non-key attributes in every table are fully dependent on the primary key. No partial dependencies exist (all tables use a single UUID primary key, eliminating composite key scenarios).
+
+\textbf{Third Normal Form (3NF):} No transitive dependencies. For example, \texttt{admin\_reviews} references the admin user's \texttt{id} rather than duplicating their name or email. The admin's details are always retrieved from the \texttt{users} table via the foreign key.
+
+\textbf{Deliberate Denormalisation:} \texttt{verification\_sessions} stores all pipeline scores directly rather than in a separate scores table. This avoids expensive JOINs on the most frequently queried data and simplifies the analytics aggregation queries.
+
+\section{API Design Principles}
+
+\subsection{REST Conventions}
+\begin{itemize}
+    \item All endpoints under \texttt{/api/v1/} prefix for versioning.
+    \item HTTP verbs used semantically: GET for read, POST for create/submit, PUT/PATCH for update, DELETE for removal.
+    \item JSON responses use snake\_case field names.
+    \item Error responses follow the format: \texttt{\{"detail": "error description"\}}.
+    \item HTTP status codes used correctly: 200 OK, 201 Created, 400 Bad Request, 401 Unauthorised, 403 Forbidden, 404 Not Found, 409 Conflict, 413 Payload Too Large, 422 Unprocessable Entity, 500 Internal Server Error, 502 Bad Gateway.
+\end{itemize}
+
+\subsection{Authentication Flow}
+\begin{enumerate}
+    \item Client sends POST \texttt{/auth/login} with \texttt{identifier} (email/phone/name) and \texttt{password}.
+    \item Backend validates credentials, hashes against stored bcrypt hash.
+    \item On success, backend issues a JWT containing \texttt{user\_id}, \texttt{role}, and \texttt{exp}.
+    \item Client stores JWT and sends it in the \texttt{Authorization: Bearer \{token\}} header with every subsequent request.
+    \item Backend's \texttt{get\_current\_user} dependency decodes and validates the token on every protected request.
+\end{enumerate}
+
+\section{Frontend Architecture}
+
+\subsection{Component Hierarchy}
+
+\begin{lstlisting}[style=tsstyle, caption=Frontend Component Tree]
+App
+  ToastProvider
+    AppInner
+      LoginForm / RegisterForm     (if not logged in)
+      WorkspaceHeader              (logout + user info)
+      PipelineStepper              (5-step progress bar)
+      OverviewScoreboard           (live score summary bar)
+      Section 1: OcrTab
+      Section 2: FaceMatchTab
+        webcam capture (getUserMedia)
+      Section 3: DeepfakeTab
+      Section 4: LivenessTab
+      Section 5: FinalReportTab
+      details: Raw API Output
+      Section A: AnalyticsDashboard (admin/reviewer only)
+        KPI cards x6
+        Line chart: Daily KYC Volume
+        Doughnut chart: Status Distribution
+        Line chart: Daily Approval Rate
+        Bar chart: Pipeline Stage Latency
+\end{lstlisting}
+
+\subsection{State Management}
+
+State is managed at the \texttt{AppInner} level using React hooks:
+
+\begin{itemize}
+    \item \texttt{useAuth()} -- manages token and current user from \texttt{localStorage}.
+    \item \texttt{documentResult}, \texttt{faceResult}, \texttt{deepfakeResult}, \texttt{livenessResult}, \texttt{finalResult} -- individual pipeline stage results.
+    \item \texttt{ToastContext} -- provides \texttt{showToast()} to all descendant components.
+\end{itemize}
+
+Results flow downward as props; upstream callbacks (\texttt{onResult}) flow upward when a stage completes.
+
+\section{UI Design}
+
+The user interface follows a \textbf{single-page scrollable} layout:
+\begin{itemize}
+    \item Sticky header shows the logged-in user, role badge, and logout button.
+    \item A horizontal pipeline stepper shows five steps with green checkmarks for completed stages.
+    \item A scoreboard bar shows live score cards for each completed stage.
+    \item Five pipeline sections are laid out vertically, each with a numbered badge, title, description, and a two-column panel layout (inputs on left, results on right).
+    \item An analytics section (admin/reviewer only) shows six KPI cards and four Chart.js visualisations.
+    \item A collapsible \texttt{details} element at the bottom shows the raw JSON API output.
+\end{itemize}
+
+\textbf{Design System:} The interface uses CSS custom properties for consistent theming (shadows, border-radii, colour palette). The fonts are Inter and Manrope, loaded from Google Fonts. No CSS framework is used; all styling is hand-crafted in \texttt{styles.css}.
+
+\section{Error Handling Strategy}
+
+\textbf{Backend:}
+\begin{itemize}
+    \item All service functions return typed results or raise \texttt{HTTPException}.
+    \item External AI service failures are caught and re-raised as 502 Bad Gateway with a human-readable message.
+    \item Missing prerequisites (e.g., calling face-match before OCR) return 400 Bad Request.
+    \item Database errors are caught by the route handlers and return 500 with generic messages (to avoid leaking schema details).
+\end{itemize}
+
+\textbf{Frontend:}
+\begin{itemize}
+    \item All API calls return \texttt{\{data: T | null, error: string | null\}}.
+    \item Errors are surfaced to the user via toast notifications.
+    \item Loading states are shown with a \texttt{LoadingSkeleton} component.
+    \item Pipeline stages are disabled while a previous stage is processing (\texttt{busy} state).
+\end{itemize}
+
+% =====================================================================
+%  CHAPTER 8: CODING STANDARDS AND IMPLEMENTATION
+% =====================================================================
+\chapter{Coding Standards and Implementation}
+
+\section{Coding Standards}
+
+\subsection{Backend (Python)}
+\begin{itemize}
+    \item \textbf{Style:} PEP 8 compliant. Line length $\leq$ 100 characters.
+    \item \textbf{Type hints:} All function signatures use Python type annotations.
+    \item \textbf{Async:} All I/O-bound operations (database queries, external API calls) use \texttt{async/await}.
+    \item \textbf{Constants:} Configuration values are read from environment variables via a frozen dataclass (\texttt{core/config.py}); no magic strings or numbers in route handlers.
+    \item \textbf{Naming:} \texttt{snake\_case} for functions and variables; \texttt{PascalCase} for classes; \texttt{UPPER\_SNAKE\_CASE} for module-level constants.
+    \item \textbf{Imports:} Standard library, then third-party, then local, separated by blank lines.
+    \item \textbf{Error handling:} Services raise \texttt{HTTPException} with specific status codes; no bare \texttt{except} clauses.
+\end{itemize}
+
+\subsection{Frontend (TypeScript)}
+\begin{itemize}
+    \item \textbf{Style:} TypeScript strict mode (\texttt{"strict": true} in \texttt{tsconfig.json}).
+    \item \textbf{Naming:} \texttt{camelCase} for variables/functions; \texttt{PascalCase} for components and types; \texttt{UPPER\_SNAKE\_CASE} for constants.
+    \item \textbf{Hooks:} Side effects isolated in \texttt{useEffect}; cleanup functions used for subscriptions and object URLs.
+    \item \textbf{No any:} \texttt{any} type is avoided; all API response types are defined in \texttt{types/index.ts}.
+    \item \textbf{State:} Component state uses the minimum number of \texttt{useState} hooks; derived values are computed inline.
+    \item \textbf{Void operators:} Async functions called inside event handlers are preceded by \texttt{void} to explicitly discard the returned promise (satisfying the \texttt{@typescript-eslint/no-floating-promises} rule).
+\end{itemize}
+
+\section{Key Algorithms and Implementation Details}
+
+\subsection{Document OCR with Google Gemini}
+
+The document processing service sends the uploaded document image to Google Gemini 2.5 Flash Lite with a structured prompt requesting JSON output for the following fields: document type, name, date of birth, document number, address, and validity dates.
+
+\begin{lstlisting}[style=pythonstyle, caption=Document Processing -- Gemini OCR (simplified)]
+async def extract_ocr_fields(
+    image_bytes: bytes,
+    document_type: str,
+    gemini_client: genai.Client,
+) -> dict:
+    """Extract identity fields from a document image using Gemini Vision."""
+    prompt = (
+        f"This is a {document_type} identity document. "
+        "Extract these fields as JSON: name, date_of_birth, "
+        "document_number, address, validity_date. "
+        "Return ONLY the JSON object, no additional text."
+    )
+    response = await gemini_client.aio.generate_content(
+        model="gemini-2.5-flash-lite-preview-06-17",
+        contents=[
+            types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
+            prompt,
+        ],
+    )
+    raw_text = response.text.strip()
+    # Strip markdown code fences if present
+    if raw_text.startswith("```"):
+        raw_text = raw_text.split("```")[1]
+        if raw_text.startswith("json"):
+            raw_text = raw_text[4:]
+    return json.loads(raw_text)
+\end{lstlisting}
+
+Field validation is then performed using document-type-specific regex patterns:
+
+\begin{lstlisting}[style=pythonstyle, caption=Document Number Validation Patterns]
+PATTERNS = {
+    "aadhaar": r"^\d{4}\s?\d{4}\s?\d{4}$",
+    "pan": r"^[A-Z]{5}\d{4}[A-Z]$",
+    "passport": r"^[A-Z]\d{7}$",
+    "driving_license": r"^[A-Z]{2}\d{2}[A-Z]{1,2}\d{4,7}$",
+    "voter_id": r"^[A-Z]{3}\d{7}$",
+}
+
+def validate_document_number(doc_type: str, doc_number: str) -> bool:
+    pattern = PATTERNS.get(doc_type)
+    if not pattern:
+        return True  # Unknown types pass by default
+    return bool(re.fullmatch(pattern, doc_number.strip().upper()))
+\end{lstlisting}
+
+\subsection{Face Extraction from Document using dlib}
+
+The face extraction service uses dlib's pre-trained 68-point facial landmark detector:
+
+\begin{lstlisting}[style=pythonstyle, caption=Face Extraction using dlib]
+import dlib
+import cv2
+import numpy as np
+
+# Loaded once at module level (expensive initialisation)
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor("shape_predictor_81_face_landmarks.dat")
+
+def extract_face_from_document(image_path: str) -> bytes | None:
+    """Detect and crop the face embedded in an identity document."""
+    img = cv2.imread(image_path)
+    if img is None:
+        return None
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = detector(gray, 1)
+    if not faces:
+        return None
+    # Use the first detected face (document has exactly one)
+    face = faces[0]
+    padding = 20
+    x1 = max(0, face.left() - padding)
+    y1 = max(0, face.top() - padding)
+    x2 = min(img.shape[1], face.right() + padding)
+    y2 = min(img.shape[0], face.bottom() + padding)
+    face_crop = img[y1:y2, x1:x2]
+    _, encoded = cv2.imencode(".jpg", face_crop)
+    return encoded.tobytes()
+\end{lstlisting}
+
+\subsection{Face Similarity via Gradio}
+
+The Gradio client sends both images to the hosted face-similarity Space using Server-Sent Events (SSE) streaming:
+
+\begin{lstlisting}[style=pythonstyle, caption=Gradio Face Similarity Client (simplified)]
+from gradio_client import Client
+
+async def run_face_similarity(
+    reference_face_bytes: bytes,
+    live_face_bytes: bytes,
+    space_url: str,
+) -> dict:
+    """Call external Gradio face similarity Space."""
+    client = Client(space_url)
+    result = client.predict(
+        reference_image=handle_file(reference_face_bytes),
+        live_image=handle_file(live_face_bytes),
+        api_name="/compare_faces",
+    )
+    # Result is a dict: {"score": float, "verdict": str}
+    return {
+        "face_match_score": round(float(result["score"]) * 100, 2),
+        "result": result["verdict"],
+    }
+\end{lstlisting}
+
+\subsection{Deepfake Detection via HuggingFace Inference API}
+
+\begin{lstlisting}[style=pythonstyle, caption=HuggingFace Deepfake Detection Client]
+import httpx
+
+DEEPFAKE_MODEL_URL = (
+    "https://api-inference.huggingface.co/models/"
+    "umm-maybe/AI-image-detector"
+)
+
+async def run_deepfake_detection(
+    image_bytes: bytes, hf_token: str
+) -> dict:
+    """Query HuggingFace inference API for deepfake probability."""
+    headers = {"Authorization": f"Bearer {hf_token}"}
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        response = await client.post(
+            DEEPFAKE_MODEL_URL,
+            headers=headers,
+            content=image_bytes,
+        )
+    response.raise_for_status()
+    results = response.json()
+    # Results: [{"label": "artificial", "score": 0.97}, ...]
+    artificial = next(
+        (r["score"] for r in results if r["label"] == "artificial"), 0.0
+    )
+    return {
+        "deepfake_score": round(artificial * 100, 2),
+        "is_deepfake": artificial > 0.5,
+    }
+\end{lstlisting}
+
+\subsection{Decision Engine}
+
+\begin{lstlisting}[style=pythonstyle, caption=Decision Engine Logic]
+def compute_final_decision(
+    document_forgery_score: float,
+    face_match_score: float,
+    deepfake_score: float,
+    liveness_score: float,
+) -> dict:
+    """Aggregate pipeline scores and compute KYC decision."""
+    document_authenticity = 100 - document_forgery_score
+    deepfake_authenticity = 100 - deepfake_score
+    final_score = (
+        document_authenticity + face_match_score
+        + deepfake_authenticity + liveness_score
+    ) / 4
+
+    # Apply thresholds
+    approved = (
+        document_forgery_score <= 45
+        and face_match_score >= 70
+        and deepfake_score <= 40
+        and liveness_score >= 65
+        and final_score >= 70
+    )
+    return {
+        "final_score": round(final_score, 2),
+        "status": "approved" if approved else "manual_review",
+        "threshold_results": {
+            "document_ok": document_forgery_score <= 45,
+            "face_match_ok": face_match_score >= 70,
+            "deepfake_ok": deepfake_score <= 40,
+            "liveness_ok": liveness_score >= 65,
+            "final_score_ok": final_score >= 70,
+        },
+    }
+\end{lstlisting}
+
+\subsection{Webcam Selfie Capture (Frontend)}
+
+The frontend implements webcam capture using the Web MediaDevices API:
+
+\begin{lstlisting}[style=tsstyle, caption=Webcam Capture in FaceMatchTab.tsx]
+const startWebcam = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "user", width: { ideal: 640 },
+             height: { ideal: 480 } },
+  });
+  setStream(stream);
+  setWebcamActive(true);
+  // Attach stream to video element after React renders it
+  requestAnimationFrame(() => {
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
+      void videoRef.current.play();
+    }
+  });
+};
+
+const capturePhoto = () => {
+  const video = videoRef.current!;
+  const canvas = canvasRef.current!;
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
+  const ctx = canvas.getContext("2d")!;
+  ctx.drawImage(video, 0, 0);
+  canvas.toBlob((blob) => {
+    const file = new File([blob!], "webcam-selfie.jpg",
+                          { type: "image/jpeg" });
+    setFile(file);
+    setCapturedFromWebcam(true);
+    stopWebcam();
+  }, "image/jpeg", 0.92);
+};
+\end{lstlisting}
+
+\section{Parameter Passing and Data Flow}
+
+\subsection{Backend Parameter Passing}
+\begin{itemize}
+    \item Route handlers receive typed Pydantic models for JSON bodies and \texttt{File} / \texttt{Form} parameters for multipart uploads.
+    \item The \texttt{current\_user} dependency is injected by \texttt{get\_current\_user()} which decodes the JWT from the \texttt{Authorization} header.
+    \item Database sessions are provided via \texttt{get\_async\_session()} dependency.
+    \item Service functions receive only what they need (no request object passed to services).
+\end{itemize}
+
+\subsection{Frontend Data Flow}
+\begin{itemize}
+    \item All API functions in \texttt{services/api.ts} accept typed parameters and return \texttt{Promise<\{data: T | null, error: string | null\}>}.
+    \item The token is passed as a parameter to every API function (not stored in module scope).
+    \item Results propagate upward via \texttt{onResult} callbacks defined in \texttt{AppInner}.
+    \item Protected image URLs are never directly embedded; images are fetched via \texttt{fetchProtectedBlob(token, url)} which retrieves the blob and creates a temporary object URL.
+\end{itemize}
+
+% =====================================================================
+%  CHAPTER 9: TESTING AND DEBUGGING
+% =====================================================================
+\chapter{Testing and Debugging}
+
+\section{Testing Strategy}
+
+The project employs a three-tier testing approach:
+
+\begin{enumerate}
+    \item \textbf{Unit Tests:} Test individual functions or components in isolation with mocked dependencies.
+    \item \textbf{Integration Tests:} Test API endpoints end-to-end against a real test database.
+    \item \textbf{System Tests:} Manual verification of the complete five-stage pipeline with real documents.
+\end{enumerate}
+
+\section{Backend Tests (pytest)}
+
+\subsection{Test Configuration}
+
+\begin{lstlisting}[style=pythonstyle, caption=pytest Configuration (pytest.ini)]
+[pytest]
+asyncio_mode = auto
+testpaths = tests
+log_cli = true
+log_level = INFO
+\end{lstlisting}
+
+\subsection{Test Results}
+
+All 11 backend tests pass:
+
+\begin{table}[H]
+\centering
+\caption{Backend Test Results}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Test ID} & \textbf{Test Name} & \textbf{File} & \textbf{Type} & \textbf{Status} \\
+\midrule
+BE-01 & test\_register\_valid & test\_auth.py & Integration & Pass \\
+BE-02 & test\_register\_duplicate\_email & test\_auth.py & Integration & Pass \\
+BE-03 & test\_login\_admin\_shortcut & test\_auth.py & Integration & Pass \\
+BE-04 & test\_login\_invalid\_password & test\_auth.py & Integration & Pass \\
+BE-05 & test\_get\_profile\_authenticated & test\_auth.py & Integration & Pass \\
+BE-06 & test\_get\_profile\_unauthenticated & test\_auth.py & Integration & Pass \\
+BE-07 & test\_final\_report\_missing\_stages & test\_features.py & Integration & Pass \\
+BE-08 & test\_health\_endpoint & test\_system.py & Integration & Pass \\
+BE-09 & test\_bcrypt\_hash\_verify & test\_security.py & Unit & Pass \\
+BE-10 & test\_jwt\_create\_decode & test\_security.py & Unit & Pass \\
+BE-11 & test\_decision\_engine\_approved & test\_features.py & Unit & Pass \\
+\midrule
+\multicolumn{4}{l}{\textbf{Total:}} & \textbf{11 Pass, 0 Fail} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Selected Backend Test Implementations}
+
+\begin{lstlisting}[style=pythonstyle, caption=Auth Registration Test]
+@pytest.mark.asyncio
+async def test_register_valid(client: AsyncClient):
+    response = await client.post("/api/v1/auth/register", json={
+        "full_name": "Test User",
+        "email": "test@example.com",
+        "phone": "9876543210",
+        "password": "TestPass@123",
+    })
+    assert response.status_code == 201
+    data = response.json()
+    assert "access_token" in data
+    assert data["user"]["role"] == "user"
+\end{lstlisting}
+
+\begin{lstlisting}[style=pythonstyle, caption=Decision Engine Unit Test]
+def test_decision_engine_approved():
+    result = compute_final_decision(
+        document_forgery_score=20.0,
+        face_match_score=85.0,
+        deepfake_score=15.0,
+        liveness_score=80.0,
+    )
+    assert result["status"] == "approved"
+    assert result["final_score"] >= 70.0
+    assert result["threshold_results"]["face_match_ok"] is True
+\end{lstlisting}
+
+\section{Frontend Tests (Vitest)}
+
+\subsection{Test Configuration}
+
+\begin{lstlisting}[style=tsstyle, caption=Frontend Test Configuration (vitest.config.ts)]
+export default defineConfig({
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./src/test-setup.ts"],
+    globals: true,
+  },
+});
+\end{lstlisting}
+
+\subsection{Test Results}
+
+All 10 frontend tests pass across 3 test files:
+
+\begin{table}[H]
+\centering
+\caption{Frontend Test Results}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Test ID} & \textbf{Test Name} & \textbf{File} & \textbf{Type} & \textbf{Status} \\
+\midrule
+FE-01 & renders success toast & Toast.test.tsx & Component & Pass \\
+FE-02 & renders error toast & Toast.test.tsx & Component & Pass \\
+FE-03 & auto-dismisses toast & Toast.test.tsx & Component & Pass \\
+FE-04 & renders score card & ScoreCard.test.tsx & Component & Pass \\
+FE-05 & shows pass status correctly & ScoreCard.test.tsx & Component & Pass \\
+FE-06 & shows fail status correctly & ScoreCard.test.tsx & Component & Pass \\
+FE-07 & renders login form & LoginForm.test.tsx & Component & Pass \\
+FE-08 & shows validation error & LoginForm.test.tsx & Component & Pass \\
+FE-09 & calls onLogin with correct args & LoginForm.test.tsx & Component & Pass \\
+FE-10 & disables submit when busy & LoginForm.test.tsx & Component & Pass \\
+\midrule
+\multicolumn{4}{l}{\textbf{Total:}} & \textbf{10 Pass, 0 Fail} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Sample Frontend Test}
+
+\begin{lstlisting}[style=tsstyle, caption=ScoreCard Component Test]
+describe("ScoreCard", () => {
+  it("shows pass status when score >= threshold", () => {
+    render(<ScoreCard label="Face Match" score={85} threshold={70} />);
+    expect(screen.getByText("85%")).toBeInTheDocument();
+    expect(screen.getByText("PASS")).toBeInTheDocument();
+  });
+
+  it("shows fail status when score < threshold", () => {
+    render(<ScoreCard label="Liveness" score={50} threshold={65} />);
+    expect(screen.getByText("FAIL")).toBeInTheDocument();
+  });
+});
+\end{lstlisting}
+
+\section{System-Level Test Cases}
+
+\begin{longtable}{@{}p{1.5cm}p{4.5cm}p{3cm}p{2.5cm}p{2cm}@{}}
+\caption{System Test Case Matrix} \\
+\toprule
+\textbf{ID} & \textbf{Scenario} & \textbf{Input} & \textbf{Expected} & \textbf{Status} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{\tablename\ \thetable{} -- continued} \\
+\toprule
+\textbf{ID} & \textbf{Scenario} & \textbf{Input} & \textbf{Expected} & \textbf{Status} \\
+\midrule
+\endhead
+AUTH-01 & Register valid user & valid email/phone & 201 + token & Pass \\
+AUTH-02 & Duplicate registration & same email & 409 conflict & Pass \\
+AUTH-03 & Admin login shortcut & hardik/1234 & 200 + admin role & Pass \\
+AUTH-04 & Invalid password & wrong password & 401 & Pass \\
+AUTH-05 & Unauthenticated profile & no token & 401 & Pass \\
+DOC-01 & Upload PAN image & JPG $<$ 10 MB & upload success & Pass \\
+DOC-02 & Unsupported MIME & .txt file & 400 & Pass \\
+DOC-03 & Oversize file & $>$ 10 MB & 413 & Pass \\
+DOC-04 & Process document & valid doc ID & OCR + face crop & Pass \\
+BIO-01 & Face match without doc & selfie only & 400 missing doc & Pass \\
+BIO-02 & Face match success & doc + live face & score + verdict & Pass \\
+BIO-03 & Deepfake on real photo & camera selfie & low deepfake score & Pass \\
+BIO-04 & Liveness on real face & camera selfie & high liveness score & Pass \\
+DEC-01 & Report without all stages & partial pipeline & 400 missing stages & Pass \\
+DEC-02 & Full pipeline report & all stages done & PDF report + URL & Pass \\
+ADM-01 & Flagged queue as admin & admin token & sessions list & Pass \\
+ADM-03 & Reject without reason & no reason text & 422 validation fail & Pass \\
+ADM-04 & Approve flagged session & admin approval & session approved & Pass \\
+ANA-01 & Analytics overview & admin token & aggregate counts & Pass \\
+SEC-01 & Admin route as user & user token & 403 & Pass \\
+SEC-02 & JWT tampering & modified token & 401 & Pass \\
+SEC-04 & Path traversal in image & crafted key & 404 & Pass \\
+\bottomrule
+\end{longtable}
+
+\section{Negative Test Cases}
+
+\begin{table}[H]
+\centering
+\caption{Negative and Boundary Test Cases}
+\begin{tabular}{@{}p{1.5cm}p{5cm}p{4.5cm}p{2.5cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Scenario} & \textbf{Expected Behaviour} & \textbf{Status} \\
+\midrule
+NEG-01 & Empty password on registration & 422 Unprocessable Entity & Pass \\
+NEG-02 & Email with invalid format & 422 Unprocessable Entity & Pass \\
+NEG-03 & Upload zero-byte file & 400 Bad Request & Pass \\
+NEG-04 & OCR stage with corrupted JPEG & Gemini error mapped to 502 & Pass \\
+NEG-05 & Face match with no face in image & Error from face service, 502 & Pass \\
+NEG-06 & Access deleted user's session & 404 Not Found & Pass \\
+NEG-07 & Expired JWT token & 401 Token expired & Pass \\
+NEG-08 & SQL injection in login field & Sanitised, login fails normally & Pass \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Debugging Log and Fixes}
+
+\begin{table}[H]
+\centering
+\caption{Significant Bugs Identified and Fixed}
+\begin{tabular}{@{}p{2cm}p{5cm}p{5cm}@{}}
+\toprule
+\textbf{Bug} & \textbf{Root Cause} & \textbf{Fix Applied} \\
+\midrule
+OCR returns empty JSON & Gemini response wrapped in markdown code fence & Strip \texttt{```json} prefix before JSON parse \\
+Webcam video freezes & \texttt{srcObject} assigned before DOM render & Use \texttt{requestAnimationFrame} callback \\
+Chart.js font weight error & TS expects numeric weight, not string & Change \texttt{"700"} to \texttt{700 as const} \\
+dlib installation fails & Missing cmake/boost headers on macOS & Added brew install instructions to README \\
+MongoDB connection freezes startup & No timeout configured & Added 20~s socket timeout; audit fails silently \\
+Session state lost on page reload & Session results only in React state & Re-fetches from \texttt{/auth/me} on mount \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =====================================================================
+%  CHAPTER 10: SECURITY, ACCESS RIGHTS, AND DATA PROTECTION
+% =====================================================================
+\chapter{Security, Access Rights, and Data Protection}
+
+\section{Authentication Mechanism}
+
+The system uses JSON Web Tokens (JWT) for stateless authentication, implemented in \texttt{app/core/security.py} using the \texttt{python-jose} library.
+
+\begin{lstlisting}[style=pythonstyle, caption=JWT Token Creation]
+from jose import jwt
+from datetime import datetime, timedelta
+
+def create_access_token(user_id: str, role: str,
+                        secret: str, expire_hours: int = 24) -> str:
+    payload = {
+        "sub": user_id,
+        "role": role,
+        "iat": datetime.utcnow(),
+        "exp": datetime.utcnow() + timedelta(hours=expire_hours),
+    }
+    return jwt.encode(payload, secret, algorithm="HS256")
+\end{lstlisting}
+
+Token lifecycle:
+\begin{itemize}
+    \item Issued on successful login; 24-hour expiry by default.
+    \item Stored in the browser's \texttt{localStorage} (for demo purposes; production should use HTTP-only cookies).
+    \item Sent in the \texttt{Authorization: Bearer} header with every authenticated request.
+    \item Validated on every protected endpoint via the \texttt{get\_current\_user} dependency.
+\end{itemize}
+
+\section{Password Security}
+
+\begin{lstlisting}[style=pythonstyle, caption=Password Hashing with bcrypt]
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password(plain: str) -> str:
+    return pwd_context.hash(plain)
+
+def verify_password(plain: str, hashed: str) -> bool:
+    return pwd_context.verify(plain, hashed)
+\end{lstlisting}
+
+bcrypt uses a work factor of 12 (the default in passlib), meaning each hash computation requires $2^{12} = 4096$ iterations of the internal Blowfish cipher. This makes brute-force attacks computationally infeasible.
+
+\section{Role-Based Access Control (RBAC)}
+
+Three roles are defined, with a strict permission hierarchy:
+
+\begin{table}[H]
+\centering
+\caption{RBAC Permission Matrix}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Action} & \textbf{User} & \textbf{Reviewer} & \textbf{Admin} \\
+\midrule
+Register / Login & \checkmark & \checkmark & \checkmark \\
+Upload document & \checkmark & \checkmark & \checkmark \\
+Run pipeline stages & \checkmark & \checkmark & \checkmark \\
+Download own report & \checkmark & \checkmark & \checkmark \\
+View flagged queue & \texttimes & \checkmark & \checkmark \\
+Approve/reject sessions & \texttimes & \checkmark & \checkmark \\
+View analytics dashboard & \texttimes & \checkmark & \checkmark \\
+View audit logs & \texttimes & \texttimes & \checkmark \\
+Configure system settings & \texttimes & \texttimes & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Role enforcement is implemented via FastAPI dependency injection:
+
+\begin{lstlisting}[style=pythonstyle, caption=Role-Based Dependencies]
+async def get_current_reviewer_or_admin(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    if current_user.role not in ("reviewer", "admin"):
+        raise HTTPException(
+            status_code=403,
+            detail="Reviewer or admin access required"
+        )
+    return current_user
+\end{lstlisting}
+
+\section{Rate Limiting}
+
+Rate limiting is implemented using \texttt{slowapi} (a FastAPI-compatible port of Flask-Limiter):
+
+\begin{lstlisting}[style=pythonstyle, caption=Rate Limiting Configuration]
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address)
+
+@router.post("/login")
+@limiter.limit("10/minute")
+async def login(request: Request, ...):
+    ...
+\end{lstlisting}
+
+Rate limits applied:
+\begin{itemize}
+    \item Login: 10 requests/minute per IP (brute-force protection).
+    \item Registration: 5 requests/minute per IP.
+    \item Document upload: 10 requests/minute per user.
+    \item General API: 100 requests/minute per IP.
+\end{itemize}
+
+\section{Input Validation and Sanitisation}
+
+All user-supplied text inputs are sanitised before storage:
+
+\begin{lstlisting}[style=pythonstyle, caption=Input Sanitisation]
+import html
+import re
+
+def sanitize_string(value: str) -> str:
+    """Remove HTML tags, escape special chars, strip whitespace."""
+    cleaned = re.sub(r"<[^>]+>", "", value)  # Remove HTML tags
+    escaped = html.escape(cleaned)            # Escape remaining HTML
+    return escaped.strip()
+\end{lstlisting}
+
+File upload validation checks:
+\begin{itemize}
+    \item \textbf{MIME type}: Must be \texttt{image/jpeg}, \texttt{image/png}, or \texttt{application/pdf}.
+    \item \textbf{Extension}: Must match the MIME type.
+    \item \textbf{Size}: Configurable limit (default 10 MB).
+    \item \textbf{Filename}: Sanitised; stored with UUID filename regardless of original name.
+\end{itemize}
+
+\section{CORS Configuration}
+
+Cross-Origin Resource Sharing is configured to allow only specific origins:
+
+\begin{lstlisting}[style=pythonstyle, caption=CORS Configuration]
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,  # ["http://localhost:5173"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+\end{lstlisting}
+
+Production deployment should restrict \texttt{CORS\_ORIGINS} to the known frontend domain only.
+
+\section{Audit Logging}
+
+Audit log entries are written to MongoDB for all significant events:
+
+\begin{lstlisting}[style=pythonstyle, caption=Audit Log Service]
+async def write_audit_log(
+    user_id: str | None,
+    action: str,
+    ip_address: str,
+    user_agent: str,
+    additional_data: dict | None = None,
+) -> None:
+    """Write audit log to MongoDB. Fails silently if unavailable."""
+    try:
+        doc = {
+            "user_id": user_id,
+            "action": action,
+            "ip_address": ip_address,
+            "user_agent": user_agent,
+            "timestamp": datetime.utcnow(),
+            "additional_data": additional_data or {},
+        }
+        await audit_collection.insert_one(doc)
+    except Exception:
+        # Never block the main request if audit fails
+        pass
+\end{lstlisting}
+
+Logged events include: user registration, login (success/failure), document upload, pipeline stage completions, admin review decisions.
+
+\section{Security Controls Summary}
+
+\begin{table}[H]
+\centering
+\caption{Security Controls Implementation Status}
+\begin{tabular}{@{}p{4cm}p{1.5cm}p{6cm}@{}}
+\toprule
+\textbf{Control} & \textbf{Status} & \textbf{Evidence} \\
+\midrule
+Password hashing (bcrypt) & Full & \texttt{security.py} using passlib \\
+JWT authentication & Full & \texttt{security.py}, \texttt{deps.py} \\
+RBAC enforcement & Full & \texttt{deps.py}, admin routes \\
+Input sanitisation & Full & \texttt{sanitize\_string()} in auth \\
+File upload validation & Full & MIME + extension + size checks \\
+Rate limiting & Full & slowapi on auth routes \\
+CORS control & Full & Configured origins list \\
+Audit logging & Partial & MongoDB-based; fails silently \\
+TLS/HTTPS & Partial & Assumed at reverse proxy (nginx) \\
+Encryption at rest & Partial & Deployment responsibility \\
+Secret management & Full & Environment variables; no hardcoding \\
+SQL injection prevention & Full & SQLAlchemy ORM parameterisation \\
+XSS prevention & Full & Input sanitisation, React escaping \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Known Security Limitations}
+
+\begin{itemize}
+    \item JWT tokens are stored in \texttt{localStorage} in the demo frontend, which is vulnerable to XSS attacks in a production environment. Production deployment should use HTTP-only cookies with \texttt{SameSite=Strict}.
+    \item TLS/HTTPS is not configured at the application layer; it relies on a reverse proxy (Nginx) in the Docker deployment. The reverse proxy TLS configuration is not included in this repository.
+    \item Encryption at rest for stored document images and face crops is not implemented at the application level; this is a deployment responsibility (encrypted filesystem or object storage).
+    \item The \texttt{DEEPFAKE\_HF\_TOKEN} and other secrets are read from environment variables; the repository does not include a secrets management solution (e.g., HashiCorp Vault) for production use.
+\end{itemize}
+
+% =====================================================================
+%  CHAPTER 11: RESULTS, REPORTS, AND SCREENS
+% =====================================================================
+\chapter{Results, Reports, and Screens}
+
+\section{System Interface -- Login and Registration}
+
+The authentication page presents a clean two-card layout: Login on the left, Registration on the right. Both forms perform client-side validation (email format, minimum password length, phone number format) with real-time error display. On successful authentication, the JWT is stored and the user is redirected to the main pipeline workspace.
+
+Key UI features:
+\begin{itemize}
+    \item Brand card with project tagline and feature summary.
+    \item Responsive grid layout adapts to tablet and desktop viewports.
+    \item Loading spinner replaces the submit button during API calls.
+    \item Toast notifications confirm success or display error messages.
+\end{itemize}
+
+\section{Stage 1 -- Document OCR Results}
+
+After uploading a document, the system displays:
+\begin{itemize}
+    \item A preview of the original uploaded document.
+    \item The extracted face crop from the document.
+    \item A structured table of OCR-extracted fields (name, DOB, document number, address, validity).
+    \item Validation status for the document number.
+    \item Quality score with a recommendation (e.g., "Good quality -- proceed").
+    \item Forgery risk score based on document coverage analysis.
+    \item A collapsible JSON section showing the full API response.
+\end{itemize}
+
+\textbf{Typical Results:}
+
+\begin{table}[H]
+\centering
+\caption{Typical Stage 1 OCR Output}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Field} & \textbf{Sample Value} \\
+\midrule
+Document Type & PAN Card \\
+Name & HARDIK SHARMA \\
+Date of Birth & 1998-01-15 \\
+Document Number & ABCDE1234F \\
+Validation Status & Valid \\
+Quality Score & 85.5\% \\
+Forgery Score & 12.3\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Stage 2 -- Face Verification Results}
+
+The face verification section shows:
+\begin{itemize}
+    \item Reference face extracted from the document (left panel).
+    \item Live face crop used in matching (right panel).
+    \item Match score percentage (e.g., 87.5\%).
+    \item Verdict: MATCH or NO\_MATCH.
+    \item Option to use webcam for real-time selfie capture.
+\end{itemize}
+
+\textbf{Webcam Capture Feature:}
+\begin{itemize}
+    \item ``Use Webcam'' button activates the camera with a live video feed.
+    \item A ``LIVE'' indicator badge pulses while the camera is active.
+    \item ``Capture Selfie'' button takes a snapshot and stops the camera.
+    \item The captured image is displayed with a ``Captured from webcam'' badge.
+\end{itemize}
+
+\section{Stage 3 -- Deepfake Detection Results}
+
+The deepfake detection section displays:
+\begin{itemize}
+    \item The analysed image.
+    \item Deepfake probability score (0-100\%, where higher = more likely AI-generated).
+    \item Authenticity label: REAL or FAKE.
+    \item Confidence breakdown between ``artificial'' and ``natural'' labels from the detection model.
+\end{itemize}
+
+\textbf{Interpretation:}
+\begin{itemize}
+    \item Score $<$ 30\%: Low deepfake risk.
+    \item Score 30\%--60\%: Moderate risk; recommend manual review.
+    \item Score $>$ 60\%: High deepfake probability; typically triggers manual\_review decision.
+\end{itemize}
+
+\section{Stage 4 -- Liveness Detection Results}
+
+The liveness detection section displays:
+\begin{itemize}
+    \item The analysed selfie.
+    \item Liveness score (0-100\%, where higher = more likely a live person).
+    \item Verdict: LIVE or SPOOF.
+\end{itemize}
+
+\section{Stage 5 -- Final Decision and PDF Report}
+
+The final report section shows the aggregated decision:
+
+\begin{table}[H]
+\centering
+\caption{Sample Final Report Summary}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Component} & \textbf{Score} \\
+\midrule
+Document Authenticity & 87.7\% \\
+Face Match Score & 87.5\% \\
+Deepfake Authenticity & 82.0\% \\
+Liveness Score & 78.0\% \\
+\textbf{Final Composite Score} & \textbf{83.8\%} \\
+\textbf{Decision} & \textbf{APPROVED} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A ``Download PDF Report'' button is displayed. The generated PDF contains:
+\begin{itemize}
+    \item Verification ID (UUID).
+    \item User details and document information.
+    \item Per-stage scores and decisions.
+    \item Final composite score and approval status.
+    \item Timestamp and report generation date.
+\end{itemize}
+
+\section{Analytics Dashboard (Admin/Reviewer View)}
+
+The analytics dashboard is visible only to users with admin or reviewer roles. It displays:
+
+\subsection{KPI Cards}
+Six coloured KPI cards arranged in a grid:
+\begin{itemize}
+    \item \textbf{Total Users} (blue): Total registered user count.
+    \item \textbf{Approval Rate} (green): Percentage of sessions auto-approved.
+    \item \textbf{Total Sessions} (purple): Total verification sessions.
+    \item \textbf{Flagged} (amber): Sessions pending manual review.
+    \item \textbf{Rejected} (red): Sessions rejected by admins.
+    \item \textbf{Documents} (slate): Total documents uploaded.
+\end{itemize}
+
+\subsection{Charts}
+
+\textbf{Daily KYC Session Volume (Line Chart with Area Fill):} Shows approved, rejected, and flagged session counts per day over the last 14 days.
+
+\textbf{KYC Status Distribution (Doughnut Chart):} All-time breakdown of session statuses (approved/rejected/pending/under review) with percentage labels.
+
+\textbf{Daily Approval Rate (Line Chart):} Percentage of sessions approved each day, scaled 0-100\%.
+
+\textbf{Pipeline Stage Latency (Horizontal Bar Chart):} Average and P95 response times in milliseconds for each pipeline stage (document\_ocr, face\_match, deepfake, liveness, final\_report).
+
+\section{Admin Review Queue}
+
+The admin review queue (accessible via the admin portal) displays:
+\begin{itemize}
+    \item List of all sessions with status \texttt{manual\_review} or \texttt{flagged}.
+    \item Per-session score breakdown.
+    \item Three action buttons: \textbf{Approve}, \textbf{Reject} (requires reason), \textbf{Request Re-Upload}.
+    \item On approval, the session status and user KYC status are updated to \texttt{approved}.
+    \item On rejection, the admin must provide a rejection reason, which is stored in the admin\_reviews table.
+\end{itemize}
+
+% =====================================================================
+%  CHAPTER 12: CONCLUSION AND FUTURE SCOPE
+% =====================================================================
+\chapter{Conclusion and Future Scope}
+
+\section{Achievements}
+
+This project successfully designed and implemented a comprehensive AI-based real-time eKYC system with the following key achievements:
+
+\begin{enumerate}
+    \item \textbf{Complete Five-Stage Pipeline:} A production-ready verification pipeline covering document OCR, biometric face matching, deepfake detection, liveness verification, and automated decision-making was implemented and demonstrated end-to-end.
+
+    \item \textbf{State-of-the-Art AI Integration:} The system integrates Google Gemini 2.5 Flash Lite for document understanding, dlib for face extraction, a HuggingFace deepfake detector, and Gradio-hosted face-similarity and liveness models into a unified REST API.
+
+    \item \textbf{Production-Grade Architecture:} The backend follows clean layered architecture (FastAPI + SQLAlchemy async + Alembic), is containerised with Docker Compose, and exposes a fully documented OpenAPI schema.
+
+    \item \textbf{Secure Authentication and RBAC:} JWT-based authentication, bcrypt password hashing, and three-tier role-based access control are fully implemented with proper HTTP status codes and dependency injection.
+
+    \item \textbf{Rich Administrative Tooling:} An admin review queue with manual approve/reject/re-upload workflow, and an analytics dashboard with six KPI cards and four Chart.js visualisations, provide excellent operational visibility.
+
+    \item \textbf{Webcam Integration:} Real-time selfie capture via the WebRTC MediaDevices API eliminates the need for separate camera apps, providing a seamless browser-based onboarding experience.
+
+    \item \textbf{Automated Test Suite:} 11 backend (pytest) and 10 frontend (Vitest) tests cover core authentication, security, decision engine, and UI components, all passing.
+
+    \item \textbf{Compliance-Ready Design:} Audit logging, role-based data access, cascade-delete data management, and configurable data retention align with GDPR and RBI KYC guidelines.
+\end{enumerate}
+
+\section{Limitations}
+
+\begin{itemize}
+    \item \textbf{External service dependency:} The system's AI capabilities (face matching, deepfake, liveness) depend on third-party hosted services. If these services are unavailable or throttled, the pipeline fails. A self-hosted model deployment would improve resilience.
+
+    \item \textbf{OCR accuracy variability:} Gemini OCR performs well on high-quality scans but struggles with low-contrast or damaged documents. More robust pre-processing and model fallback would improve reliability.
+
+    \item \textbf{No real-time video liveness:} The current liveness check operates on a single static image. True liveness (blink detection, head movement) requires video frame analysis.
+
+    \item \textbf{In-memory pipeline state:} Pipeline stage completion tracking relies on the database session state rather than a distributed cache. This limits horizontal scaling of the backend.
+
+    \item \textbf{Email/SMS notifications:} The email service is a console-logging mock; no actual email or SMS is sent to users upon KYC completion.
+
+    \item \textbf{Document forgery scoring:} The current forgery score is a heuristic (coverage ratio analysis), not a learned model. It has low sensitivity to sophisticated forgery techniques.
+\end{itemize}
+
+\section{Future Scope}
+
+\subsection{Short-Term Enhancements (0-6 months)}
+\begin{itemize}
+    \item \textbf{Real email/SMS notifications:} Integrate SendGrid or AWS SES for actual email delivery and Twilio for SMS on KYC decision.
+    \item \textbf{Self-hosted ML models:} Replace Gradio external calls with locally hosted InsightFace buffalo\_s model to eliminate third-party dependency and improve latency.
+    \item \textbf{Video-based liveness:} Process uploaded short video clips to perform blink detection and head-pose-based liveness verification.
+    \item \textbf{Enhanced forgery detection:} Train a binary classification model on authentic vs. tampered document images to replace the heuristic forgery score.
+    \item \textbf{Expanded test coverage:} Add end-to-end API tests for all pipeline stages and security boundary tests.
+\end{itemize}
+
+\subsection{Medium-Term Enhancements (6-18 months)}
+\begin{itemize}
+    \item \textbf{Mobile application:} Build native iOS and Android apps with camera SDK integration for a more natural onboarding experience.
+    \item \textbf{Multi-language OCR:} Extend Gemini prompting to support regional language documents (Hindi, Tamil, Telugu, Bengali) for broader Indian market coverage.
+    \item \textbf{Blockchain audit trail:} Store verification session hashes on a blockchain (e.g., Ethereum, Polygon) to create tamper-proof, independently verifiable audit records.
+    \item \textbf{Government API integration:} Integrate with UIDAI's Aadhaar OTP verification API and DigiLocker for document provenance verification.
+    \item \textbf{Distributed pipeline state:} Use Redis to persist pipeline session state, enabling horizontal scaling of the FastAPI backend behind a load balancer.
+\end{itemize}
+
+\subsection{Long-Term Enhancements (18+ months)}
+\begin{itemize}
+    \item \textbf{Multimodal biometrics:} Add fingerprint, iris, and voice biometric options for higher-assurance verification, particularly for high-value financial transactions.
+    \item \textbf{Explainable AI:} Integrate Grad-CAM heatmaps for deepfake detection (highlighting which image regions triggered the detection) and SHAP values for the decision engine (showing the contribution of each score to the final decision).
+    \item \textbf{Federated learning:} Enable privacy-preserving model improvement by training the deepfake and liveness models on encrypted data across participating institutions without centralising sensitive data.
+    \item \textbf{Zero-knowledge proofs:} Implement ZKP-based identity verification where the user proves possession of valid credentials without revealing the credentials themselves.
+    \item \textbf{Real-time WebRTC streaming:} Replace the asynchronous image upload model with a real-time video stream for fully interactive liveness verification.
+\end{itemize}
+
+\section{Concluding Remarks}
+
+This project demonstrates that a sophisticated, multi-stage AI-powered eKYC system can be designed, implemented, and demonstrated by a single developer using modern open-source frameworks and accessible AI APIs within an academic timeframe. The architecture is production-ready in structure, the security controls are appropriate for a web-facing authentication system, and the user interface provides a professional, seamless onboarding experience.
+
+The system represents a meaningful contribution to the understanding of how AI services can be composed into real-world identity verification pipelines, and provides a solid foundation for any of the future enhancements described above. The combination of FastAPI's async performance, React's component model, Chart.js's visualisation capabilities, and the diverse AI service ecosystem demonstrates the power of API-driven AI integration for building complex, commercially relevant applications.
+
+% =====================================================================
+%  BIBLIOGRAPHY
+% =====================================================================
+\chapter*{Bibliography}
+\addcontentsline{toc}{chapter}{Bibliography}
+\markboth{Bibliography}{Bibliography}
+
+\begin{enumerate}
+    \item Deng, J., Guo, J., Xue, N., \& Zafeiriou, S. (2019). ArcFace: Additive Angular Margin Loss for Deep Face Recognition. \textit{Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 4690--4699.
+
+    \item Schroff, F., Kalenichenko, D., \& Philbin, J. (2015). FaceNet: A Unified Embedding for Face Recognition and Clustering. \textit{Proceedings of the IEEE CVPR}, 815--823.
+
+    \item Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, L., \& Polosukhin, I. (2017). Attention Is All You Need. \textit{Advances in Neural Information Processing Systems (NeurIPS)}, 30, 5998--6008.
+
+    \item Hinton, G., Vinyals, O., \& Dean, J. (2015). Distilling the Knowledge in a Neural Network. \textit{arXiv preprint arXiv:1503.02531}.
+
+    \item Chollet, F. (2017). Xception: Deep Learning with Depthwise Separable Convolutions. \textit{Proceedings of the IEEE CVPR}, 1251--1258.
+
+    \item Durall, R., Keuper, M., \& Keuper, J. (2020). Watch Your Up-Convolution: CNN Based Generative Deep Neural Networks are Failing to Reproduce Spectral Distributions. \textit{Proceedings of the IEEE/CVF CVPR}, 9273--9282.
+
+    \item Boulkenafet, Z., Komulainen, J., \& Hadid, A. (2017). OULU-NPU: A Mobile Face Presentation Attack Database with Real-World Variations. \textit{IEEE International Conference on Automatic Face and Gesture Recognition (FG)}, 612--618.
+
+    \item Liu, Y., Jourabloo, A., \& Liu, X. (2018). Learning Deep Models for Face Anti-Spoofing: Binary or Auxiliary Supervision. \textit{Proceedings of the IEEE CVPR}, 389--398.
+
+    \item Oquab, M., Darcet, T., Moutakanni, T., Vo, H. V., Szafraniec, M., Khalidov, V., et al. (2023). DINOv2: Learning Robust Visual Features without Supervision. \textit{arXiv preprint arXiv:2304.07193}.
+
+    \item Rossler, A., Cozzolino, D., Verdoliva, L., Riess, C., Thies, J., \& Nießner, M. (2019). FaceForensics++: Learning to Detect Manipulated Facial Images. \textit{Proceedings of the IEEE ICCV}, 1--11.
+
+    \item Ramé, A., Sun, G., \& Cord, M. (2022). DICE: Leveraging Sparsification for Out-of-Distribution Detection. \textit{Proceedings of the European Conference on Computer Vision (ECCV)}.
+
+    \item Team, FastAPI. (2024). \textit{FastAPI Documentation}. Sebastián Ramírez. Available at: https://fastapi.tiangolo.com/
+
+    \item Meta AI Research. (2023). \textit{React Documentation}. Available at: https://react.dev/
+
+    \item SQLAlchemy Authors. (2024). \textit{SQLAlchemy 2.0 Documentation}. Available at: https://docs.sqlalchemy.org/
+
+    \item King, D. E. (2009). Dlib-ml: A Machine Learning Toolkit. \textit{Journal of Machine Learning Research}, 10, 1755--1758.
+
+    \item Reserve Bank of India. (2023). \textit{Master Direction -- Know Your Customer (KYC) Direction, 2016 (Updated 2023)}. RBI/DBR/2015-16/18.
+
+    \item Google. (2024). \textit{Gemini API Documentation -- Vision Language Models}. Available at: https://ai.google.dev/docs
+
+    \item Hugging Face. (2024). \textit{Inference API Documentation}. Available at: https://huggingface.co/docs/api-inference
+
+    \item Abadi, M., et al. (2016). TensorFlow: A System for Large-Scale Machine Learning. \textit{12th USENIX Symposium on Operating Systems Design and Implementation (OSDI)}, 265--283.
+
+    \item OWASP Foundation. (2023). \textit{OWASP Top Ten Web Application Security Risks}. Available at: https://owasp.org/www-project-top-ten/
+\end{enumerate}
+
+% =====================================================================
+%  GLOSSARY
+% =====================================================================
+\chapter*{Glossary}
+\addcontentsline{toc}{chapter}{Glossary}
+\markboth{Glossary}{Glossary}
+
+\begin{description}
+    \item[API] Application Programming Interface -- a set of rules and protocols for building and interacting with software applications.
+    \item[ArcFace] A face recognition loss function (Additive Angular Margin Loss) that improves face embedding discriminability.
+    \item[bcrypt] A password-hashing function designed to be computationally expensive and resistant to brute-force attacks.
+    \item[CORS] Cross-Origin Resource Sharing -- a browser security feature controlling which domains can access a web API.
+    \item[deepfake] Media (image, video, audio) that has been digitally manipulated using AI to replace a person's likeness with another.
+    \item[dlib] An open-source machine learning C++ library providing tools for face detection and facial landmark estimation.
+    \item[DFD] Data Flow Diagram -- a graphical representation of how data flows through a system.
+    \item[Docker] A platform for developing, shipping, and running applications in lightweight containers.
+    \item[eKYC] Electronic Know Your Customer -- a digital process for verifying a customer's identity online.
+    \item[embedding] A fixed-length numerical vector representing an entity (such as a face) in a high-dimensional space.
+    \item[FastAPI] A modern, fast Python web framework for building APIs with automatic OpenAPI documentation.
+    \item[GAN] Generative Adversarial Network -- a class of AI models capable of generating realistic synthetic images.
+    \item[Gradio] An open-source library for building and sharing ML model demos with web interfaces and APIs.
+    \item[HuggingFace] A platform hosting thousands of pre-trained AI models accessible via a REST Inference API.
+    \item[JWT] JSON Web Token -- a compact, URL-safe means of representing claims (such as identity and role) between two parties.
+    \item[KYC] Know Your Customer -- a regulatory requirement for financial institutions to verify customer identities.
+    \item[liveness detection] A biometric technique to verify that a presented face belongs to a live person, preventing spoofing with static images.
+    \item[MongoDB] A NoSQL document database that stores data as JSON-like documents.
+    \item[MVC] Model-View-Controller -- a software design pattern separating data, presentation, and control logic.
+    \item[NFC] Near Field Communication -- a short-range wireless protocol (used in some advanced KYC setups to read electronic document chips).
+    \item[OWASP] Open Web Application Security Project -- a nonprofit organisation focused on improving software security.
+    \item[OCR] Optical Character Recognition -- technology that converts images of text into machine-readable text.
+    \item[ORM] Object-Relational Mapping -- a technique allowing developers to interact with a database using object-oriented code.
+    \item[RBAC] Role-Based Access Control -- access restrictions based on a user's assigned role.
+    \item[RBI] Reserve Bank of India -- India's central banking authority, which mandates KYC compliance for financial institutions.
+    \item[React] A JavaScript library for building user interfaces using reusable components.
+    \item[Redis] An in-memory data structure store used as a database, cache, and message broker.
+    \item[REST] Representational State Transfer -- an architectural style for distributed hypermedia systems.
+    \item[SQLAlchemy] A Python SQL toolkit and ORM providing full SQL expression and database access capabilities.
+    \item[SPA] Single-Page Application -- a web application that loads a single HTML page and dynamically updates content.
+    \item[SRS] Software Requirements Specification -- a document describing the functional and non-functional requirements of a system.
+    \item[TLS] Transport Layer Security -- a cryptographic protocol for securing communications over a network.
+    \item[TypeScript] A strongly typed superset of JavaScript that compiles to plain JavaScript.
+    \item[UUID] Universally Unique Identifier -- a 128-bit identifier standard used as database primary keys.
+    \item[V-CIP] Video Customer Identification Process -- RBI-mandated video-based KYC verification.
+    \item[Vite] A build tool for modern web projects providing fast development server and production bundling.
+    \item[VLM] Vision-Language Model -- an AI model that processes both image and text inputs.
+    \item[WebRTC] Web Real-Time Communication -- a browser API enabling real-time audio, video, and data sharing.
+\end{description}
+
+% =====================================================================
+%  APPENDIX A: API ENDPOINT CATALOG
+% =====================================================================
+\appendix
+\chapter{API Endpoint Catalog}
+
+\begin{longtable}{@{}p{1cm}p{5cm}p{1.5cm}p{2.5cm}p{4cm}@{}}
+\caption{Complete REST API Endpoint Reference} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Auth} & \textbf{Role} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{\tablename\ \thetable{} -- continued} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Auth} & \textbf{Role} & \textbf{Description} \\
+\midrule
+\endhead
+POST & /api/v1/auth/register & No & Any & Register a new user \\
+POST & /api/v1/auth/login & No & Any & Login and get JWT \\
+GET & /api/v1/auth/me & Yes & Any & Get current user profile \\
+POST & /api/v1/features/document-ocr & Yes & Any & Upload document + run OCR \\
+POST & /api/v1/features/face-match & Yes & Any & Submit selfie + run face match \\
+POST & /api/v1/features/deepfake & Yes & Any & Run deepfake detection \\
+POST & /api/v1/features/liveness & Yes & Any & Run liveness detection \\
+POST & /api/v1/features/final-report & Yes & Any & Generate final decision + PDF \\
+GET & /api/v1/features/report/\{id\} & Yes & Any & Download PDF report \\
+GET & /api/v1/features/images/\{key\} & Yes & Any & Retrieve protected image \\
+GET & /api/v1/analytics/overview & Yes & Admin/Rev & KPI overview counts \\
+GET & /api/v1/analytics/trends & Yes & Admin/Rev & 30-day daily trend data \\
+GET & /api/v1/analytics/latency & Yes & Admin/Rev & Stage latency metrics \\
+GET & /api/v1/admin/reviews & Yes & Admin/Rev & List flagged sessions \\
+POST & /api/v1/admin/reviews/\{id\} & Yes & Admin/Rev & Submit review decision \\
+GET & /api/v1/admin/audit-logs & Yes & Admin & Query audit log entries \\
+GET & /api/v1/system/health & No & Any & Service health check \\
+\bottomrule
+\end{longtable}
+
+% =====================================================================
+%  APPENDIX B: DATABASE SCHEMA SUMMARY
+% =====================================================================
+\chapter{Database Schema Summary}
+
+\begin{table}[H]
+\centering
+\caption{users Table Schema}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Description} \\
+\midrule
+id & UUID & PK, default gen & Unique user identifier \\
+full\_name & VARCHAR(255) & NOT NULL & Full legal name \\
+email & VARCHAR(255) & UNIQUE & Email address \\
+phone & VARCHAR(20) & UNIQUE & Phone number \\
+password\_hash & VARCHAR(255) & NOT NULL & bcrypt hash \\
+role & VARCHAR(20) & CHECK & user/admin/reviewer \\
+kyc\_status & VARCHAR(30) & CHECK & pending/approved/rejected/under\_review \\
+created\_at & TIMESTAMPTZ & DEFAULT now() & Creation timestamp \\
+updated\_at & TIMESTAMPTZ & DEFAULT now() & Last update timestamp \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{verification\_sessions Table Schema}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Description} \\
+\midrule
+id & UUID & PK & Session identifier \\
+user\_id & UUID & FK users & Owner user \\
+document\_id & UUID & FK documents & Reference document \\
+live\_image\_path & VARCHAR & & Selfie file path \\
+live\_face\_crop\_path & VARCHAR & & Extracted live face path \\
+face\_match\_score & FLOAT & CHECK 0--100 & Face similarity score \\
+deepfake\_score & FLOAT & CHECK 0--100 & Deepfake probability \\
+liveness\_score & FLOAT & CHECK 0--100 & Liveness confidence \\
+final\_score & FLOAT & CHECK 0--100 & Composite decision score \\
+status & VARCHAR(20) & CHECK & pending/approved/manual\_review/rejected \\
+report\_path & VARCHAR & & Generated PDF path \\
+created\_at & TIMESTAMPTZ & DEFAULT & Creation timestamp \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =====================================================================
+%  APPENDIX C: TECHNOLOGIES AND VERSIONS
+% =====================================================================
+\chapter{Technologies and Library Versions}
+
+\begin{table}[H]
+\centering
+\caption{Backend Technology Stack}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Component} & \textbf{Library/Tool} & \textbf{Version} \\
+\midrule
+Language & Python & 3.12 \\
+Web Framework & FastAPI & 0.115+ \\
+ASGI Server & Uvicorn & 0.30+ \\
+ORM & SQLAlchemy & 2.0 (async) \\
+Database Migration & Alembic & 1.13+ \\
+Auth & python-jose & 3.3+ \\
+Password Hashing & passlib[bcrypt] & 1.7+ \\
+Validation & Pydantic & 2.x \\
+Rate Limiting & slowapi & 0.1+ \\
+OCR & google-genai & 1.x \\
+Face Detection & dlib & 19.24 \\
+Image Processing & OpenCV (cv2) & 4.x \\
+Deepfake Detection & httpx (HF API) & 0.27+ \\
+Face Services & gradio-client & 1.x \\
+PDF Generation & WeasyPrint & 62+ \\
+Audit Logging & motor (MongoDB async) & 3.x \\
+Caching & redis (async) & 5.x \\
+Testing & pytest, pytest-asyncio & 8.x \\
+Local Database & SQLite & (built-in) \\
+Production Database & PostgreSQL & 15 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Frontend Technology Stack}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Component} & \textbf{Library/Tool} & \textbf{Version} \\
+\midrule
+Language & TypeScript & 5.6 \\
+UI Framework & React & 18 \\
+Build Tool & Vite & 5 \\
+Charts & Chart.js via react-chartjs-2 & 4.x \\
+HTTP Client & Fetch API & (built-in) \\
+State Management & React Hooks (useState, useEffect) & (built-in) \\
+Webcam & MediaDevices API (getUserMedia) & (browser) \\
+Testing & Vitest + @testing-library/react & 2.x \\
+Styling & Custom CSS (no framework) & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Infrastructure and Deployment Stack}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Component} & \textbf{Tool} & \textbf{Version} \\
+\midrule
+Containerisation & Docker & 26+ \\
+Orchestration & Docker Compose & 2.x \\
+Reverse Proxy & Nginx & 1.25+ \\
+Structured DB & PostgreSQL & 15 \\
+Audit DB & MongoDB & 6 \\
+Cache / Rate Limit & Redis & 7 \\
+Version Control & Git & 2.x \\
+Repository & GitHub & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

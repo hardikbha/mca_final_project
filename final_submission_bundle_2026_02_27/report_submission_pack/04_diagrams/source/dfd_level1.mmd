@@ -1,0 +1,45 @@
+flowchart LR
+    EU[End User]
+    AD[Admin Reviewer]
+
+    P1((1.0 User Management))
+    P2((2.0 Document Processing))
+    P3((3.0 Face Verification))
+    P4((4.0 Deepfake and Liveness))
+    P5((5.0 Decision Engine))
+    P6((6.0 Admin Review))
+    P7((7.0 Reporting and Analytics))
+
+    D1[(Users DB)]
+    D2[(Documents DB)]
+    D3[(Verification Sessions DB)]
+    D4[(Admin Reviews DB)]
+    D5[(Audit Store)]
+
+    EU --> P1
+    P1 --> D1
+
+    EU --> P2
+    P2 --> D2
+
+    D2 --> P3
+    EU --> P3
+    P3 --> D3
+
+    EU --> P4
+    P4 --> D3
+
+    D3 --> P5
+    P5 --> D3
+
+    AD --> P6
+    P6 --> D4
+    P6 --> D1
+    P6 --> D3
+
+    D1 --> P7
+    D3 --> P7
+    D4 --> P7
+    P7 --> D5
+    P7 --> EU
+    P7 --> AD

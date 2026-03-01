@@ -1,0 +1,40 @@
+\chapter{Detailed Test Case Matrix}
+\label{app:test-matrix}
+
+\small
+\begin{longtable}{p{1.6cm}p{5.8cm}p{3.2cm}p{3.8cm}}
+\caption{Consolidated Test Case Matrix}\\
+\toprule
+ID & Scenario & Expected Result & Status \\
+\midrule
+AUTH-01 & Register valid user & 201 with token & Pass \\
+AUTH-02 & Duplicate registration & 409 conflict & Pass \\
+AUTH-03 & Login valid fixed admin & 200 with admin role & Pass \\
+AUTH-04 & Login invalid user/password & 401 unauthorized & Pass \\
+AUTH-05 & \\texttt{/me} without token & 401/403 & Pass \\
+DOC-01 & Upload valid PAN image & Successful upload & Pending manual evidence \\
+DOC-02 & Upload unsupported file type & 400 validation error & Pending \\
+DOC-03 & Upload oversized file & 413 payload too large & Pending \\
+DOC-04 & Process existing uploaded document & OCR payload returned & Pending \\
+DOC-05 & Process missing storage file & 404 not found & Pending \\
+BIO-01 & Face-match before document stage & 400 prerequisite message & Pending \\
+BIO-02 & Face-match valid case & score + result payload & Pending \\
+BIO-03 & Deepfake on uploaded image & deepfake score payload & Pending \\
+BIO-04 & Liveness after face stage & liveness score payload & Pending \\
+BIO-05 & Simulated external timeout & 502 gateway error & Pending \\
+DEC-01 & Final report before all stages & 400 missing stages detail & Pass \\
+DEC-02 & Final report with invalid email & 400 validation error & Pending \\
+DEC-03 & Final report with full stage data & report id + URL & Pending \\
+ADM-01 & Admin loads flagged queue & session list returned & Pending \\
+ADM-02 & Review non-flagged session & 409 conflict & Pending \\
+ADM-03 & Reject without reason & request validation failure & Pending \\
+ADM-04 & Approve flagged session & statuses updated & Pending \\
+ANA-01 & Analytics overview endpoint & aggregate payload & Pending \\
+ANA-02 & Analytics trends endpoint & date-series payload & Pending \\
+ANA-03 & Analytics latency endpoint & stage latency payload & Pending \\
+SEC-01 & User access to admin route & 403 forbidden & Pending \\
+SEC-02 & JWT tampering & auth failure & Pending \\
+SEC-03 & Rate-limit stress on login & throttled response & Pending \\
+SEC-04 & Path traversal attempt on image fetch & blocked/invalid path & Pending \\
+\bottomrule
+\end{longtable}

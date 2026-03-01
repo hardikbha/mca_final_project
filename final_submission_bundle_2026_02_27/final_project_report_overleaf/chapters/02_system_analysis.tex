@@ -1,0 +1,57 @@
+\chapter{System Analysis and Identification of Need}
+
+\section{Background}
+Organizations performing remote onboarding face a trade-off between user convenience and security assurance. Manual verification pipelines increase turnaround time and cost, while simplistic automation increases fraud exposure. Therefore, an implementation that combines multiple evidence streams is necessary.
+
+\section{Existing System Limitations}
+\begin{enumerate}[label=\textbf{L\arabic*:}]
+\item \textbf{Single-factor evidence:} document-only or selfie-only checks are bypassable.
+\item \textbf{Manual review bottlenecks:} human-only validation reduces throughput.
+\item \textbf{Poor fraud resilience:} deepfake and replay attacks remain undetected.
+\item \textbf{Insufficient traceability:} weak audit trails hinder compliance.
+\item \textbf{Limited explainability:} users cannot understand why cases are flagged.
+\end{enumerate}
+
+\section{Need Identification}
+The implementation was designed to satisfy the following practical needs:
+\begin{itemize}
+\item Reduce false acceptance risk through combined document + biometric checks.
+\item Maintain a usable workflow for normal users.
+\item Provide explicit review path for uncertain outcomes.
+\item Produce verifiable evidence through stored stage outputs and generated reports.
+\item Keep the architecture modular for future provider/model replacement.
+\end{itemize}
+
+\section{Feasibility Analysis}
+\subsection{Technical Feasibility}
+The selected technology stack (FastAPI, React, relational DB, Redis, modular service integrations) supports the target pipeline. External inference APIs provide practical model integration without requiring local training infrastructure.
+
+\subsection{Operational Feasibility}
+The system provides separate user and reviewer workflows, making it suitable for deployment in teams that require manual escalation of risky cases.
+
+\subsection{Economic Feasibility}
+A staged implementation was chosen to optimize cost. Initial inference integrations use hosted APIs, avoiding immediate GPU infrastructure expenditure.
+
+\subsection{Risk Feasibility}
+Primary technical risks include dependence on external inference availability, false positives in risk stages, and uneven real-world image quality.
+
+\section{Assumptions and Constraints}
+\begin{itemize}
+\item Users submit images with acceptable quality and visible facial features.
+\item Network connectivity is available for external model calls.
+\item Reviewer action is available for flagged edge cases.
+\item Storage and retention are managed under defined policy outside application logic.
+\end{itemize}
+
+\section{Stakeholder Expectations}
+\begin{longtable}{p{3.2cm}p{4.8cm}p{6.5cm}}
+\caption{Stakeholder Need Matrix}\\
+\toprule
+Stakeholder & Primary Need & Implementation Response \\
+\midrule
+End User & Fast and predictable verification & Guided stage-wise workflow and clear status feedback \\
+Reviewer/Admin & Reliable flagged-case triage & Queue APIs and decision actions (approve/reject/reupload) \\
+Institution/Operator & Compliance and traceability & Audit logging + report generation + persistent session records \\
+System Integrator (future) & API-driven onboarding hooks & OpenAPI-based endpoint catalog and modular routes \\
+\bottomrule
+\end{longtable}

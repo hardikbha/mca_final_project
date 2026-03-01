@@ -82,26 +82,34 @@ export async function runFaceMatch(token: string, file: File): Promise<ApiResult
 }
 
 export async function runDeepfake(token: string, file?: File): Promise<ApiResult<DeepfakeResult>> {
-  const formData = new FormData();
   if (file) {
+    const formData = new FormData();
     formData.append("live_image", file);
+    return apiCall<DeepfakeResult>(`${API_BASE}/api/v1/features/deepfake`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
   }
   return apiCall<DeepfakeResult>(`${API_BASE}/api/v1/features/deepfake`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
-    body: formData,
   });
 }
 
 export async function runLiveness(token: string, file?: File): Promise<ApiResult<LivenessResult>> {
-  const formData = new FormData();
   if (file) {
+    const formData = new FormData();
     formData.append("single_image", file);
+    return apiCall<LivenessResult>(`${API_BASE}/api/v1/features/liveness`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
   }
   return apiCall<LivenessResult>(`${API_BASE}/api/v1/features/liveness`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
-    body: formData,
   });
 }
 

@@ -1,0 +1,74 @@
+\chapter{System Design}
+
+\section{Design Goals}
+The system design emphasizes modular separation, traceability of verification stages, controlled failure behavior, and readiness for future component replacement.
+
+\section{Module Architecture}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{architecture_overview.png}
+\caption{Logical architecture with service decomposition}
+\label{fig:logical-architecture}
+\end{figure}
+
+\subsection{Backend Route Modules}
+\begin{itemize}
+\item \texttt{auth}: registration, login, and current-user retrieval.
+\item \texttt{documents}: upload and OCR-process persistence.
+\item \texttt{features}: stage-by-stage pipeline and final report generation.
+\item \texttt{verification}: verification session persistence workflow.
+\item \texttt{admin/reviews}: review queue and decision update flow.
+\item \texttt{analytics}: dashboard-ready aggregate metrics.
+\item \texttt{audit}: audit retrieval and logging support.
+\end{itemize}
+
+\subsection{Service Modules}
+\begin{itemize}
+\item document processing service for extraction/validation/quality.
+\item face extraction and external face similarity service wrapper.
+\item deepfake inference parser wrapper.
+\item liveness inference wrapper.
+\item email service abstraction.
+\item cache service and audit service.
+\end{itemize}
+
+\section{Data Integrity and Constraints}
+\subsection{Database Integrity Rules}
+\begin{enumerate}
+\item Unique constraints on user email and phone.
+\item Foreign key constraints preserving ownership and review linkage.
+\item Score range check constraints on verification score fields.
+\item Rejection-reason condition for admin rejection decisions.
+\end{enumerate}
+
+\subsection{Object/Data Modeling Rationale}
+JSON fields are used where stage payloads are semi-structured and may evolve (e.g., OCR extracted data, quality checks). Enumerations constrain critical state fields (role, kyc status, verification status).
+
+\section{User Interface Design}
+\subsection{Design Principles}
+\begin{itemize}
+\item Stage visibility: user always sees current step and pending actions.
+\item Feedback clarity: each API action returns usable status/error messages.
+\item Role-aware views: reviewer/admin-only controls are restricted.
+\item Report availability: final stage provides downloadable report output.
+\end{itemize}
+
+\subsection{Core UI Flows}
+\begin{enumerate}
+\item Login/Register
+\item Document upload and processing
+\item Face/deepfake/liveness execution
+\item Final decision generation and report download
+\item Admin review queue and decisions
+\end{enumerate}
+
+\section{Procedural and Object-Oriented Design}
+The backend design blends procedural route orchestration with object-relational domain models. Routes handle request validation and state transitions, while services encapsulate specialized logic for OCR/inference/utility operations.
+
+\section{Error Handling and Validation Design}
+\begin{itemize}
+\item Input errors return client-facing 4xx responses with detail messages.
+\item External service failures return controlled 5xx gateway responses.
+\item Missing prerequisites (e.g., stage order mismatch) return explicit 400 details.
+\item Critical DB integrity conditions are protected at schema level.
+\end{itemize}

@@ -1,0 +1,57 @@
+\chapter{Testing Techniques, Strategies, and Reports}
+
+\section{Testing Approach}
+Testing was carried out using a combination of automated smoke/component tests and planned manual system-level validation for full workflow evidence.
+
+\section{Automated Test Evidence}
+\begin{itemize}
+\item Backend tests: 11 passed.
+\item Frontend tests: 10 passed.
+\end{itemize}
+
+These baseline tests verify authentication behavior, feature endpoint accessibility, and selected UI component behavior.
+
+\section{Testing Types Applied}
+\subsection{Unit and Component Validation}
+Focused on individual route behavior and UI components.
+
+\subsection{Integration Validation}
+Focused on token-protected API interactions and stage transition preconditions.
+
+\subsection{System Testing}
+Planned and partially executed end-to-end scenarios include:
+\begin{enumerate}
+\item user onboarding and authentication,
+\item document processing,
+\item full verification stage sequence,
+\item final report generation,
+\item admin review closure.
+\end{enumerate}
+
+\section{Sample Test Report Table}
+\begin{longtable}{p{1.7cm}p{5.8cm}p{3.2cm}p{3.7cm}}
+\caption{Representative Test Outcomes}\\
+\toprule
+Test ID & Scenario & Expected & Status \\
+\midrule
+AUTH-01 & Register valid user & 201 + token & Pass \\
+AUTH-02 & Duplicate registration & 409 conflict & Pass \\
+AUTH-03 & Login fixed admin & 200 + role admin & Pass \\
+DOC-02 & Unsupported upload type & 400 validation error & Planned/Manual \\
+BIO-01 & Face match before document stage & 400 prerequisite error & Planned/Manual \\
+DEC-01 & Final report without all stages & 400 missing stages & Pass \\
+ADM-01 & Load flagged queue as admin & queue payload returned & Planned/Manual \\
+SEC-03 & Login rate burst & throttled response & Planned/Manual \\
+\bottomrule
+\end{longtable}
+
+\section{Debugging and Improvement Notes}
+\begin{itemize}
+\item Improved stage-by-stage error messaging for missing prerequisites.
+\item Added defensive parsing for external model output formats.
+\item Added file validation guards for empty/oversized/invalid MIME uploads.
+\item Added role guard enforcement for admin review and analytics routes.
+\end{itemize}
+
+\section{Residual Testing Gap}
+Current automated suite is strong as a baseline but should be extended with deeper negative, performance, and security scenario evidence for final academic documentation strength.

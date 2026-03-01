@@ -1,0 +1,105 @@
+\chapter{System Modeling and Diagrams}
+
+\section{Modeling Overview}
+This chapter presents implementation-aligned models required for system analysis and design documentation.
+
+\section{Data Flow Diagrams}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{dfd_level0.png}
+\caption{DFD Level 0 (context-level interaction)}
+\label{fig:dfd0}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{dfd_level1.png}
+\caption{DFD Level 1 (module-level decomposition)}
+\label{fig:dfd1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{dfd_l1.png}
+\caption{Approved synopsis DFD Level 1}
+\label{fig:dfd1-approved}
+\end{figure}
+
+\section{Use-Case Model}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{use_case_diagram.png}
+\caption{Use-case view for user and admin actors}
+\label{fig:usecase}
+\end{figure}
+
+\section{Activity Model}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{activity_workflow.png}
+\caption{End-to-end activity workflow with manual review branch}
+\label{fig:activity}
+\end{figure}
+
+\section{Sequence/Interaction Models}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.86\textwidth]{sequence_admin_review.png}
+\caption{Admin review sequence}
+\label{fig:seq-admin}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.32\textwidth]{sequence_user_verification.png}
+\caption{User verification stage sequence}
+\label{fig:seq-user}
+\end{figure}
+
+\section{State and Control Flow Models}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.52\textwidth]{state_verification_session.png}
+\caption{Verification session state transitions}
+\label{fig:state-session}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.33\textwidth]{decision_control_flow.png}
+\caption{Decision control flow using stage thresholds}
+\label{fig:control-flow}
+\end{figure}
+
+\section{Data and Class Models}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{er_database.png}
+\caption{Entity relationship model (implementation view)}
+\label{fig:er}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{er_diagram.png}
+\caption{ER diagram from approved synopsis assets}
+\label{fig:er-approved}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{class_backend_domain.png}
+\caption{Backend domain class mapping}
+\label{fig:class-domain}
+\end{figure}
+
+\section{Deployment Model}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{deployment_diagram.png}
+\caption{Deployment model with service and integration boundaries}
+\label{fig:deployment}
+\end{figure}
+
+\section{Modeling Notes}
+All diagrams are generated from implementation-aligned source files in the project packaging folder. They can be regenerated or refined as system components evolve.

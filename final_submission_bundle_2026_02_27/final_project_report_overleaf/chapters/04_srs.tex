@@ -1,0 +1,78 @@
+\chapter{Software Requirements Specification (SRS)}
+
+\section{Functional Requirements}
+\begin{longtable}{p{1.7cm}p{5.2cm}p{2.8cm}p{4.6cm}}
+\caption{Functional Requirement Mapping}\\
+\toprule
+ID & Requirement & Priority & Implementation Evidence \\
+\midrule
+FR-01 & User registration and login & High & \\texttt{/api/v1/auth/register}, \\texttt{/api/v1/auth/login}, \\texttt{/api/v1/auth/me} \\
+FR-02 & Upload identity documents & High & \\texttt{/api/v1/documents/upload}, type and size validation \\
+FR-03 & OCR extraction and validation & High & \\texttt{/api/v1/documents/\\{id\\}/process}, \\texttt{/api/v1/features/document-ocr} \\
+FR-04 & Face match between ID and selfie & High & \\texttt{/api/v1/features/face-match} with external similarity inference \\
+FR-05 & Deepfake risk scoring & High & \\texttt{/api/v1/features/deepfake} \\
+FR-06 & Liveness verification & High & \\texttt{/api/v1/features/liveness} \\
+FR-07 & Final decision and report generation & High & \\texttt{/api/v1/features/final-report}, \\texttt{/api/v1/features/reports/\\{report\\_id\\}} \\
+FR-08 & Verification session persistence & Medium & \\texttt{/api/v1/verification-sessions/upload} and listing endpoints \\
+FR-09 & Admin manual review flow & High & \\texttt{/api/v1/admin/reviews/queue} and decision endpoint \\
+FR-10 & Operational analytics & Medium & \\texttt{/api/v1/analytics/overview}, \\texttt{/api/v1/analytics/trends}, \\texttt{/api/v1/analytics/latency} \\
+FR-11 & Audit event logging & Medium & Auth/review audit service to MongoDB \\
+\bottomrule
+\end{longtable}
+
+\section{Non-Functional Requirements}
+\begin{longtable}{p{1.7cm}p{5.2cm}p{2.8cm}p{4.6cm}}
+\caption{Non-Functional Requirement Mapping}\\
+\toprule
+ID & Requirement & Target & Implementation Status \\
+\midrule
+NFR-01 & Security authentication & Token-based secure APIs & Implemented (JWT + bcrypt) \\
+NFR-02 & Role-based authorization & Restrict reviewer/admin routes & Implemented \\
+NFR-03 & Data validation & Strict type/size input checks & Implemented on key upload paths \\
+NFR-04 & Reliability & Service status and health checks & Implemented \\
+NFR-05 & Maintainability & Modular service and route separation & Implemented \\
+NFR-06 & Observability & Error response + audit trails & Partially implemented \\
+NFR-07 & Scalability baseline & Containerized multi-service deployment & Implemented \\
+NFR-08 & Compliance readiness & Documentation and traceability support & Partially implemented \\
+\bottomrule
+\end{longtable}
+
+\section{External Interface Requirements}
+\subsection{User Interface}
+A React-based web interface provides:
+\begin{itemize}
+\item authentication forms,
+\item document submission actions,
+\item verification stage execution,
+\item report generation and download,
+\item admin review and analytics views.
+\end{itemize}
+
+\subsection{API Interface}
+The backend exposes REST endpoints with OpenAPI schema and JSON/multipart payload handling. Endpoint table is included in Appendix~\ref{app:api-catalog}.
+
+\subsection{Data Interface}
+\begin{itemize}
+\item Relational data: user profiles, documents, sessions, reviews.
+\item Audit collection: event-level trace records.
+\item Cache/limits: Redis-backed helper service.
+\end{itemize}
+
+\section{Validation Rules}
+\begin{itemize}
+\item File MIME type and extension alignment checks.
+\item Upload size caps for image/document/video inputs.
+\item Regex-based validation for key document number formats.
+\item Score range constraints at database level (0 to 100 checks).
+\end{itemize}
+
+\section{Acceptance Criteria}
+The implementation is considered acceptable for v1 when:
+\begin{enumerate}
+\item complete auth flow works,
+\item document upload and process flow works,
+\item face/deepfake/liveness stages return results,
+\item final report generation succeeds after all stages,
+\item admin review operations update verification status,
+\item automated baseline tests pass.
+\end{enumerate}

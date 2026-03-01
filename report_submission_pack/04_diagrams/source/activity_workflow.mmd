@@ -1,0 +1,28 @@
+flowchart TD
+    S([Start]) --> R[Register and Login]
+    R --> D1[Upload Identity Document]
+    D1 --> D2[Run OCR and Validation]
+    D2 --> Q1{Document Stage OK?}
+    Q1 -- No --> M1[Mark for Manual Review]
+    Q1 -- Yes --> F1[Upload Selfie]
+
+    F1 --> F2[Run Face Match]
+    F2 --> D3[Run Deepfake Check]
+    D3 --> L1[Run Liveness Check]
+
+    L1 --> DEC[Compute Final Score and Decision]
+    DEC --> Q2{Auto-Approve Rules Met?}
+
+    Q2 -- Yes --> AP[Approve and Generate PDF]
+    Q2 -- No --> FL[Flag for Admin Review]
+
+    FL --> AR[Admin Decision]
+    AR --> Q3{Decision}
+    Q3 -- Approved --> AP
+    Q3 -- Rejected --> RJ[Reject and Notify]
+    Q3 -- Reupload --> RU[Request Re-upload]
+
+    AP --> E([End])
+    RJ --> E
+    RU --> E
+    M1 --> E

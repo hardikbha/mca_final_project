@@ -1,0 +1,12 @@
+flowchart LR
+    U[users\nPK user_id\nemail UNIQUE\nphone UNIQUE\nrole\nkyc_status]
+    D[documents\nPK document_id\nFK user_id\ndocument_type\nocr_extracted_data]
+    VS[verification_sessions\nPK session_id\nFK user_id\nmatch_score\nliveness_score\ndeepfake_probability\nstatus]
+    AR[admin_reviews\nPK review_id\nFK session_id\nFK admin_id\nreview_decision\nrejection_reason]
+    AL[audit_logs\nPK log_id\nFK user_id\naction\ntimestamp]
+
+    U -->|1 to many| D
+    U -->|1 to many| VS
+    U -->|1 to many| AL
+    VS -->|1 to 0..1| AR
+    U -->|1 to many as admin| AR

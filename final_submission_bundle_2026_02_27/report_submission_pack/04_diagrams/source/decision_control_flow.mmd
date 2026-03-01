@@ -1,0 +1,24 @@
+flowchart TD
+    S([Start Aggregation]) --> D1[Read document_forgery_score]
+    D1 --> D2[Read face_match_score]
+    D2 --> D3[Read deepfake_score]
+    D3 --> D4[Read liveness_score]
+
+    D4 --> C1[Compute document_authenticity = 100 - forgery]
+    C1 --> C2[Compute deepfake_authenticity = 100 - deepfake]
+    C2 --> C3[Compute final_score average]
+
+    C3 --> Q1{Forgery <= 45?}
+    Q1 -- No --> MR[manual_review]
+    Q1 -- Yes --> Q2{Face Match >= 70?}
+    Q2 -- No --> MR
+    Q2 -- Yes --> Q3{Deepfake <= 40?}
+    Q3 -- No --> MR
+    Q3 -- Yes --> Q4{Liveness >= 65?}
+    Q4 -- No --> MR
+    Q4 -- Yes --> Q5{Final Score >= 70?}
+    Q5 -- No --> MR
+    Q5 -- Yes --> AP[approved]
+
+    AP --> E([End])
+    MR --> E

@@ -1,0 +1,1166 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{parskip}
+% Standard enumerate used throughout
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue,
+    pdftitle={AI-Based Real-Time eKYC System for Deepfake-Free Identity Verification},
+    pdfauthor={Hardik Sharma}
+}
+
+% Code listing style
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{orange},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    tabsize=4,
+    captionpos=b
+}
+
+\lstdefinestyle{tsstyle}{
+    language=Java,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{orange},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    tabsize=2,
+    captionpos=b
+}
+
+\lstdefinestyle{sqlstyle}{
+    language=SQL,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{orange},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    tabsize=4,
+    captionpos=b
+}
+
+% Header/Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small AI-Based Real-Time eKYC System}
+\fancyhead[R]{\small Hardik Sharma -- 2353777736}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{15pt}
+
+
+\setstretch{1.4}
+\setlength{\parskip}{0.5em}
+
+\graphicspath{{./04_diagrams/rendered/}{./04_diagrams/approved_synopsis/}}
+
+\begin{document}
+
+% =====================================================================
+%  TITLE PAGE
+% =====================================================================
+\begin{titlepage}
+    \centering
+    \vspace*{0.5cm}
+
+    {\Large \textbf{INDIRA GANDHI NATIONAL OPEN UNIVERSITY}}\\[0.3cm]
+    {\large School of Computer and Information Sciences}\\[0.2cm]
+    {\large Maidan Garhi, New Delhi -- 110068}\\[1cm]
+
+    \rule{\textwidth}{1.5pt}\\[0.4cm]
+    {\LARGE \textbf{MCSP-232 PROJECT REPORT}}\\[0.4cm]
+    \rule{\textwidth}{1.5pt}\\[1.2cm]
+
+    {\LARGE \textbf{AI-Based Real-Time eKYC System for\\[0.3cm]
+    Deepfake-Free Identity Verification}}\\[2cm]
+
+    \begin{flushleft}
+    \large
+    \textbf{Submitted by:}\\[0.2cm]
+    Hardik Sharma\\
+    Enrolment No: 2353777736\\
+    Programme: MCA (MCAOL)\\[0.8cm]
+
+    \textbf{Under the Guidance of:}\\[0.2cm]
+    Anshul Sharma\\
+    AI Engineer\\
+    IDS Infotech Ltd., Chandigarh\\[1cm]
+    \end{flushleft}
+
+    \vfill
+    {\large \textbf{July 2025}}
+
+\end{titlepage}
+
+% =====================================================================
+%  CERTIFICATE
+% =====================================================================
+\newpage
+\thispagestyle{empty}
+\begin{center}
+    {\Large \textbf{CERTIFICATE}}
+\end{center}
+\vspace{1cm}
+
+This is to certify that the project report entitled \textbf{``AI-Based Real-Time eKYC System for Deepfake-Free Identity Verification''} submitted to Indira Gandhi National Open University in partial fulfilment of the requirements for the award of the degree of \textbf{Master of Computer Applications (MCA)} is an authentic record of bonafide work carried out by \textbf{Mr.~Hardik Sharma} (Enrolment No.~\textbf{2353777736}) under my guidance and supervision.
+
+The matter embodied in this report has not been submitted for the award of any other degree or diploma to this University or any other institution.
+
+\vspace{2cm}
+
+\begin{minipage}[t]{0.45\textwidth}
+    \rule{6cm}{0.5pt}\\
+    \textbf{Signature of Supervisor}\\[0.4cm]
+    \textbf{Name:} Anshul Sharma\\
+    \textbf{Designation:} AI Engineer\\
+    \textbf{Organization:} IDS Infotech Ltd.\\
+    \textbf{Date:} \underline{\hspace{3cm}}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.45\textwidth}
+    \rule{6cm}{0.5pt}\\
+    \textbf{Signature of Student}\\[0.4cm]
+    \textbf{Name:} Hardik Sharma\\
+    \textbf{Enrolment No:} 2353777736\\
+    \textbf{Date:} \underline{\hspace{3cm}}
+\end{minipage}
+
+\vspace{2cm}
+\begin{center}
+    \rule{6cm}{0.5pt}\\
+    \textbf{Signature of Coordinator / Study Centre}\\[0.3cm]
+    \textbf{Date:} \underline{\hspace{3cm}}
+\end{center}
+
+% =====================================================================
+%  DECLARATION
+% =====================================================================
+\newpage
+\thispagestyle{empty}
+\begin{center}
+    {\Large \textbf{DECLARATION}}
+\end{center}
+\vspace{1cm}
+
+I, \textbf{Hardik Sharma}, Enrolment No.~\textbf{2353777736}, a student of Master of Computer Applications (MCA) at Indira Gandhi National Open University, hereby declare that the project work presented in this report entitled \textbf{``AI-Based Real-Time eKYC System for Deepfake-Free Identity Verification''} has been carried out by me under the supervision of Mr.~Anshul Sharma, AI Engineer, IDS Infotech Ltd., Chandigarh.
+
+I declare that:
+\begin{enumerate}
+    \item This work is entirely my own and has not been submitted to any other university or institution for the award of any degree or diploma.
+    \item All information, data, facts and figures presented in this report are correct to the best of my knowledge.
+    \item I have acknowledged all sources of information and have cited them appropriately wherever they have been used.
+    \item I understand that any falsification or plagiarism is a serious academic offence and may result in cancellation of the degree.
+\end{enumerate}
+
+\vspace{2cm}
+
+\begin{flushleft}
+\rule{6cm}{0.5pt}\\
+\textbf{Hardik Sharma}\\
+Enrolment No: 2353777736\\
+MCA (MCAOL), IGNOU\\
+Date: \underline{\hspace{3cm}}
+\end{flushleft}
+
+% =====================================================================
+%  ACKNOWLEDGEMENTS
+% =====================================================================
+\newpage
+\thispagestyle{empty}
+\begin{center}
+    {\Large \textbf{ACKNOWLEDGEMENTS}}
+\end{center}
+\vspace{0.5cm}
+
+I am grateful to all who contributed to the successful completion of this project.
+
+I express my sincere gratitude to my project supervisor \textbf{Mr.~Anshul Sharma}, AI Engineer at IDS Infotech Ltd., Chandigarh, for his invaluable guidance, constant encouragement, and constructive feedback throughout the development of this system. His expertise in artificial intelligence and practical industry insights were indispensable in shaping both the technical direction and the quality of this work.
+
+I would like to thank the \textbf{School of Computer and Information Sciences, IGNOU}, for providing this learning opportunity through the MCSP-232 project course and for the structured guidelines that helped me plan and execute the project systematically.
+
+I am deeply thankful to the open-source community -- particularly the contributors to \textbf{FastAPI, React, SQLAlchemy, Chart.js, dlib, Hugging Face Transformers, and Google Generative AI} -- whose tools form the backbone of this implementation.
+
+Finally, I thank my family and friends for their constant moral support and encouragement throughout the programme.
+
+\vspace{2cm}
+\begin{flushleft}
+\textbf{Hardik Sharma}\\
+Enrolment No: 2353777736
+\end{flushleft}
+
+% =====================================================================
+%  ABSTRACT
+% =====================================================================
+\newpage
+\thispagestyle{empty}
+\begin{center}
+    {\Large \textbf{ABSTRACT}}
+\end{center}
+\vspace{0.5cm}
+
+Digital identity verification has become a cornerstone of modern financial services, with Know Your Customer (KYC) processes mandatory under Reserve Bank of India (RBI) guidelines. However, conventional eKYC systems that rely on static document uploads and simple selfie comparisons are increasingly vulnerable to sophisticated fraud techniques including GAN-generated synthetic faces, face-swap deepfakes, and morphed documents. This project presents the design and implementation of an \textbf{AI-Based Real-Time eKYC System} that addresses these vulnerabilities through a five-stage automated pipeline.
+
+The system integrates \textbf{Google Gemini 2.5 Flash Lite} for multi-document OCR extraction (supporting Aadhaar, PAN, Passport, Driving Licence, and Voter ID), \textbf{dlib-based facial landmark detection} for isolating face regions from identity documents, a \textbf{Gradio-hosted face-similarity model} for biometric face matching with cosine-similarity scoring, a \textbf{HuggingFace deepfake detection model} for identifying AI-generated imagery, and a \textbf{Gradio-hosted liveness detection model} for anti-spoofing verification. An automated decision engine aggregates all scores against configurable thresholds to produce an approval or manual-review verdict, with a generated PDF report summarising all findings.
+
+The backend is implemented in \textbf{Python 3.12 with FastAPI} and asynchronous SQLAlchemy 2.0, backed by SQLite (local development) or PostgreSQL (production), with optional MongoDB for audit logs and Redis for rate limiting. The frontend is built with \textbf{React 18 and TypeScript 5.6} using Vite, featuring a single-page scrollable pipeline interface, a webcam-capture selfie component, and an analytics dashboard with Chart.js visualisations for admin and reviewer roles. The system is containerised using \textbf{Docker Compose} and exposes a fully documented REST API.
+
+Automated testing comprises 11 backend tests (pytest) and 10 frontend component tests (Vitest), all passing. The system demonstrates a practical, extensible architecture for real-time identity verification, providing a foundation that can be extended with mobile applications, blockchain audit trails, and government API integrations.
+
+\textbf{Keywords:} eKYC, deepfake detection, face matching, liveness detection, OCR, FastAPI, React, identity verification, RBAC, JWT.
+
+% =====================================================================
+%  TABLE OF CONTENTS
+% =====================================================================
+\newpage
+\tableofcontents
+
+% =====================================================================
+%  LIST OF FIGURES
+% =====================================================================
+\newpage
+\listoffigures
+
+% =====================================================================
+%  LIST OF TABLES
+% =====================================================================
+\newpage
+\listoftables
+
+% =====================================================================
+%  CHAPTER 1: INTRODUCTION AND OBJECTIVES
+% =====================================================================
+\chapter{Introduction and Objectives}
+
+\section{Background and Context}
+
+The digital revolution in financial services has fundamentally changed the way institutions onboard and verify customers. Electronic Know Your Customer (eKYC) processes allow organisations to verify a customer's identity remotely, replacing the cumbersome physical document submission model with a fully digital workflow. In India, the Reserve Bank of India (RBI) has made digital KYC mandatory for banks, non-banking financial companies (NBFCs), and payment service providers under its Master Direction on KYC (2016, updated 2023), specifying requirements for Video Customer Identification Process (V-CIP), liveness detection, and tamper-proof audit trails.
+
+Despite the convenience of digital onboarding, eKYC fraud has escalated dramatically. The global financial sector reported a \textbf{300\% increase} in deepfake-related fraud attempts between 2020 and 2023. Attackers now routinely use:
+
+\begin{itemize}
+    \item \textbf{GAN-generated synthetic faces}: Photo-realistic images of non-existent people created by Generative Adversarial Networks (GANs).
+    \item \textbf{Face-swap deepfakes}: Videos or images in which an attacker's face is digitally replaced by a victim's face.
+    \item \textbf{Morphed documents}: Identity documents in which biometric photographs have been subtly altered to match an impersonator.
+    \item \textbf{Photo/video replay attacks}: Presenting printed photographs or recorded videos to fool liveness detection cameras.
+\end{itemize}
+
+Existing eKYC systems -- including some commercially deployed ones -- rely on static image similarity scores and basic motion-detection liveness checks that fail against these advanced attacks. There is a clear need for a \textbf{multi-layered, AI-driven verification pipeline} that can simultaneously process document authenticity, biometric face matching, deepfake detection, and liveness verification in near real-time.
+
+\section{Motivation}
+
+The primary motivation for this project is threefold:
+
+\textbf{(1) Regulatory compliance:} RBI mandates robust V-CIP with liveness detection for new-age financial services. Fintech startups and NBFCs face penalties for non-compliant KYC processes.
+
+\textbf{(2) Fraud prevention:} With deepfake generation becoming accessible through freely available tools and pre-trained models, financial institutions are at increasing risk of synthetic identity fraud. A detection layer that screens every submitted selfie against deepfake indicators adds a critical security barrier.
+
+\textbf{(3) Academic and technical exploration:} The project provides an opportunity to integrate multiple state-of-the-art AI services -- large vision-language models for OCR, pre-trained facial recognition pipelines, and neural deepfake detectors -- within a production-grade software architecture, demonstrating how complex AI capabilities can be composed into real-world applications.
+
+\section{Project Objectives}
+
+\subsection{Primary Objective}
+Design, implement, and demonstrate a comprehensive AI-powered eKYC platform that performs multi-stage identity verification including document OCR, face matching, deepfake detection, and liveness analysis, producing a verifiable audit-ready PDF report.
+
+\subsection{Specific Objectives}
+
+\begin{enumerate}
+    \item \textbf{Document OCR and Validation:} Extract identity fields (name, date of birth, document number, address) from Aadhaar, PAN, Passport, Driving Licence, and Voter ID using a Vision-Language Model (VLM), validate extracted fields using document-type-specific regex patterns, and assess document quality.
+
+    \item \textbf{Face Extraction:} Automatically detect and crop the facial photograph embedded within a submitted identity document using dlib's 68-point facial landmark detector, producing a reference face image for subsequent matching.
+
+    \item \textbf{Biometric Face Matching:} Compare the reference face from the document against a live selfie image (uploaded or webcam-captured) using an external face-similarity model, returning a percentage match score with a pass/fail verdict.
+
+    \item \textbf{Deepfake Detection:} Screen every submitted selfie through a pre-trained AI-image detector hosted on HuggingFace Inference API, returning a confidence score indicating the probability that the image is AI-generated or manipulated.
+
+    \item \textbf{Liveness Detection:} Verify that the submitted selfie originates from a live person rather than a static photograph or replay attack using an external liveness model.
+
+    \item \textbf{Automated Decision Engine:} Aggregate document authenticity, face match, deepfake, and liveness scores against configurable thresholds to produce an automated approved or manual\_review decision, along with a composite final score.
+
+    \item \textbf{PDF Report Generation:} Generate a downloadable PDF verification report containing all extracted data, individual stage scores, the final decision, and a unique verification identifier.
+
+    \item \textbf{Admin Review Workflow:} Provide reviewer and admin roles with a flagged-session queue, enabling manual review with approval, rejection, or re-upload decisions, and propagating the decision to the user's KYC status.
+
+    \item \textbf{Analytics Dashboard:} Provide admin-only analytics visualisations covering daily KYC volume trends, status distribution, daily approval rates, and pipeline stage latency.
+
+    \item \textbf{Security and Compliance:} Implement JWT-based authentication, bcrypt password hashing, role-based access control (RBAC), rate limiting, input validation, and audit logging meeting industry security standards.
+\end{enumerate}
+
+\section{Scope of the Project}
+
+\subsection{In Scope}
+\begin{itemize}
+    \item User registration and JWT-authenticated login (email, phone, or full name).
+    \item Document upload and OCR processing for five document types.
+    \item Webcam and file-upload selfie capture for face verification.
+    \item Three AI inference stages: face match, deepfake detection, liveness.
+    \item Automated decision engine with configurable scoring thresholds.
+    \item PDF report generation and download.
+    \item Admin/reviewer manual review workflow.
+    \item Role-based analytics dashboard with Chart.js visualisations.
+    \item Audit logging to MongoDB (optional, gracefully degraded if unavailable).
+    \item Docker Compose full-stack deployment.
+    \item REST API documented via FastAPI's built-in OpenAPI/Swagger interface.
+\end{itemize}
+
+\subsection{Out of Scope}
+\begin{itemize}
+    \item Native iOS/Android mobile applications.
+    \item Real-time video streaming verification (video liveness is limited to image-based checks in the current implementation).
+    \item Direct integration with UIDAI Aadhaar API, DigiLocker, or other government databases.
+    \item Multi-language OCR support beyond English.
+    \item Fingerprint or iris biometric modalities.
+    \item Payment gateway integration.
+    \item Production-grade email/SMS delivery (currently mock-logged).
+    \item Blockchain-based immutable audit trails.
+\end{itemize}
+
+\section{Project Category and Technology Domain}
+
+\textbf{Primary Category:} Artificial Intelligence, Machine Learning, Deep Learning
+
+\textbf{Secondary Categories:} Computer Vision, Image Processing, Web Development, RDBMS + NoSQL, Software Engineering, Information Security
+
+\section{Organisation of the Report}
+
+The remainder of this report is organised as follows:
+
+\begin{itemize}
+    \item \textbf{Chapter 2} presents the system analysis, including a study of existing systems, pain points, and feasibility analysis.
+    \item \textbf{Chapter 3} covers project planning with Gantt and PERT charts, Work Breakdown Structure, and risk assessment.
+    \item \textbf{Chapter 4} provides the full Software Requirements Specification.
+    \item \textbf{Chapter 5} describes the engineering paradigm and methodology.
+    \item \textbf{Chapter 6} presents all system models and UML diagrams.
+    \item \textbf{Chapter 7} details the system design including database and API design.
+    \item \textbf{Chapter 8} covers implementation, coding standards, and key algorithms.
+    \item \textbf{Chapter 9} presents testing strategies and results.
+    \item \textbf{Chapter 10} discusses security mechanisms and access controls.
+    \item \textbf{Chapter 11} shows representative system outputs and screenshots.
+    \item \textbf{Chapter 12} concludes with achievements, limitations, and future scope.
+\end{itemize}
+
+% =====================================================================
+%  CHAPTER 2: SYSTEM ANALYSIS AND NEED IDENTIFICATION
+% =====================================================================
+\chapter{System Analysis and Need Identification}
+
+\section{Study of Existing Systems}
+
+Several commercial and open-source eKYC solutions currently exist in the market. A survey of these systems reveals both their capabilities and their shortcomings, which motivate the approach taken in this project.
+
+\subsection{Commercial Solutions}
+
+\textbf{DigiLocker-Linked KYC (India):} DigiLocker provides government-backed document sharing where users authorise access to UIDAI-issued digital Aadhaar. While it eliminates physical document submission, it has no built-in liveness or deepfake detection, and requires users to have a DigiLocker account linked to their Aadhaar number.
+
+\textbf{IDFY (India):} IDFY provides API-based OCR and face-match services. Its offerings are cloud-only, per-API-call charged, require vendor lock-in, and do not expose an open architecture for academic or custom integration.
+
+\textbf{Jumio / Onfido (Global):} These are market-leading KYC-as-a-service platforms with sophisticated AI. However, they are proprietary, expensive (enterprise licensing), closed-source, and cannot be studied, modified, or deployed in an academic context.
+
+\textbf{Limitations of existing systems:}
+\begin{itemize}
+    \item Most commercial systems treat deepfake detection as an optional add-on, not as a first-class verification stage.
+    \item None provide a transparent, self-hosted, open-architecture pipeline where the verification logic can be inspected and customised.
+    \item Academic institutions and startups cannot afford commercial APIs for research or proof-of-concept implementations.
+    \item Audit logs in commercial systems are opaque; there is no mechanism to export or analyse raw verification data.
+\end{itemize}
+
+\subsection{Open-Source Tools}
+
+Several open-source libraries address individual stages but no integrated open pipeline exists:
+
+\begin{table}[H]
+\centering
+\caption{Open-Source Tools for Identity Verification}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Tool} & \textbf{Purpose} & \textbf{Limitation} \\
+\midrule
+Tesseract OCR & Text extraction & No field understanding, poor on ID layouts \\
+InsightFace & Face recognition & Model only; no pipeline integration \\
+dlib & Face detection & Low-level; requires custom integration \\
+FaceNet & Face embeddings & Training required; no turnkey service \\
+Various deepfake detectors & Image classification & Standalone models; no API wrapper \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Problem Identification and Pain Points}
+
+Based on the study of existing systems, the following key problems were identified:
+
+\begin{enumerate}
+    \item \textbf{No integrated pipeline:} No single open-source system combines OCR, face extraction, face matching, deepfake detection, and liveness in a unified REST API.
+    \item \textbf{Deepfake blindness:} Existing simple eKYC tools do not screen selfies for AI generation, leaving a critical security gap.
+    \item \textbf{Static document images:} OCR alone cannot determine whether a document image is authentic or digitally tampered.
+    \item \textbf{Poor admin tooling:} No open platform provides a review queue where flagged sessions can be manually adjudicated with a structured audit trail.
+    \item \textbf{No analytics:} Verification trends, stage-wise latency, and approval rates are not visible in typical open-source setups.
+    \item \textbf{Lack of transparency:} Commercial systems give a binary pass/fail; there is no per-stage score breakdown that allows reviewers to understand the basis of a decision.
+\end{enumerate}
+
+\section{Requirement Gathering Methodology}
+
+Requirements for this project were gathered through multiple structured approaches:
+
+\textbf{(a) Regulatory Document Review:} The RBI Master Direction on KYC (2023) was reviewed to identify mandatory functional requirements for eKYC systems, particularly V-CIP requirements.
+
+\textbf{(b) Literature Survey:} Academic papers on face recognition (ArcFace, FaceNet), deepfake detection (dual-stream architectures, frequency-domain analysis), and liveness detection (texture-based, depth-based) were reviewed to identify state-of-the-art approaches.
+
+\textbf{(c) Competitive Analysis:} Features of Jumio, Onfido, and IDFY were catalogued to establish a feature-parity baseline.
+
+\textbf{(d) User Persona Analysis:} Three distinct user personas were defined -- end user (verifies identity), reviewer (reviews flagged cases), and admin (system oversight + analytics) -- and their workflows were traced to derive functional requirements.
+
+\textbf{(e) Prototyping:} An initial prototype of the five-stage pipeline was built and tested with real documents to identify edge cases, error conditions, and latency bottlenecks.
+
+\section{Feasibility Analysis}
+
+\subsection{Technical Feasibility}
+
+All required technologies are mature, well-documented, and available:
+\begin{itemize}
+    \item \textbf{FastAPI} (Python 3.12) provides high-performance async REST API development with built-in OpenAPI documentation.
+    \item \textbf{Google Gemini 2.5 Flash Lite} provides state-of-the-art Vision-Language OCR capability via a simple API.
+    \item \textbf{dlib} (C++ with Python bindings) provides robust facial landmark detection for face extraction from documents.
+    \item \textbf{HuggingFace Inference API} provides hosted deepfake detection without requiring local GPU resources.
+    \item \textbf{Gradio Spaces} provide hosted face-similarity and liveness models accessible over HTTP.
+    \item \textbf{React + TypeScript} provides a modern, type-safe frontend framework with an extensive ecosystem.
+    \item \textbf{SQLAlchemy 2.0 async} provides production-grade ORM with PostgreSQL and SQLite support.
+    \item \textbf{Docker Compose} enables reproducible multi-service deployment.
+\end{itemize}
+
+\subsection{Economic Feasibility}
+
+\begin{itemize}
+    \item All core frameworks and libraries are open-source (zero licensing cost).
+    \item Gemini API, HuggingFace Inference API, and Gradio Spaces all offer free tiers sufficient for development and demonstration purposes.
+    \item Infrastructure cost for local development is zero; Docker-based deployment on commodity hardware is feasible.
+    \item Production deployment on a cloud provider (AWS EC2 t3.medium) would cost approximately \$40--\$80/month -- viable for a startup.
+\end{itemize}
+
+\subsection{Operational Feasibility}
+
+\begin{itemize}
+    \item The system's web-based interface requires no software installation on the user side beyond a modern browser.
+    \item Admin and reviewer workflows are simple (list → review → decide) and require minimal training.
+    \item Automated score-based decisions reduce manual review workload to only borderline cases.
+    \item The Docker Compose setup makes deployment and operations straightforward for a small DevOps team.
+\end{itemize}
+
+\subsection{Legal Feasibility}
+
+\begin{itemize}
+    \item All external APIs and models used are available under terms permitting research and academic use.
+    \item The system's architecture is designed with GDPR/PDPB-compatible data practices: document images are stored per-session, audit logs are retained, and user data deletion is supported via cascade-delete foreign keys.
+    \item The system does not directly integrate with UIDAI or NPCI systems, avoiding regulatory requirements associated with licensed API consumers.
+\end{itemize}
+
+\section{System Overview}
+
+The system can be described at a high level as a five-stage sequential pipeline with a supporting administration layer:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{architecture_overview.png}
+\caption{System Architecture Overview showing frontend, backend, databases, and external services}
+\end{figure}
+
+\begin{enumerate}
+    \item \textbf{Stage 1 -- Document OCR:} User uploads an identity document. The backend sends the image to Google Gemini for structured field extraction, validates the results, extracts a face crop using dlib, and stores both the OCR data and image references.
+    \item \textbf{Stage 2 -- Face Matching:} User provides a live selfie (file upload or webcam). The backend compares the document face crop against the selfie using an external face-similarity Gradio service and returns a percentage score.
+    \item \textbf{Stage 3 -- Deepfake Detection:} The backend submits the selfie image to a HuggingFace-hosted AI image detector and returns a deepfake probability score.
+    \item \textbf{Stage 4 -- Liveness Detection:} The backend submits the selfie to a Gradio-hosted liveness model and returns a liveness score.
+    \item \textbf{Stage 5 -- Final Decision + Report:} An automated decision engine aggregates all four scores. If all thresholds are met, the session is approved; otherwise it is flagged for manual review. A PDF report is generated and downloadable.
+\end{enumerate}
+
+The administration layer provides a reviewer queue for flagged sessions and an analytics dashboard visible to admin and reviewer roles.
+
+% =====================================================================
+%  CHAPTER 3: PROJECT PLANNING AND SCHEDULING
+% =====================================================================
+\chapter{Project Planning and Scheduling}
+
+\section{Work Breakdown Structure}
+
+The project was decomposed into the following work packages:
+
+\begin{table}[H]
+\centering
+\caption{Work Breakdown Structure}
+\begin{tabular}{@{}clll@{}}
+\toprule
+\textbf{WBS ID} & \textbf{Work Package} & \textbf{Sub-Tasks} & \textbf{Deliverable} \\
+\midrule
+1.0 & Requirements & Literature review, SRS draft & SRS document \\
+2.0 & Architecture & DB design, API design, module breakdown & Design doc \\
+3.0 & Backend Core & Auth, DB models, migrations & Working API \\
+4.0 & Document Module & Upload, OCR, validation, face extract & OCR endpoint \\
+5.0 & Biometric Module & Face match, deepfake, liveness & 3 AI endpoints \\
+6.0 & Decision + Report & Scoring engine, PDF generation & Report endpoint \\
+7.0 & Admin Module & Review queue, decision API, analytics & Admin routes \\
+8.0 & Frontend & Auth UI, 5 pipeline sections, dashboard & React app \\
+9.0 & Integration & End-to-end pipeline testing & Working system \\
+10.0 & Docker & Compose setup, environment config & docker-compose.yml \\
+11.0 & Testing & Unit, integration, system tests & Test suite \\
+12.0 & Documentation & Report, API docs, code comments & This report \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Project Milestones}
+
+\begin{table}[H]
+\centering
+\caption{Key Project Milestones}
+\begin{tabular}{@{}clll@{}}
+\toprule
+\textbf{No.} & \textbf{Milestone} & \textbf{Target Week} & \textbf{Status} \\
+\midrule
+M1 & SRS approved & Week 3 & Completed \\
+M2 & Database schema finalised & Week 5 & Completed \\
+M3 & Auth module operational & Week 7 & Completed \\
+M4 & Document OCR pipeline working & Week 10 & Completed \\
+M5 & Face match + deepfake + liveness operational & Week 14 & Completed \\
+M6 & Decision engine + PDF report working & Week 16 & Completed \\
+M7 & Admin review queue working & Week 17 & Completed \\
+M8 & Frontend all sections integrated & Week 20 & Completed \\
+M9 & Analytics dashboard with charts & Week 21 & Completed \\
+M10 & Docker Compose full stack working & Week 22 & Completed \\
+M11 & All automated tests passing & Week 23 & Completed \\
+M12 & Report submitted & Week 24 & Completed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Gantt Chart}
+
+The project followed a 24-week schedule with overlapping phases to allow parallel development:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{gantt_chart.png}
+\caption{Gantt Chart showing the 24-week project timeline with overlapping phases}
+\end{figure}
+
+The overlapping design allowed backend and frontend development to proceed in parallel once the API contracts were established at Week 5, significantly reducing the overall project duration compared to a purely sequential waterfall approach.
+
+\section{PERT Chart}
+
+The Programme Evaluation and Review Technique (PERT) chart below shows the critical path through the project:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{pert_chart.png}
+\caption{PERT Chart showing task dependencies and critical path}
+\end{figure}
+
+\textbf{Critical Path:}\\
+Requirements Analysis $\rightarrow$ Database Design $\rightarrow$ Backend Core $\rightarrow$ Document OCR $\rightarrow$ Face Match $\rightarrow$ Deepfake Detection $\rightarrow$ Liveness $\rightarrow$ Decision Engine $\rightarrow$ PDF Report $\rightarrow$ Admin Module $\rightarrow$ Integration Testing $\rightarrow$ Submission
+
+Total critical path duration: 24 weeks.
+
+\section{Team Roles and Responsibilities}
+
+\begin{table}[H]
+\centering
+\caption{Team Roles and Responsibilities}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Role} & \textbf{Person} & \textbf{Responsibilities} \\
+\midrule
+Developer / Architect & Hardik Sharma & Full-stack implementation, all modules \\
+Supervisor & Anshul Sharma & Technical review, guidance, approval \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Risk Assessment and Mitigation}
+
+\begin{table}[H]
+\centering
+\caption{Risk Register}
+\begin{tabular}{@{}p{3.5cm}p{1.5cm}p{1.5cm}p{4.5cm}@{}}
+\toprule
+\textbf{Risk} & \textbf{Probability} & \textbf{Impact} & \textbf{Mitigation} \\
+\midrule
+External API unavailability (Gradio, HuggingFace) & Medium & High & Graceful error handling; mock responses for testing \\
+Gemini OCR inaccuracy on low-quality documents & High & Medium & Pre-processing, quality scoring, user feedback \\
+SQLite limitations in production & Low & Medium & Docker uses PostgreSQL; SQLite only for local dev \\
+MongoDB unavailability & Low & Low & Audit logging degrades silently; app continues \\
+JWT secret compromise & Low & Very High & Env var only; no hardcoding; documented in deployment notes \\
+Scope creep & Medium & Medium & Strict in-scope/out-of-scope definition; deferred features listed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Timeline Deviations and Lessons Learned}
+
+\begin{itemize}
+    \item \textbf{OCR field extraction (Week 8-10):} Initial use of Tesseract OCR produced poor results on Indian identity documents due to varied fonts and layouts. This was replaced with Google Gemini 2.5 Flash Lite, which significantly improved extraction accuracy but required additional API integration work (+1 week).
+    \item \textbf{dlib installation (Week 9):} Compiling dlib from source on macOS required resolving cmake and boost dependencies (+2 days).
+    \item \textbf{Frontend webcam integration (Week 20):} Browser-based webcam capture using getUserMedia API required additional state management and a hidden canvas element for snapshot capture (+1 day).
+    \item \textbf{Overall:} The project was delivered within the planned 24-week window, with no critical path delays.
+\end{itemize}
+
+% =====================================================================
+%  CHAPTER 4: SOFTWARE REQUIREMENTS SPECIFICATION
+% =====================================================================
+\chapter{Software Requirements Specification}
+
+\section{Introduction}
+
+\subsection{Purpose}
+This Software Requirements Specification (SRS) defines the complete functional and non-functional requirements for the AI-Based Real-Time eKYC System. It serves as the contractual agreement between the developer and the supervisor, and as the baseline against which the implemented system is validated.
+
+\subsection{Document Conventions}
+\begin{itemize}
+    \item Requirements are tagged \textbf{FR-nn} (functional) or \textbf{NFR-nn} (non-functional).
+    \item Priority is indicated as: \textbf{Must Have}, \textbf{Should Have}, or \textbf{Nice to Have}.
+    \item Implementation status is: \textbf{Implemented}, \textbf{Partial}, or \textbf{Planned}.
+\end{itemize}
+
+\subsection{Intended Audience}
+Developer, project supervisor, IGNOU evaluators.
+
+\subsection{System Scope}
+The system is a web-based eKYC platform consuming AI services for identity verification. It is not a government KYC system; it is an academic demonstration of an integrated AI pipeline for identity verification.
+
+\section{Overall Description}
+
+\subsection{Product Perspective}
+The system is a standalone web application. It integrates with three categories of external services:
+\begin{enumerate}
+    \item \textbf{Google Generative AI} (Gemini 2.5 Flash Lite) for document OCR.
+    \item \textbf{HuggingFace Inference API} for deepfake detection.
+    \item \textbf{Gradio Spaces} for face similarity and liveness detection.
+\end{enumerate}
+
+\subsection{User Classes}
+
+\begin{table}[H]
+\centering
+\caption{User Classes and Characteristics}
+\begin{tabular}{@{}p{2.5cm}p{4cm}p{5cm}@{}}
+\toprule
+\textbf{User Class} & \textbf{Description} & \textbf{Primary Tasks} \\
+\midrule
+End User & General public seeking KYC verification & Register, upload document, provide selfie, view status, download report \\
+Reviewer & Staff with KYC review authority & View flagged sessions, approve/reject/request re-upload \\
+Admin & System administrator & All reviewer actions + view analytics, audit logs \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Design and Implementation Constraints}
+\begin{itemize}
+    \item OCR accuracy depends on input document image quality.
+    \item Face match and liveness scores depend on availability and performance of external Gradio-hosted models.
+    \item Deepfake detection depends on HuggingFace Inference API availability.
+    \item Local development uses SQLite; full production stack uses PostgreSQL.
+    \item MongoDB and Redis are optional; the system degrades gracefully if unavailable.
+\end{itemize}
+
+\subsection{Assumptions and Dependencies}
+\begin{itemize}
+    \item Users have a device with a modern web browser (Chrome 90+, Firefox 88+, Safari 14+).
+    \item Users have a camera for webcam-based selfie capture.
+    \item \texttt{GEMINI\_API\_KEY}, \texttt{DEEPFAKE\_HF\_TOKEN}, \texttt{FACE\_SIMILARITY\_SPACE\_URL}, and \texttt{LIVENESS\_SPACE\_URL} are configured in the backend environment.
+\end{itemize}
+
+\section{Functional Requirements}
+
+\begin{longtable}{@{}p{1.5cm}p{5cm}p{3cm}p{2.5cm}p{2.5cm}@{}}
+\caption{Functional Requirements} \\
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Status} & \textbf{Test ID} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{\tablename\ \thetable{} -- continued} \\
+\toprule
+\textbf{ID} & \textbf{Requirement} & \textbf{Priority} & \textbf{Status} & \textbf{Test ID} \\
+\midrule
+\endhead
+FR-01 & User registers with full\_name, email, phone, password; system validates uniqueness and returns JWT token & Must Have & Implemented & AUTH-01/02 \\
+FR-02 & User logs in using email, phone, or full name plus password; system returns JWT token & Must Have & Implemented & AUTH-03/04 \\
+FR-03 & Authenticated user can retrieve own profile (role, KYC status) via /auth/me & Must Have & Implemented & AUTH-05 \\
+FR-04 & User can upload a document image (Aadhaar/PAN/Passport/DL/Voter ID) as JPEG, PNG, or PDF & Must Have & Implemented & DOC-01 \\
+FR-05 & System extracts OCR fields (name, DOB, document number, address) using Gemini Vision API & Must Have & Implemented & DOC-04 \\
+FR-06 & System validates document number format against type-specific regex patterns & Must Have & Implemented & DOC-04 \\
+FR-07 & System calculates a document quality score and returns a recommendation & Should Have & Implemented & DOC-04 \\
+FR-08 & System extracts and stores a face crop from the document image using dlib & Must Have & Implemented & DOC-04 \\
+FR-09 & User provides a selfie image (file upload or webcam capture); system runs face similarity comparison & Must Have & Implemented & BIO-02 \\
+FR-10 & Face match endpoint returns a percentage score and pass/fail result & Must Have & Implemented & BIO-02 \\
+FR-11 & System screens the selfie through a deepfake detection model and returns a risk score & Must Have & Implemented & BIO-03 \\
+FR-12 & System runs liveness detection on the selfie and returns a liveness score & Must Have & Implemented & BIO-04 \\
+FR-13 & Decision engine aggregates all four scores and determines approved or manual\_review & Must Have & Implemented & DEC-03 \\
+FR-14 & System generates a downloadable PDF verification report after final decision & Must Have & Implemented & DEC-03 \\
+FR-15 & Reviewer/admin can list all flagged (manual\_review) sessions & Must Have & Implemented & ADM-01 \\
+FR-16 & Reviewer/admin can approve, reject, or request re-upload for a flagged session & Must Have & Implemented & ADM-04 \\
+FR-17 & Rejection requires a reason string; system enforces this at the API level & Must Have & Implemented & ADM-03 \\
+FR-18 & Admin can view analytics overview (total users, sessions, approvals, rejections, flagged) & Should Have & Implemented & ANA-01 \\
+FR-19 & Admin can view 30-day daily trend data (approved/rejected/flagged per day) & Should Have & Implemented & ANA-02 \\
+FR-20 & Admin can view per-stage average and P95 latency data & Should Have & Implemented & ANA-03 \\
+FR-21 & System writes audit log entries to MongoDB for auth and review events & Should Have & Partial & AUD-01 \\
+FR-22 & Authenticated image requests are proxied through a protected endpoint requiring a valid JWT & Must Have & Implemented & SEC-04 \\
+\bottomrule
+\end{longtable}
+
+\section{Non-Functional Requirements}
+
+\subsection{Performance Requirements (NFR-01)}
+\begin{itemize}
+    \item API response time for all non-AI endpoints (auth, session CRUD, analytics): $<$500~ms at p95 under normal load.
+    \item Document OCR stage: dependent on Gemini API; typically 3--10~s.
+    \item Face match stage: dependent on Gradio Space; typically 2--5~s.
+    \item Deepfake detection: dependent on HuggingFace Inference API; typically 5--15~s.
+    \item Liveness detection: dependent on Gradio Space; typically 2--5~s.
+    \item PDF generation: $<$2~s for a typical report payload.
+\end{itemize}
+
+\subsection{Security Requirements (NFR-02)}
+\begin{itemize}
+    \item All passwords stored as bcrypt hash with cost factor 12.
+    \item JWT tokens signed with HS256; configurable expiry (default 24~h).
+    \item All API routes requiring authentication return HTTP 401 if no valid token is presented.
+    \item Admin and reviewer routes return HTTP 403 if the token holder's role is insufficient.
+    \item File uploads are validated for MIME type, extension, and size before processing.
+    \item Rate limiting applied to all auth routes using slowapi.
+    \item Input strings are sanitised before storage.
+\end{itemize}
+
+\subsection{Reliability Requirements (NFR-03)}
+\begin{itemize}
+    \item Application startup creates all required database tables automatically (\texttt{AUTO\_CREATE\_SCHEMA=true}).
+    \item External service failures (Gradio, HuggingFace, MongoDB, Redis) are caught and mapped to appropriate HTTP error responses; the core application remains operational.
+    \item A \texttt{/api/v1/system/health} endpoint returns the status of all dependent services.
+\end{itemize}
+
+\subsection{Maintainability Requirements (NFR-04)}
+\begin{itemize}
+    \item Backend follows a layered architecture: \texttt{api/routes} $\rightarrow$ \texttt{services} $\rightarrow$ \texttt{models} $\leftrightarrow$ \texttt{db/session}.
+    \item Frontend components are TypeScript-typed with explicit prop interfaces.
+    \item All API endpoints are documented via FastAPI's auto-generated OpenAPI schema.
+    \item Database schema changes are managed via Alembic migrations.
+\end{itemize}
+
+\subsection{Portability Requirements (NFR-05)}
+\begin{itemize}
+    \item The full stack can be started with a single \texttt{docker compose up -d --build} command.
+    \item Local development (without Docker) requires only Python 3.12, Node.js 18+, and environment variable configuration.
+    \item The system supports both SQLite (local) and PostgreSQL (Docker/production) without code changes.
+\end{itemize}
+
+\subsection{Scalability Requirements (NFR-06)}
+\begin{itemize}
+    \item FastAPI's async architecture enables handling multiple concurrent requests without thread blocking.
+    \item Redis is integrated as a rate-limit store and cache, allowing horizontal scaling of backend instances.
+    \item PostgreSQL supports connection pooling and read replicas for production scale-out.
+\end{itemize}
+
+\section{External Interface Requirements}
+
+\subsection{User Interface}
+\begin{itemize}
+    \item Single-page web application accessible via standard desktop and tablet browsers.
+    \item Responsive layout with a sticky header, 5-step pipeline progress indicator, and section-based scrollable content.
+    \item Toast notifications for all operations (success, warning, error).
+    \item Collapsible raw JSON output for debugging.
+\end{itemize}
+
+\subsection{Hardware Interface}
+\begin{itemize}
+    \item Server: any x86\_64 machine with 4+ GB RAM and Python 3.12.
+    \item Client: any device with a modern browser and an optional camera for webcam selfie capture.
+\end{itemize}
+
+\subsection{Software Interfaces}
+\begin{table}[H]
+\centering
+\caption{External Software Interfaces}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{System} & \textbf{Protocol} & \textbf{Config Var} & \textbf{Purpose} \\
+\midrule
+Google Gemini API & HTTPS / REST & GEMINI\_API\_KEY & Document OCR \\
+HuggingFace Inference & HTTPS / REST & DEEPFAKE\_HF\_TOKEN & Deepfake scoring \\
+Gradio Face Similarity & HTTPS / SSE & FACE\_SIMILARITY\_SPACE\_URL & Face matching \\
+Gradio Liveness & HTTPS / SSE & LIVENESS\_SPACE\_URL & Liveness scoring \\
+PostgreSQL / SQLite & TCP / file & DATABASE\_URL & Persistent data \\
+MongoDB & TCP & MONGODB\_URI & Audit logs \\
+Redis & TCP & REDIS\_URL & Rate limiting, cache \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Acceptance Criteria}
+
+The following acceptance criteria define the minimum viable delivered system:
+
+\begin{enumerate}
+    \item A new user can register, login, and receive a JWT token. (\textit{AUTH-01})
+    \item A user can upload a PAN/Aadhaar document and receive OCR-extracted fields. (\textit{DOC-04})
+    \item A user can submit a selfie and receive a face match score. (\textit{BIO-02})
+    \item A user can receive deepfake and liveness scores for a submitted selfie. (\textit{BIO-03, BIO-04})
+    \item A user can generate and download a PDF report after completing all pipeline stages. (\textit{DEC-03})
+    \item An admin can view the flagged session queue and approve a session. (\textit{ADM-04})
+    \item Analytics endpoints return valid aggregate data for admin tokens. (\textit{ANA-01})
+    \item All 11 backend tests and 10 frontend tests pass. (\textit{Automated test suite})
+\end{enumerate}
+
+% =====================================================================
+%  CHAPTER 5: ENGINEERING PARADIGM AND METHODOLOGY
+% =====================================================================
+\chapter{Engineering Paradigm and Methodology}
+
+\section{SDLC Approach}
+
+\subsection{Iterative and Incremental Development}
+
+The project followed an \textbf{iterative and incremental} approach inspired by Agile principles, rather than a strict waterfall model. This choice was motivated by:
+
+\begin{itemize}
+    \item \textbf{Evolving requirements:} The exact API contracts for external services (Gradio, HuggingFace) were discovered during implementation and required iterative adjustment.
+    \item \textbf{Tight feedback loop:} Working software was available after each stage of the pipeline was implemented, allowing early validation.
+    \item \textbf{Risk mitigation:} High-risk components (external AI services) were prototyped and integrated early, reducing late-stage surprises.
+\end{itemize}
+
+Development was organised into 2-week sprints, each with a specific deliverable:
+
+\begin{table}[H]
+\centering
+\caption{Sprint Plan}
+\begin{tabular}{@{}clll@{}}
+\toprule
+\textbf{Sprint} & \textbf{Weeks} & \textbf{Focus} & \textbf{Deliverable} \\
+\midrule
+1 & 1--2 & Requirements, architecture & SRS, DB schema \\
+2 & 3--4 & Backend core & Auth, DB models, health endpoint \\
+3 & 5--6 & Document module & Upload + OCR endpoint \\
+4 & 7--8 & Face extraction & dlib integration, face crop storage \\
+5 & 9--10 & Face match + deepfake & Gradio + HuggingFace integration \\
+6 & 11--12 & Liveness + decision & Liveness endpoint + scoring engine \\
+7 & 13--14 & PDF report & WeasyPrint generation + download \\
+8 & 15--16 & Admin module & Review queue + analytics endpoints \\
+9 & 17--18 & Frontend core & Auth UI + OCR + face match sections \\
+10 & 19--20 & Frontend pipeline & Deepfake, liveness, report sections \\
+11 & 21--22 & Frontend analytics + Docker & Chart.js dashboard + Compose setup \\
+12 & 23--24 & Testing + documentation & All tests passing, report written \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Modular Architecture Philosophy}
+
+The system follows a \textbf{separation of concerns} principle with clearly defined module boundaries:
+
+\begin{enumerate}
+    \item \textbf{Authentication Module:} Handles all identity-related concerns -- registration, login, JWT issuance, token validation, and role resolution. No business logic from other modules bleeds into this layer.
+    \item \textbf{Feature Pipeline Module:} Implements the five-stage verification pipeline as a single coherent route group (\texttt{/api/v1/features/}). Each stage builds on the previous one through in-memory session state.
+    \item \textbf{Admin Module:} Provides review queue and decision APIs restricted to reviewer/admin roles. Decoupled from the feature pipeline.
+    \item \textbf{Analytics Module:} Provides aggregation queries over verification sessions. Read-only; does not mutate any data.
+    \item \textbf{Audit Module:} Writes to MongoDB. Implemented as a fire-and-forget async call that never blocks the main request flow.
+    \item \textbf{Frontend Components:} React components are organised by function (auth, pipeline stages, dashboard, layout, shared). Each component receives data through typed props and calls API functions from the centralised \texttt{services/api.ts} module.
+\end{enumerate}
+
+\section{API-First Design}
+
+The backend was designed API-first: the OpenAPI schema was defined before frontend development began, ensuring a stable contract between the two layers. FastAPI auto-generates and serves this schema at \texttt{/docs} (Swagger UI) and \texttt{/redoc} (ReDoc).
+
+All API functions on the frontend return a typed \texttt{\{data, error\}} object, isolating error handling from business logic.
+
+\section{Test-Driven Mindset}
+
+While the project did not follow strict Test-Driven Development (TDD), tests were written alongside implementation rather than after, particularly for:
+\begin{itemize}
+    \item Auth routes (register, login, profile) -- verifying security boundaries.
+    \item Frontend components (LoginForm, ScoreCard, Toast) -- verifying rendering and interaction.
+\end{itemize}
+
+\section{Traceability Matrix}
+
+\begin{table}[H]
+\centering
+\caption{Requirements Traceability Matrix (Sample)}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{FR ID} & \textbf{Module} & \textbf{File} & \textbf{Test ID} \\
+\midrule
+FR-01 & Auth & \texttt{app/api/routes/auth.py} & AUTH-01 \\
+FR-02 & Auth & \texttt{app/api/routes/auth.py} & AUTH-03 \\
+FR-05 & Document & \texttt{app/services/document\_processing.py} & DOC-04 \\
+FR-08 & Document & \texttt{app/services/document\_face\_extraction.py} & DOC-04 \\
+FR-09 & Feature & \texttt{app/api/routes/features.py} & BIO-02 \\
+FR-11 & Feature & \texttt{app/services/deepfake\_inference.py} & BIO-03 \\
+FR-13 & Feature & \texttt{app/api/routes/features.py} & DEC-03 \\
+FR-18 & Analytics & \texttt{app/api/routes/analytics.py} & ANA-01 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =====================================================================
+%  CHAPTER 6: SYSTEM MODELING AND DIAGRAMS
+% =====================================================================
+\chapter{System Modeling and Diagrams}
+
+\section{Data Flow Diagrams}
+
+\subsection{DFD Level 0 -- Context Diagram}
+
+The Level 0 DFD (Context Diagram) shows the eKYC system as a single process interacting with three external entities:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{dfd_level0.png}
+\caption{DFD Level 0 -- System Context Diagram}
+\end{figure}
+
+\textbf{External Entities:}
+\begin{itemize}
+    \item \textbf{End User:} Provides personal information, identity documents, and selfie images. Receives KYC status and PDF report.
+    \item \textbf{Admin/Reviewer:} Receives flagged session data. Provides review decisions.
+    \item \textbf{AI Services:} External platforms (Gemini, HuggingFace, Gradio) that receive document/image data and return analysis results.
+\end{itemize}
+
+\subsection{DFD Level 1}
+
+The Level 1 DFD decomposes the system into seven major processes:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{dfd_level1.png}
+\caption{DFD Level 1 -- Major System Processes}
+\end{figure}
+
+\textbf{Process Descriptions:}
+
+\textbf{1.0 -- User Management:} Handles registration, login, and profile management. Reads/writes the Users data store. Outputs JWT tokens to authenticated entities.
+
+\textbf{2.0 -- Document Processing:} Receives document images from the End User. Sends them to the OCR Engine (Gemini). Validates extracted data and invokes face extraction. Writes to the Documents data store.
+
+\textbf{3.0 -- Face Verification:} Receives the reference face crop (from Process 2.0) and the live selfie image. Invokes the Gradio face-similarity service. Writes match score and image references to the Sessions data store.
+
+\textbf{4.0 -- Deepfake \& Liveness Detection:} Receives the live selfie image. Invokes the HuggingFace deepfake model and the Gradio liveness model. Writes scores to the Sessions data store.
+
+\textbf{5.0 -- Decision Engine:} Reads all scores from the Sessions data store. Applies thresholds. Writes the final KYC decision to both the Sessions and Users data stores.
+
+\textbf{6.0 -- Admin Review:} Reads flagged sessions from the Sessions data store. Presents them to the Admin/Reviewer entity. Receives review decisions and updates the Reviews and Sessions data stores.
+
+\textbf{7.0 -- Reporting:} Reads session data and generates PDF reports. Writes to the Audit Logs data store. Provides reports to the End User and analytics data to the Admin.
+
+\section{Use Case Diagram}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{use_case_diagram.png}
+\caption{Use Case Diagram showing actor-system interactions}
+\end{figure}
+
+\textbf{Actor: End User}
+\begin{itemize}
+    \item UC-01: Register Account
+    \item UC-02: Login
+    \item UC-03: Upload Identity Document
+    \item UC-04: Provide Selfie (Upload or Webcam)
+    \item UC-05: View Verification Status
+    \item UC-06: Download PDF Report
+    \item UC-07: Logout
+\end{itemize}
+
+\textbf{Actor: Reviewer (extends End User)}
+\begin{itemize}
+    \item UC-08: View Flagged Session Queue
+    \item UC-09: Approve Flagged Session
+    \item UC-10: Reject Flagged Session
+    \item UC-11: Request Document Re-Upload
+\end{itemize}
+
+\textbf{Actor: Admin (extends Reviewer)}
+\begin{itemize}
+    \item UC-12: View Analytics Dashboard
+    \item UC-13: View Audit Logs
+    \item UC-14: Manage Users
+\end{itemize}
+
+\section{Activity Diagram -- Verification Workflow}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{activity_workflow.png}
+\caption{Activity Diagram showing the full user verification workflow}
+\end{figure}
+
+The verification workflow proceeds as follows:
+\begin{enumerate}
+    \item User registers and logs in.
+    \item User uploads an identity document. System performs OCR extraction and face crop.
+    \item If OCR fails quality checks, user is prompted to re-upload.
+    \item User provides a live selfie (upload or webcam).
+    \item System runs face match, deepfake detection, and liveness in parallel.
+    \item Decision engine evaluates all scores.
+    \item \textbf{Branch A (All thresholds met):} Session is automatically approved. PDF report generated. User notified.
+    \item \textbf{Branch B (Any threshold failed):} Session flagged for manual review.
+    \item Admin reviews flagged session: approves, rejects, or requests re-upload.
+    \item User is notified of the final decision.
+\end{enumerate}
+
+\section{Sequence Diagrams}
+
+\subsection{User Verification Sequence}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{sequence_user_verification.png}
+\caption{Sequence Diagram -- User Identity Verification Flow}
+\end{figure}
+
+The sequence shows interactions between: Browser, React SPA, FastAPI Backend, Gemini API, Gradio Face Service, HuggingFace API, and PostgreSQL Database.
+
+Key interaction steps:
+\begin{enumerate}
+    \item User POSTs credentials $\rightarrow$ Backend validates $\rightarrow$ Returns JWT.
+    \item User POSTs document image $\rightarrow$ Backend calls Gemini $\rightarrow$ Returns OCR data + face crop URL.
+    \item User POSTs selfie $\rightarrow$ Backend calls Gradio face-similarity $\rightarrow$ Returns match score.
+    \item Backend calls HuggingFace deepfake model $\rightarrow$ Returns deepfake probability.
+    \item Backend calls Gradio liveness model $\rightarrow$ Returns liveness score.
+    \item Backend runs decision engine $\rightarrow$ Persists decision $\rightarrow$ Returns final report.
+\end{enumerate}
+
+\subsection{Admin Review Sequence}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{sequence_admin_review.png}
+\caption{Sequence Diagram -- Admin Review Workflow}
+\end{figure}
+
+\section{State Machine Diagram -- Verification Session}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{state_verification_session.png}
+\caption{State Machine Diagram for a Verification Session}
+\end{figure}
+
+\textbf{States:}
+\begin{itemize}
+    \item \textbf{pending:} Initial state when a session is created.
+    \item \textbf{approved:} All AI scores meet thresholds; auto-approved by decision engine.
+    \item \textbf{flagged:} One or more scores fail thresholds; awaiting manual review.
+    \item \textbf{rejected:} Admin explicitly rejected the session.
+\end{itemize}
+
+\textbf{Transitions:}
+\begin{itemize}
+    \item pending $\rightarrow$ approved: all thresholds met after final report generation.
+    \item pending $\rightarrow$ flagged: any threshold failed.
+    \item flagged $\rightarrow$ approved: admin approves.
+    \item flagged $\rightarrow$ rejected: admin rejects.
+    \item flagged $\rightarrow$ pending: admin requests re-upload (user must restart pipeline).
+\end{itemize}
+
+\section{Class Diagram -- Backend Domain Model}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{class_backend_domain.png}
+\caption{Class Diagram -- Backend Domain Model}
+\end{figure}
+
+The backend domain model consists of five primary entities:
+
+\begin{itemize}
+    \item \textbf{User} -- Central entity with role (user/admin/reviewer) and KYC status. One-to-many relationships with Document, VerificationSession, and AuditLog.
+    \item \textbf{Document} -- Represents an uploaded identity document with OCR-extracted data stored as JSON.
+    \item \textbf{VerificationSession} -- Stores all pipeline scores, image paths, and the final decision. One-to-one relationship with AdminReview.
+    \item \textbf{AdminReview} -- Records the reviewer's decision for a flagged session.
+    \item \textbf{AuditLog} -- Records timestamped actions for compliance purposes (stored in MongoDB).
+\end{itemize}
+
+\section{ER Diagram}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{er_database.png}
+\caption{Entity-Relationship Diagram}
+\end{figure}
+
+\textbf{Relationships and Cardinalities:}
+\begin{itemize}
+    \item \textbf{USER -- DOCUMENT:} 1:N (one user can upload many documents; cascade delete).
+    \item \textbf{USER -- VERIFICATION\_SESSION:} 1:N (one user can have multiple sessions; cascade delete).
+    \item \textbf{VERIFICATION\_SESSION -- ADMIN\_REVIEW:} 1:1 (each flagged session has at most one review).
+    \item \textbf{USER (admin) -- ADMIN\_REVIEW:} 1:N (one admin can review many sessions; set null on admin deletion).
+    \item \textbf{USER -- AUDIT\_LOG:} 1:N (each action generates a log entry; set null if user deleted).
+\end{itemize}
+
+\section{Deployment Diagram}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{deployment_diagram.png}
+\caption{Deployment Diagram showing Docker Compose service topology}
+\end{figure}
+
+The Docker Compose deployment topology:
+\begin{itemize}
+    \item \textbf{frontend} container: Nginx serving the React SPA on port 80/443; communicates with backend via internal Docker network.
+    \item \textbf{backend} container: FastAPI/Uvicorn on port 8000; communicates with postgres, mongodb, redis containers.
+    \item \textbf{postgres} container: PostgreSQL 15 on port 5432; data persisted to a named volume.
+    \item \textbf{mongodb} container: MongoDB 6 on port 27017; data persisted to a named volume.
+    \item \textbf{redis} container: Redis 7 on port 6379; data persisted to a named volume.
+    \item \textbf{External}: Gemini API, HuggingFace API, Gradio Spaces -- accessed over HTTPS from the backend container.
+\end{itemize}
+
+\section{Decision Control Flow Diagram}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{decision_control_flow.png}
+\caption{Decision Engine Control Flow}
+\end{figure}
+
+The decision engine evaluates five conditions in sequence:
+\begin{enumerate}
+    \item document\_forgery\_score $\leq$ 45
+    \item face\_match\_score $\geq$ 70
+    \item deepfake\_score $\leq$ 40
+    \item liveness\_score $\geq$ 65
+    \item final\_score $\geq$ 70 (where final\_score = average of all four normalised authenticity values)
+\end{enumerate}
+
+If all five conditions are true $\rightarrow$ status = \texttt{approved}.\\
+If any condition is false $\rightarrow$ status = \texttt{manual\_review}.
+
+\input{project_report_part2}
+
+\end{document}
