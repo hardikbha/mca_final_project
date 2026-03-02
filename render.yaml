@@ -1,0 +1,76 @@
+services:
+  - type: web
+    name: ekyc-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      # Injected automatically from Render's managed DB and Redis
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ekyc-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: ekyc-redis
+          property: connectionString
+
+      # Auto-generated secure secret
+      - key: JWT_SECRET
+        generateValue: true
+
+      # App settings
+      - key: APP_ENV
+        value: production
+      - key: AUTO_CREATE_SCHEMA
+        value: "false"
+      - key: UPLOAD_ROOT
+        value: /app/storage/uploads
+      - key: REPORT_ROOT
+        value: /app/storage/reports
+
+      # Set these manually in Render dashboard after deploy
+      - key: CORS_ORIGINS
+        sync: false   # e.g. https://your-app.vercel.app
+      - key: MONGODB_URI
+        sync: false   # e.g. mongodb+srv://... from MongoDB Atlas
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DEEPFAKE_HF_TOKEN
+        sync: false
+
+      # External ML service config (pre-filled, change if needed)
+      - key: FACE_SIMILARITY_SPACE_URL
+        value: https://cvdetectors-humandetector.hf.space
+      - key: FACE_SIMILARITY_API_NAME
+        value: /predict
+      - key: FACE_MATCH_PASS_THRESHOLD
+        value: "70"
+      - key: LIVENESS_SPACE_URL
+        value: https://cvdetectors-liveness-detector.hf.space
+      - key: LIVENESS_API_NAME
+        value: /predict
+      - key: LIVENESS_LIVE_THRESHOLD
+        value: "65"
+      - key: DEEPFAKE_SPACE_URL
+        value: Dharshaneshwaran/deepfake
+      - key: DEEPFAKE_API_NAME
+        value: /predict_3
+      - key: EXTERNAL_API_TIMEOUT_SECONDS
+        value: "90"
+      - key: DEEPFAKE_TIMEOUT_SECONDS
+        value: "90"
+
+  - type: redis
+    name: ekyc-redis
+    plan: free
+    maxmemoryPolicy: noeviction
+
+databases:
+  - name: ekyc-postgres
+    databaseName: ekyc
+    user: ekyc
+    plan: free
